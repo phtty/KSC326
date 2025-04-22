@@ -1,0 +1,11 @@
+*.lst
+*.cod
+*.cof
+*.cofv
+*.hex
+*.map
+*.err
+*.o
+*.hc
+log*
+doc
