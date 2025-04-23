@@ -82,9 +82,6 @@ NEXTBYTE_1:
 	movlw	0
 	movwf	R_Alarm_Min
 
-	movlw	16
-	movwf	TurnOffScreen_Counter	; 熄屏倒计时初始值
-
 	return
 
 

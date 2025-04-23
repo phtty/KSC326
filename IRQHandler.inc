@@ -94,23 +94,28 @@ PF_IRQ_Handler:
 	bcf		RFIF
 
 	movlw	0xe0
-	andwf	PORTF,W					; PF5~7有1个为1则有键压下
-	btfss	Z
+	andwf	PORTF,W
+	subwf	PORTF_BackUp,W			; 用当前PF5~7与历史状态比较，若增大了则说明有按键压下
+	btfss	C
 	goto	PortF_PressKey
-	btfsc	Key_Flag,0				; 只有在压键事件存在时，才会判断有无松键事件
+
+	movlw	0xe0
+	andwf	PORTF,W
+	movwf	PORTF_BackUp			; 更新历史状态
+	btfsc	Key_Flag,0				; 只有在扫键标志存在时，才会判断有无松键
 	goto	PortF_ReleaseKey
 	goto	IRQ_EXIT
 PortF_PressKey:
-	bsf		Key_Flag,0				; 压键事件标志位
+	bsf		Key_Flag,0				; 扫键标志位
 	bsf		Key_Flag,2				; 首次触发标志位
-	goto	IRQ_EXIT
-PortF_ReleaseKey:
+	movlw	2
+	movwf	Debounce_Counter		; 复位消抖计数值
 	movlw	0xe0
 	andwf	PORTF,W
-	btfss	Z
-	goto	PortF_ReleaseKey_Exit	; 若PF5~7都为0，则为松键
-	bsf		Key_Flag,1				; 松键事件标志位
-	bcf		Key_Flag,0
-PortF_ReleaseKey_Exit:
+	movwf	PORTF_BackUp			; 更新历史状态
+	clrf	IOCF					; 消抖完成前关闭PF5~7电平变化中断
+	goto	IRQ_EXIT
 
+PortF_ReleaseKey:
+	bsf		Key_Flag,1				; 置位松键标志位
 	goto	IRQ_EXIT

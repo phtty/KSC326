@@ -2,6 +2,7 @@ List	P = HC18P134L, R = DEC
 
 include	HC18P133L.inc
 include	Content.inc
+include	Macro.inc
 include	RAM_DEF.inc
 
 	org	0000H
@@ -79,38 +80,13 @@ SendLoop9:
 
 
 MAIN:
-
-Global_Run:									; 全局生效的功能
-	;call	F_KeyHandler
-	;call	F_BeepManage
-	;call	F_Time_Run						; 走时
-
-Status_Juge:
-	btfsc	Primary_Status,0
-	goto	Status_DisClock
-	btfsc	Primary_Status,1
-	goto	Status_DisAlarm
-	btfsc	Primary_Status,2
-	goto	Status_SetClock
-	btfsc	Primary_Status,3
-	goto	Status_SetAlarm
-	goto	MAIN
-
-Status_DisClock:
-	goto	MAIN
-
-Status_DisAlarm:
-	
-	goto	MAIN
-
-Status_SetClock:
-	goto	MAIN
-
-Status_SetAlarm:
+	call	PeriodicTask_32Hz				; 32Hz任务
+	call	PeriodicTask_2Hz				; 2Hz任务
+	call	PeriodicTask_1Hz				; 1Hz任务
 	goto	MAIN
 
 
-F_Delay:
+F_Delay:									; 大约130us
 	bcf		RP0
 
 	movlw	0xff

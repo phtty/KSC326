@@ -4,7 +4,7 @@ F_Temperature_Get:
 	clrf	R_ADC_H
 	clrf	R_ADC_L
 
-	bsf		PORTF,4					; AD测温电路通电
+	bsf		PORTF,1					; AD测温电路启动
 	nop
 	nop
 	bsf		ADON
@@ -16,7 +16,7 @@ ADC_Wait:
 	movwf	R_ADC_H
 	movf	ADRESL,W
 	movwf	R_ADC_L
-	bcf		PORTF,4					; AD测温电路断开
+	bcf		PORTF,1					; AD测温电路断开
 
 	swapf	R_ADC_L,F				; 采样值要右移4位
 	movlw	0x0f

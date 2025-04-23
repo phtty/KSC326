@@ -14,10 +14,14 @@ T0_Counter
 T1_Counter
 ; 响闹秒数计数
 Louding_Counter
-; 返回时显模式的时间
-Return_MaxTime
-; 熄屏计时计数
-TurnOffScreen_Counter
+; 退出设置模式计数
+Return_Counter
+; DP模式计数
+DP_Counter
+; 去抖延时计数
+Debounce_Counter
+; 快加/长按计数
+LongPress_Counter
 
 Calendar_Flag
 ;bit0 = 1 闰年
@@ -54,8 +58,8 @@ TimeFlag_SW
 ;bit1 = 1 16Hz计数开关
 ;bit2 = 1 32Hz计数开关
 
-Time_Event
-;bit0 = 1 
+SysEvent_Flag
+;bit0 = 1 休眠开启
 ;bit1 = 1 
 ;bit2 = 1 
 ;bit3 = 1 
@@ -65,19 +69,26 @@ Primary_Status
 ;0 = 时间显示
 ;1 = 日期显示
 ;2 = 温度显示
-;3 = 闹钟显示
-;4 = 时间设置
-;5 = 日期设置
-;6 = 闹钟设置
+;3 = 闹钟1显示
+;4 = 闹钟2显示
+;5 = 闹钟3显示
 Secondary_Status
-;子状态序号
+;0 = 显示模式
+;1 = 设置项1
+;2 = 设置项2
+;3 = 设置项3
+
+DP_Mode
+;0 = dp-1
+;1 = dp-2
+;2 = dp-3
 
 Key_Flag
-;bit0 = 1 压键事件
-;bit1 = 1 松键事件
+;bit0 = 1 扫键标志
+;bit1 = 1 松键标志
 ;bit2 = 1 首次触发标志
 ;bit3 = 1 快加/长按标志
-;bit4 = 1 
+;bit4 = 1 功能跳过标志
 ;bit5 = 1 
 ;bit6 = 1 
 ;bit7 = 1 
@@ -85,12 +96,10 @@ Key_Flag
 NightPeriod_Flag
 ;bit0 = 1 夜间模式开启
 
-SpecialKey_Flag
-;bit0 = 1 Mode键待处理				|特殊按键
-;bit1 = 1 Alarm键待处理				|特殊按键
-;bit2 = 1 SNZ/Backlight键待处理		|特殊按键
-;bit3 = 1 Up键待处理				|特殊按键
-;bit4 = 1 Down键待处理				|特殊按键
+Depress_Flag
+;bit0 = 1 Down键待处理				|松键处理
+;bit1 = 1 Up键待处理				|松键处理
+;bit2 = 1 Set键待处理				|松键处理
 
 Power_Flag
 ;bit0 = 1 PWR_DET电平变化标志
@@ -101,20 +110,14 @@ ADC_Flag
 ;bit0 = 1 负温度标志
 ;bit1 = 1 华氏度模式标志
 
-BackLight_Flag
-;bit0 = 1 
+BackLight_Level
+;Level=0 低亮
+;Level=2 高亮
 
 PORTA_BackUp
 PORTF_BackUp
 
-QuickAdd_Counter
-
 Beep_Serial
-
-BackLight_Level
-;Level=0 低亮
-;Level=1 半亮
-;Level=2 高亮
 
 R_ADC_L
 R_ADC_H
@@ -146,7 +149,7 @@ R_Snooze_Time			; 贪睡计时
 
 
 
-; 显存
+; 显存32*3=96Byte
 DRAM:
 DRAM1
 DRAM2

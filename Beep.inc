@@ -23,12 +23,13 @@ LoudManage:
 	
 	movlw	4
 	movwf	Beep_Serial					; 响闹序列为两声
-	incf	Louding_Counter
+	incf	Louding_Counter,F
 	movlw	60
 	subwf	Louding_Counter,W			; 判断是否响闹结束
 	btfss	C
 	return
 
+Close_Loud:
 	clrf	Louding_Counter
 	btfss	Beep_Flag,1					; 若存在按键提示音，则不关闭蜂鸣器
 	goto	KeyBeep_NoClose

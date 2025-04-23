@@ -1,7 +1,7 @@
 [HC-IDE]
 Version=3.0.11.S
 [File Count]
-Count=18
+Count=19
 [MCU]
 PowerSupply=0
 [Settings]
@@ -14,18 +14,19 @@ PostBuild=0
 PostBuildCommand=
 Library=
 [Files]
-OpenFileCounts=11
-File0=Display.inc|3 234 1685 234 706
-File1=HalfSec.inc|1 78 1477 78 684
-File2=main.asm|1 208 1603 208 810
-File3=Content.inc|1 156 1607 156 628
-File4=ADCTable.inc|1 260 1659 260 866
-File5=IRQHandler.inc|1 78 1529 78 550
-File6=Init.inc|1 130 1581 130 602
-File7=HC18P133L.inc|1 26 1425 26 632
-File8=KeyHandler.inc|1 104 1555 104 576
-File9=Beep.inc|1 286 1685 286 892
-File10=Alarm.inc|1 234 1633 234 840
+OpenFileCounts=12
+File0=PeriodicTask1Hz.inc|3 26 1477 26 498
+File1=DisplayDriver.inc|1 26 1477 26 498
+File2=Display.inc|1 234 1685 234 706
+File3=main.asm|1 208 1603 208 810
+File4=Content.inc|1 156 1607 156 628
+File5=ADCTable.inc|1 260 1659 260 866
+File6=IRQHandler.inc|1 78 1529 78 550
+File7=Init.inc|1 130 1581 130 602
+File8=HC18P133L.inc|1 26 1425 26 632
+File9=KeyHandler.inc|1 104 1555 104 576
+File10=Beep.inc|1 286 1685 286 892
+File11=Alarm.inc|1 234 1633 234 840
 [Break]
 Count=3
 BP0=11 21 1
@@ -45,14 +46,15 @@ File3=Calendar.inc
 File4=Content.inc
 File5=Display.inc
 File6=DisplayDriver.inc
-File7=HalfSec.inc
-File8=HC18P133L.inc
-File9=Init.inc
-File10=IRQHandler.inc
-File11=KeyHandler.inc
-File12=main.asm
-File13=NightMode.inc
-File14=PowerManage.inc
-File15=RAM_DEF.inc
-File16=Temper.inc
-File17=Time.inc
+File7=HC18P133L.inc
+File8=Init.inc
+File9=IRQHandler.inc
+File10=KeyHandler.inc
+File11=main.asm
+File12=NightMode.inc
+File13=PeriodicTask1Hz.inc
+File14=PeriodicTask2Hz.inc
+File15=PowerManage.inc
+File16=RAM_DEF.inc
+File17=Temper.inc
+File18=Time.inc
