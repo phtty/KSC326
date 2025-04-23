@@ -6,15 +6,15 @@ PeriodicTask_2Hz:
 
 ; 一些2Hz刷新程序
 
-	movlw	High(Sys_HalfSec_Table)
+	movlw	High(PeriodicTask_2HzJumpTable)
 	movwf	PCLATH
 	movf	Primary_Status,W
-Sys_HalfSec_Table:
+PeriodicTask_2HzJumpTable:
 	addwf	PCL,F
-	goto	F_TimeDis_HalfSec
-	goto	F_DateDis_HalfSec
-	goto	F_TemperDis_HalfSec
-	goto	F_Alarm1Dis_HalfSec
-	goto	F_Alarm2Dis_HalfSec
-	goto	F_Alarm3Dis_HalfSec
+	goto	TimeDis_HalfSec
+	goto	DateDis_HalfSec
+	goto	TemperDis_HalfSec
+	goto	Alarm1Dis_HalfSec
+	goto	Alarm2Dis_HalfSec
+	goto	Alarm3Dis_HalfSec
 	return

@@ -9,102 +9,107 @@ PeriodicTask_1Hz:
 	call	F_Alarm_Handler					; 闹钟判断
 	call	LoudManage						; 响闹管理
 	call	DPMode_Mangage					; DP模式切换
+	call	Return_DisMode					; 设置模式定时返回显示模式
 
-	movlw	High(SysSec_JumpTable)
+	movlw	High(PeriodicTask_1HzJumpTable)
 	movwf	PCLATH
 	movf	Primary_Status,W
-SysSec_JumpTable:
+PeriodicTask_1HzJumpTable:
 	addwf	PCL,F
-	goto	F_TimeDis_Sec
-	goto	F_DateDis_Sec
-	goto	F_TemperDis_Sec
-	goto	F_Alarm1Dis_Sec
-	goto	F_Alarm2Dis_Sec
-	goto	F_Alarm3Dis_Sec
+	goto	TimeDis_Sec
+	goto	DateDis_Sec
+	goto	TemperDis_Sec
+	goto	Alarm1Dis_Sec
+	goto	Alarm2Dis_Sec
+	goto	Alarm3Dis_Sec
 	return
 
 
-DPMode_Mangage:
-	movf	Secondary_Status,F				; 设置模式下不进行DP切换
-	btfss	Z
-	return
-	incf	DP_Counter,F					; 递增DP计数
 
-	movlw	High(DPMode_JumpTable)
-	movwf	PCLATH
-	movf	DP_Mode,W
-DPMode_JumpTable:
-	addwf	PCL,F
-	goto	DPMode_1
-	goto	DPMode_2
-	goto	DPMode_3
-	
-DPMode_1:
-	movlw	3
-	subwf	Primary_Status,W
-	btfsc	C
-	goto	DP1_OtherDis					; 非时间、日期、温度模式
-
-	movlw	High(DP1_JumpTable)
+TimeDis_Sec:
+	movlw	High(TimeModeDis_JumpTable)
 	movwf	PCLATH
 	movf	Primary_Status,W
-DP1_JumpTable:
+TimeModeDis_JumpTable:
 	addwf	PCL,F
-	goto	DP1_TimeDis
-	goto	DP1_DateDis
-	goto	DP1_TemperDis
-DP1_TimeDis:
-	movlw	10
-	subwf	DP_Counter,W
-	btfss	C
-	return
-	clrf	DP_Counter						; DP1时间显示10S切换到日期显示
-	movlw	1
-	movwf	Primary_Status
-	return
-DP1_DateDis:
-	movlw	2
-	subwf	DP_Counter,W
-	btfss	C
-	return
-	clrf	DP_Counter						; DP1日期显示2S切换到温度显示
-	movlw	2
-	movwf	Primary_Status
-	return
-DP1_TemperDis:
-	movlw	2
-	subwf	DP_Counter,W
-	btfss	C
-	return
-	clrf	DP_Counter						; DP1温度显示2S切换到时间显示
-	clrf	Primary_Status
-	return
-DP1_OtherDis:
-	movlw	10
-	subwf	DP_Counter,W
-	btfss	C
-	return
-	clrf	DP_Counter						; DP1其他模式显示10S切换到时间显示
-	clrf	Primary_Status
+	goto	Time_Display
+	goto	TimeMode_Dis
+	goto	TimeHourSet_Dis
+	goto	TimeMinSet_Dis
 	return
 
 
 
-DPMode_2:
-	clrf	DP_Counter						; DP2不会主动切换模式
+DateDis_Sec:
+	movlw	High(DateModeDis_JumpTable)
+	movwf	PCLATH
+	movf	Primary_Status,W
+DateModeDis_JumpTable:
+	addwf	PCL,F
+	goto	Date_Display
+	goto	DateYearSet_Dis
+	goto	DateMonthSet_Dis
+	goto	DateDaySet_Dis
 	return
 
 
 
-DPMode_3:
-	movf	Primary_Status,F
-	btfsc	Z								; DP3非时间显示模式15S切换回时间显示
+TemperDis_Sec:
 	return
 
+
+
+Alarm1Dis_Sec:
+	movlw	High(Alarm1ModeDis_JumpTable)
+	movwf	PCLATH
+	movf	Primary_Status,W
+Alarm1ModeDis_JumpTable:
+	addwf	PCL,F
+	goto	Alarm1_Display
+	goto	Alarm1SW_Dis
+	goto	Alarm1HourSet_Dis
+	goto	Alarm1MinSet_Dis
+	return
+
+
+
+Alarm2Dis_Sec:
+	movlw	High(Alarm2ModeDis_JumpTable)
+	movwf	PCLATH
+	movf	Primary_Status,W
+Alarm2ModeDis_JumpTable:
+	addwf	PCL,F
+	goto	Alarm2_Display
+	goto	Alarm2SW_Dis
+	goto	Alarm2HourSet_Dis
+	goto	Alarm2MinSet_Dis
+	return
+
+
+
+Alarm3Dis_Sec:
+	movlw	High(Alarm3ModeDis_JumpTable)
+	movwf	PCLATH
+	movf	Primary_Status,W
+Alarm3ModeDis_JumpTable:
+	addwf	PCL,F
+	goto	Alarm3_Display
+	goto	Alarm3SW_Dis
+	goto	Alarm3HourSet_Dis
+	goto	Alarm3MinSet_Dis
+	return
+
+
+
+Return_DisMode:
+	movf	Secondary_Status,F				; 若不处于设置模式则直接退出
+	btfsc	Z
+	return
+
+	decfsz	Return_Counter,F
+	return									; 未计到0则直接退出
 	movlw	15
-	subwf	DP_Counter,W
-	btfss	C
-	return
-	clrf	DP_Counter
-	clrf	Primary_Status
+	movwf	Return_Counter					; 复位设置模式返回计时
+	clrf	Secondary_Status
+	nop										; 刷新显示
 	return

@@ -122,6 +122,9 @@ Port_Initial:
 	clrf	PORTC
 	clrf	PORTF
 
+	movlw	15
+	movwf	Return_Counter	; 设置模式返回计时复位
+
 	movlw	PORTF
 	andlw	0xe0
 	movwf	PORTF_BackUp	; 按键IO口初始状态保存

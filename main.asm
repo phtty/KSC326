@@ -81,6 +81,7 @@ SendLoop9:
 
 MAIN:
 	call	PeriodicTask_32Hz				; 32Hz任务
+	call	PeriodicTask_16Hz				; 16Hz任务
 	call	PeriodicTask_2Hz				; 2Hz任务
 	call	PeriodicTask_1Hz				; 1Hz任务
 	goto	MAIN

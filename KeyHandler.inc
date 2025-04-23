@@ -1,5 +1,9 @@
 ;32Hz任务，主要用于按键处理
 PeriodicTask_32Hz:
+	btfss	Time_Flag,4
+	return
+	bcf		Time_Flag,4
+
 	call	Key_Handler
 	nop									; 颜色变换
 	return
@@ -139,7 +143,7 @@ Key_CloseLoud:
 
 
 
-L_Key_Beep:
-	movlw	B'11'
+Key_Beep:
+	movlw	B'10'
 	movwf	Beep_Serial
 	return
