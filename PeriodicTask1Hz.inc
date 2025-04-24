@@ -5,11 +5,12 @@ PeriodicTask_1Hz:
 	bcf		Time_Flag,0						; 复位1Hz标志
 
 ; 还有一些加时1S的程序
-	call	F_Time_Run						; 走时
-	call	F_Alarm_Handler					; 闹钟判断
+	call	Time_Run						; 走时
+	call	Alarm_Handler					; 闹钟判断
 	call	LoudManage						; 响闹管理
 	call	DPMode_Mangage					; DP模式切换
 	call	Return_DisMode					; 设置模式定时返回显示模式
+	call	DotCOL_Sec						; 秒点闪烁
 
 	movlw	High(PeriodicTask_1HzJumpTable)
 	movwf	PCLATH
@@ -18,44 +19,12 @@ PeriodicTask_1HzJumpTable:
 	addwf	PCL,F
 	goto	TimeDis_Sec
 	goto	DateDis_Sec
-	goto	TemperDis_Sec
-	goto	Alarm1Dis_Sec
-	goto	Alarm2Dis_Sec
-	goto	Alarm3Dis_Sec
+	return
+	goto	AlarmDis_Sec
+	goto	AlarmDis_Sec
+	goto	AlarmDis_Sec
 	return
 
-
-
-TimeDis_Sec:
-	movlw	High(TimeModeDis_JumpTable)
-	movwf	PCLATH
-	movf	Primary_Status,W
-TimeModeDis_JumpTable:
-	addwf	PCL,F
-	goto	Time_Display
-	goto	TimeMode_Dis
-	goto	TimeHourSet_Dis
-	goto	TimeMinSet_Dis
-	return
-
-
-
-DateDis_Sec:
-	movlw	High(DateModeDis_JumpTable)
-	movwf	PCLATH
-	movf	Primary_Status,W
-DateModeDis_JumpTable:
-	addwf	PCL,F
-	goto	Date_Display
-	goto	DateYearSet_Dis
-	goto	DateMonthSet_Dis
-	goto	DateDaySet_Dis
-	return
-
-
-
-TemperDis_Sec:
-	return
 
 
 
@@ -102,10 +71,12 @@ Alarm3ModeDis_JumpTable:
 
 
 Return_DisMode:
-	movf	Secondary_Status,F				; 若不处于设置模式则直接退出
-	btfsc	Z
+	movf	Secondary_Status,F				; 若处于设置模式则进入计时
+	btfss	Z
+	goto	Return_Counting
+	btfss	SysEvent_Flag,1					; 存在DP标志位也进入计时
 	return
-
+Return_Counting:
 	decfsz	Return_Counter,F
 	return									; 未计到0则直接退出
 	movlw	15

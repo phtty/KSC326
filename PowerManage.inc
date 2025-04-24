@@ -57,13 +57,13 @@ Open5020:
 	movf	BackLight_Level,W				; 根据记忆亮度等级进行亮屏
 	btfsc	Z
 	goto	LowLightLevel
-	subwf	1
+	sublw	1
 	btfsc	Z
 	goto	MidLightLevel
-	subwf	2
+	sublw	2
 	btfsc	Z
 	goto	HighLightLevel
-	
+
 LowLightLevel:
 	bsf		RP0
 	movlw	0xfa

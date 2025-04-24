@@ -136,3 +136,10 @@ MinusTemper2Fah:
 	sublw	32
 	movwf	R_Temperature_F
 	return
+
+
+
+
+TemperDis_HalfSec:
+	call	Display_Temper
+	return

@@ -157,16 +157,16 @@ IRQ_EXIT:
 
 include	Init.inc
 include	IRQHandler.inc
-;include KeyHandler.inc
+include KeyHandler.inc
 ;include LedTable.inc
 ;include Dis.inc
 ;include Display.inc
 include Temper.inc
 include ADCTable.inc
 include Beep.inc
-;include Time.inc
-;include Calendar.inc
-;include Alarm.inc
+include Time.inc
+include Calendar.inc
+include Alarm.inc
 include NightMode.inc
 include PowerManage.inc
 

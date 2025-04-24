@@ -33,8 +33,7 @@ Beep_Flag
 
 Clock_Flag
 ;bit0 = 1 12h模式
-;bit1 = 1 闹钟触发
-;bit2 = 1 响闹模式
+;bit1 = 1 响闹模式
 
 Alarm_Switch
 ;bit0 = 1 闹钟1开启
@@ -59,9 +58,9 @@ TimeFlag_SW
 ;bit2 = 1 32Hz计数开关
 
 SysEvent_Flag
-;bit0 = 1 休眠开启
-;bit1 = 1 
-;bit2 = 1 
+;bit0 = 1 更新显示标志位
+;bit1 = 1 显示DP
+;bit2 = 1 夜间模式开启
 ;bit3 = 1 
 ;bit4 = 1 
 
@@ -93,9 +92,6 @@ Key_Flag
 ;bit6 = 1 
 ;bit7 = 1 
 
-NightPeriod_Flag
-;bit0 = 1 夜间模式开启
-
 Depress_Flag
 ;bit0 = 1 Down键待处理				|松键处理
 ;bit1 = 1 Up键待处理				|松键处理
@@ -110,9 +106,12 @@ ADC_Flag
 ;bit0 = 1 负温度标志
 ;bit1 = 1 华氏度模式标志
 
+; 作循环右移的循环计数
 BackLight_Level
-;Level=0 低亮
-;Level=2 高亮
+;0 = 高亮
+;1 = 半亮
+;2 = 低亮
+
 
 PORTA_BackUp
 PORTF_BackUp

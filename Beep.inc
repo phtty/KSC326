@@ -27,7 +27,7 @@ NoBeep_Serial_Mode:
 
 
 LoudManage:
-	btfss	Clock_Flag,2
+	btfss	Clock_Flag,1
 	return
 	
 	movlw	4
@@ -46,6 +46,5 @@ Close_Loud:
 	bsf		TRISA,7
 KeyBeep_NoClose:
 	bcf		Clock_Flag,1
-	bcf		Clock_Flag,2
 	clrf	Triggered_AlarmGroup
 	return

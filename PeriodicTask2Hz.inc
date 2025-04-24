@@ -5,6 +5,7 @@ PeriodicTask_2Hz:
 	bcf		Time_Flag,1						; 复位2Hz标志
 
 ; 一些2Hz刷新程序
+	call	DotCOL_HalfSec					; 秒点闪烁
 
 	movlw	High(PeriodicTask_2HzJumpTable)
 	movwf	PCLATH
@@ -14,7 +15,7 @@ PeriodicTask_2HzJumpTable:
 	goto	TimeDis_HalfSec
 	goto	DateDis_HalfSec
 	goto	TemperDis_HalfSec
-	goto	Alarm1Dis_HalfSec
-	goto	Alarm2Dis_HalfSec
-	goto	Alarm3Dis_HalfSec
+	goto	AlarmDis_HalfSec
+	goto	AlarmDis_HalfSec
+	goto	AlarmDis_HalfSec
 	return
