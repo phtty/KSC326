@@ -148,11 +148,52 @@ R_Snooze_Time			; 贪睡计时
 
 
 
-; 显存32*3=96Byte
-DRAM:
-DRAM1
-DRAM2
-DRAM3
+; GRB颜色通道的发送缓冲区
+SendBuff_G
+SendBuff_R
+SendBuff_B
+
+; 用于标识显示位选是否开启
+DisSwtich:
+DisSwtich1
+DisSwtich2
+DisSwtich3
+DisSwtich4
+
+; 存放当前的GRB时刻
+GRB_Tick:
+GRB_Tick1
+GRB_Tick2
+GRB_Tick3
+GRB_Tick4
+GRB_Tick5
+GRB_Tick6
+GRB_Tick7
+GRB_Tick8
+GRB_Tick9
+GRB_Tick10
+GRB_Tick11
+GRB_Tick12
+GRB_Tick13
+GRB_Tick14
+GRB_Tick15
+GRB_Tick16
+GRB_Tick17
+GRB_Tick18
+GRB_Tick19
+GRB_Tick20
+GRB_Tick21
+GRB_Tick22
+GRB_Tick23
+GRB_Tick24
+GRB_Tick25
+GRB_Tick26
+GRB_Tick27
+GRB_Tick28
+GRB_Tick29
+GRB_Tick30
+GRB_Tick31
+GRB_Tick32
 
 
 ; 临时变量

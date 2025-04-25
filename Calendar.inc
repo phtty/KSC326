@@ -69,9 +69,9 @@ DateDis_HalfSec:
 DateModeDis_JumpTable:
 	addwf	PCL,F
 	goto	Date_Display
-	goto	DateYearSet_Dis
-	goto	DateMonthSet_Dis
-	goto	DateDaySet_Dis
+	goto	Year_Display
+	goto	Date_Display
+	goto	Date_Display
 	return
 
 

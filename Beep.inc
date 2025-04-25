@@ -1,12 +1,3 @@
-; 16Hz任务，主要用于蜂鸣间隔
-PeriodicTask_16Hz:
-	btfss	Time_Flag,3
-	return
-	bcf		Time_Flag,3
-
-	call	BeepManage
-	return
-
 BeepManage:
 	btfss	Beep_Flag,0
 	return
@@ -14,7 +5,7 @@ BeepManage:
 	movf	Beep_Serial,F
 	btfsc	Z
 	goto	NoBeep_Serial_Mode
-	decf	Beep_Serial
+	decf	Beep_Serial,F
 	btfss	Beep_Serial,0
 	goto	NoBeep_Serial_Mode
 	bcf		TRISA,7						; PA7输出启用

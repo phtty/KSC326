@@ -31,7 +31,7 @@ ADC_Wait:
 	movlw	0
 	movwf	R_Temperature			; 温度通过循环查表递减得出
 	movlw	0xff
-	subwf	R_ADC_L
+	subwf	R_ADC_L,W
 	btfsc	C
 	goto	TemperTableHead_NoBorrow
 	movlw	1
@@ -109,9 +109,9 @@ F_Cel2Fah:
 	rlf		P_Temp1,F				; 左移三次乘8
 
 	movf	R_Temperature,W
-	addwf	P_Temp
+	addwf	P_Temp,F
 	movlw	0
-	addwf	P_Temp1					; 再加上自身完成x9操作
+	addwf	P_Temp1,F				; 再加上自身完成x9操作
 
 L_Div5_Loop:
 	movlw	5

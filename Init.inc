@@ -157,7 +157,7 @@ PWM_Initial:
 	bcf		RP0
 	bsf		PORCTR,4		; 配置CCP2为PA7，输出PWM
 	movlw	0xfc
-	andwf	TRISA
+	andwf	TRISA,F
 
 	bsf		RP0
 	clrf	PWMEN			; PWM模块使能寄存器

@@ -15,69 +15,6 @@ START:
 	nop
 
 	call	System_Init						; 上电初始化
-	
-	bcf		TRISF,5
-	bcf		PORTF,5
-
-	movlw	8
-	movwf	P_Temp
-SendLoop1:
-	LED_CODE1
-	decfsz	P_Temp,F
-	goto	SendLoop1
-	movlw	8
-	movwf	P_Temp
-SendLoop2:
-	LED_CODE0
-	decfsz	P_Temp,F
-	goto	SendLoop2
-	movlw	8
-	movwf	P_Temp
-SendLoop3:
-	LED_CODE0
-	decfsz	P_Temp,F
-	goto	SendLoop3
-
-
-	movlw	8
-	movwf	P_Temp
-SendLoop4:
-	LED_CODE0
-	decfsz	P_Temp,F
-	goto	SendLoop4
-	movlw	8
-	movwf	P_Temp
-SendLoop5:
-	LED_CODE1
-	decfsz	P_Temp,F
-	goto	SendLoop5
-	movlw	8
-	movwf	P_Temp
-SendLoop6:
-	LED_CODE0
-	decfsz	P_Temp,F
-	goto	SendLoop6
-
-
-	movlw	8
-	movwf	P_Temp
-SendLoop7:
-	LED_CODE0
-	decfsz	P_Temp,F
-	goto	SendLoop7
-	movlw	8
-	movwf	P_Temp
-SendLoop8:
-	LED_CODE0
-	decfsz	P_Temp,F
-	goto	SendLoop8
-	movlw	8
-	movwf	P_Temp
-SendLoop9:
-	LED_CODE1
-	decfsz	P_Temp,F
-	goto	SendLoop9
-
 
 MAIN:
 	call	PeriodicTask_32Hz				; 32Hz任务
@@ -158,9 +95,9 @@ IRQ_EXIT:
 include	Init.inc
 include	IRQHandler.inc
 include KeyHandler.inc
-;include LedTable.inc
-;include Dis.inc
-;include Display.inc
+include RGBTable.inc
+include Dis.inc
+include Display.inc
 include Temper.inc
 include ADCTable.inc
 include Beep.inc

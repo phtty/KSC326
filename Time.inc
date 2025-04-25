@@ -54,7 +54,7 @@ TimeSetDis_HS_JumpTable:
 	goto	TimeMode_Display
 	goto	Time_Display
 	goto	Time_Display
-	return
+
 
 
 ; 时间模式1S程序
@@ -68,4 +68,4 @@ TimeSetDis_JumpTable:
 	goto	Undisplay_Digit
 	goto	Undisplay_01
 	goto	Undisplay_23
-	return
+

@@ -18,4 +18,7 @@ PeriodicTask_2HzJumpTable:
 	goto	AlarmDis_HalfSec
 	goto	AlarmDis_HalfSec
 	goto	AlarmDis_HalfSec
+
+
+DotCOL_HalfSec:
 	return

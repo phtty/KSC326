@@ -1,6 +1,6 @@
 T0_IRQ_Handler:
 	bcf		T0IF
-	decf	T0_Counter
+	decf	T0_Counter,F
 
 L_32Hz_Juge:
 	btfss	TimeFlag_SW,2			; 32Hz标志开关

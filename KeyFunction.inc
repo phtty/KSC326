@@ -64,6 +64,14 @@ SwitchState_DPDis:
 	bsf		SysEvent_Flag,1				; 置位DP显示标志位
 	movlw	3
 	movwf	Return_Counter				; 返回计时设置为3S
+	
+	movlw	2
+	subwf	DP_Mode,W
+	btfsc	C
+	goto	DPMode_Overflow
+	incf	DP_Mode,F
+DPMode_Overflow:
+	clrf	DP_Mode
 SwitchState_DPDis_Exit:
 	nop									; 更新显示
 	return
