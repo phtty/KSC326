@@ -141,5 +141,5 @@ MinusTemper2Fah:
 
 
 TemperDis_HalfSec:
-	call	Display_Temper
+	call	Temper_Display
 	return

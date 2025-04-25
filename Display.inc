@@ -7,24 +7,22 @@ Time_Display:
 TimeMin_Display:
 	movf	R_Time_Min,W
 	call	Hex2BCD
-	movf	P_Temp5,W
-	movwf	P_Temp
-
+	
 	movlw	2
 	movwf	R_X
+	movf	P_Temp5,W
 	call	Digit_Num_Display				; 显示分钟个位
 
-	movf	P_Temp6,W
-	movwf	P_Temp
 	movlw	3
 	movwf	R_X
+	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示分钟个位
 	return
 
 ; 小时显示
 TimeHour_Display:
 	btfss	Clock_Flag,0
-	goto	L_24hMode_Time
+	goto	Time_24hMode
 
 	movlw	12
 	subwf	R_Time_Hour,W					; 判断当前时间是上午或下午
@@ -134,7 +132,264 @@ Year_Display:
 	return
 
 
+Temper_Display:
+	call	SymbolTEMP_Display				; 显示温度符号
 
+	btfss	ADC_Flag,1
+	goto	Display_CelsiusDegree
+	goto	Display_FahrenheitDegree
+
+Display_CelsiusDegree:
+	btfsc	ADC_Flag,0
+	goto	CelsiusDegree_Minus				; 摄氏度存在负号时使用另一套显示逻辑
+
+	movf	R_Temperature,W
+	call	F_Hex2BCD
+	clrf	R_X
+	movf	P_Temp6,W
+	call	Digit_Num_Display				; 显示温度十位
+
+	movlw	1
+	movwf	R_X
+	movf	P_Temp5,W
+	call	Digit_Num_Display				; 显示温度个位
+
+	movlw	2
+	movwf	R_X
+	movlw	Word_C
+	call	Digit_Word_Display				; D2显示温标C
+	return
+
+CelsiusDegree_Minus:
+	clrf	R_X
+	movlw	Word_Neg
+	call	Digit_Word_Display				; D0显示负号
+
+	movf	R_Temperature,W
+	call	F_Hex2BCD
+	movlw	1
+	movwf	R_X
+	movf	P_Temp6,W
+	call	Digit_Num_Display				; 显示温度十位
+
+	movlw	2
+	movwf	R_X
+	movf	P_Temp5,W
+	call	Digit_Num_Display				; 显示温度个位
+
+	movlw	3
+	movwf	R_X
+	movlw	Word_C
+	call	Digit_Word_Display				; D3显示温标C
+	return
+
+
+Display_FahrenheitDegree:
+	movf	R_Temperature_F,W
+	call	F_Hex2BCD
+	movf	P_Temp7
+	btfss	Z
+	goto	CelsiusDegree_3Digit			; 华氏度存在百位数时使用另一套显示逻辑
+
+	clrf	R_X
+	movf	P_Temp6,W
+	call	Digit_Num_Display				; 显示温度十位
+
+	movlw	1
+	movwf	R_X
+	movf	P_Temp5,W
+	call	Digit_Num_Display				; 显示温度个位
+
+	movlw	2
+	movwf	R_X
+	movlw	Word_C
+	call	Digit_Word_Display				; D2显示温标F
+	return
+
+CelsiusDegree_3Digit:
+	clrf	R_X
+	movf	P_Temp7,W
+	call	Digit_Num_Display				; 显示温度百位
+
+	movlw	1
+	movwf	R_X
+	movf	P_Temp6,W
+	call	Digit_Num_Display				; 显示温度十位
+
+	movlw	2
+	movwf	R_X
+	movf	P_Temp5,W
+	call	Digit_Num_Display				; 显示温度个位
+
+	movlw	3
+	movwf	R_X
+	movlw	Word_C
+	call	Digit_Word_Display				; D3显示温标F
+	return
+
+
+
+
+; 根据当前显示模式，显示闹钟组n的开关
+AlarmSW_Dipalay:
+	movlw	3
+	subwf	Primary_Status,W
+	movwf	R_X
+	movlw	1
+	call	W_LeftShift_XBit				; 将当前的显示状态变为操作的闹钟组
+	andwf	Alarm_Switch,W
+	btfss	Z
+	goto	AlarmSW_DisON
+
+	clrf	R_X
+	movlw	Word_Neg
+	call	Digit_Word_Display				; 闹钟关闭显示-
+
+	movlw	1
+	movwf	R_X
+	movf	Word_Neg
+	call	Digit_Word_Display				; 闹钟关闭显示-
+	goto	Display_AlarmNumber
+AlarmSW_DisON:
+	clrf	R_X
+	movlw	Word_o
+	call	Digit_Word_Display				; 闹钟关闭显示-
+
+	movlw	1
+	movwf	R_X
+	movf	Word_n
+	call	Digit_Word_Display				; 闹钟关闭显示-
+
+Display_AlarmNumber:
+	movlw	2
+	movwf	R_X
+	movf	Word_A
+	call	Digit_Word_Display				; 显示A
+
+	movlw	3
+	movwf	R_X
+	movlw	3
+	subwf	Primary_Status,W
+	call	Digit_Num_Display				; 显示闹钟序号
+	return
+
+
+
+; 显示闹钟
+Alarm_Dipalay:
+	call	AlarmMin_Display
+	call	AlarmHour_Display
+
+; 闹钟分钟显示
+AlarmMin_Display:
+	movlw	3
+	subwf	Primary_Status,W
+	movwf	P_Temp							; 计算出闹钟组
+	movlw	Low(R_Alarm1_Min)
+	addwf	P_Temp,W
+	movwf	FSR0L
+	movlw	High(R_Alarm1_Min)
+	movwf	FSR0H
+
+	movf	INDF0,W
+	call	Hex2BCD
+
+	movlw	2
+	movwf	R_X
+	movf	P_Temp5,W
+	call	Digit_Num_Display				; 显示分钟十位
+
+	movf	P_Temp6,W
+	movwf	P_Temp
+	movlw	3
+	movwf	R_X
+	call	Digit_Num_Display				; 显示分钟个位
+	return
+
+; 闹钟小时显示
+AlarmHour_Display:
+	movlw	3
+	subwf	Primary_Status,W
+	movwf	P_Temp							; 计算出闹钟组
+	movlw	Low(R_Alarm1_Min)
+	addwf	P_Temp,W
+	movwf	FSR0L
+	movlw	High(R_Alarm1_Min)
+	movwf	FSR0H
+
+	btfss	Clock_Flag,0
+	goto	Alarm_24hMode
+
+	movlw	12
+	subwf	INDF0,W					; 判断闹钟时间是上午或下午
+	btfsc	C
+	goto	Alarm12h_PM
+
+	call	SymbolPM_Clear					; 上午需灭PM点
+
+	movf	INDF0,W							; 再判断是否在0点
+	btfsc	Z
+	goto	Alarm_0Hour
+	goto	Start_DisAlarm_Hour
+Alarm_12h_PM:
+	call	SymbolPM_Display				; 下午亮PM点
+	movlw	12
+	subwf	INDF0,W							; 调整为12h模式显示
+	btfss	Z
+	goto	Start_DisAlarm_Hour
+Alarm_0Hour:
+	movlw	12								; 0点在12h模式里是12点
+	goto	Start_DisAlarm_Hour
+
+Alarm_24hMode:
+	call	SymbolPM_Clear					; 24h模式下没有PM点
+	movf	INDF0,W
+Start_DisAlarm_Hour:
+	call	Hex2BCD							; 显示最终的结果
+	movlw	1
+	movwf	R_X
+	movf	P_Temp5,W
+	call	Digit_Num_Display
+
+	clrf	R_X
+	movf	P_Temp6,W
+	call	Digit_Num_Display
+	return
+
+
+
+
+; 取消显示
+Undisplay_All:
+	call	Undisplay_01
+	call	Undisplay_23
+	return
+
+; 取消显示Digit0、1
+Undisplay_01:
+	movlw	0
+	movwf	R_X
+	movlw	10
+	call	Digit_Num_Display				; 取消显示Digit0
+
+	movlw	1
+	movwf	R_X
+	movlw	10
+	call	Digit_Num_Display				; 取消显示Digit1
+	return
+
+; 取消显示Digit2、3
+Undisplay_23:
+	movlw	2
+	movwf	R_X
+	movlw	10
+	call	Digit_Num_Display				; 取消显示Digit2
+
+	movlw	3
+	movwf	R_X
+	movlw	10
+	call	Digit_Num_Display				; 取消显示Digit3
+	return
 
 
 
@@ -169,11 +424,16 @@ END_TEN:
 
 
 
-
-L_LSR_4Bit:
+; 将W左移R_X位
+W_LeftShift_XBit:
+	movwf	P_Temp
+Shift_Loop:
+	movf	R_X,F
+	btfsc	Z
+	goto	Shift_LoopOver
+	decf	R_X,F
 	bcf		C
-	rrf		P_Temp
-	rrf		P_Temp
-	rrf		P_Temp
-	rrf		P_Temp
+	rlf		P_Temp
+	goto	Shift_Loop
+Shift_LoopOver:
 	return

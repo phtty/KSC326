@@ -20,7 +20,16 @@ D_Char_d:		equ	0x5e ;	d
 D_Char_p:		equ	0x73 ;	p
 D_Char_A:		equ	0x77 ;	A
 
-
+Word_C			equ	0
+Word_F			equ	1
+Word_A			equ	2
+Word_o			equ	3
+Word_n			equ	4
+Word_Neg		equ	5
+Word_d			equ	6
+Word_p			equ	7
+Word_H			equ	8
+Word_r			equ	9
 
 
 SEND_CODE1:		MACRO	
