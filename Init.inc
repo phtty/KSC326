@@ -24,6 +24,8 @@ System_Init:
 
 	call	TIM_Initial
 
+	LED_ON					; 打开RGB灯的供电
+
 	bsf		GIE				; 开启总中断
 	bsf		PEIE			; 使能外设中断
 
@@ -55,10 +57,10 @@ NEXTBYTE_1:
 	goto	NEXTBYTE_1		; FSR1L 的值加不溢出,循环清零下一个地址
 
 ; 用户变量初始化
-	movlw	32
-	movwf	T0_Counter		; 从32开始计数到0
-	movlw	5
-	movwf	R_Snooze_Time	; 贪睡时间默认为5分钟
+	movlw	2
+	movwf	T0_Counter		; 从1开始计数到0
+	movlw	8
+	movwf	T1_Counter		; 从8开始计数到0
 
 	movlw	2
 	movwf	BackLight_Level	; 上电默认高亮
@@ -77,10 +79,13 @@ NEXTBYTE_1:
 	movlw	1
 	movwf	R_Date_Day
 
-	movlw	6
-	movwf	R_Alarm_Hour	; 设置上电闹钟
-	movlw	0
-	movwf	R_Alarm_Min
+	movlw	12
+	movwf	R_Alarm1_Hour	; 设置上电闹钟
+	movwf	R_Alarm2_Hour
+	movwf	R_Alarm3_Hour
+	clrf	R_Alarm1_Min
+	clrf	R_Alarm2_Min
+	clrf	R_Alarm3_Min
 
 	return
 
@@ -113,7 +118,8 @@ Port_Initial:
 	movwf	WPUF			; PF5~7启用上拉
 	movlw	0xe0
 	movwf	IOCF			; 启用PF5~7电平变化中断
-	;bsf		RFIE
+	bcf		RFIF
+	bsf		RFIE			; 开启PF中断
 
 	bsf		RBPUB
 
@@ -154,36 +160,36 @@ ADC_Initial:
 
 ; PWM初始化
 PWM_Initial:
-	bcf		RP0
-	bsf		PORCTR,4		; 配置CCP2为PA7，输出PWM
-	movlw	0xfc
-	andwf	TRISA,F
+	;bcf		RP0
+	;bsf		PORCTR,4		; 配置CCP2为PA7，输出PWM
+	;movlw	0xfc
+	;andwf	TRISA,F
 
-	bsf		RP0
-	clrf	PWMEN			; PWM模块使能寄存器
+	;bsf		RP0
+	;clrf	PWMEN			; PWM模块使能寄存器
 
-	movlw	0xd0
-	movwf	PWM0PL
-	movlw	0x07
-	movwf	PWM0PH			; 周期寄存器
+	;movlw	0xd0
+	;movwf	PWM0PL
+	;movlw	0x07
+	;movwf	PWM0PH			; 周期寄存器
 
-	movlw	0xd0
-	movwf	PWM0DL			; 先设置低位
-	movlw	0x07
-	movwf	PWM0DH			; 占空比寄存器
+	;movlw	0xd0
+	;movwf	PWM0DL			; 先设置低位
+	;movlw	0x07
+	;movwf	PWM0DH			; 占空比寄存器
 
-	movlw	0x0b
-	movwf	PWM0C			; PWM模块控制寄存器
+	;movlw	0x0b
+	;movwf	PWM0C			; PWM模块控制寄存器
 
-	bcf		RP0
-	bsf		TRISA,7			; PA7先关闭输出
+	;bcf		RP0
+	;bsf		TRISA,7			; PA7先关闭输出
 
 Beep_Initial:
 	movlw	0x14
 	movwf	T2CON			; Fcpu预分频为4作为时钟源
 
 	movlw	0xf9
-	movwf	PR2				; 250个脉冲为1个周期（2KHz）
+	movwf	PR2				; 250个脉冲计数为1个周期（2KHz）
 
 	movlw	0x0f
 	movwf	CCP2CON			; 配置CCP模块为PWM模式
@@ -201,27 +207,27 @@ Beep_Initial:
 ; 定时器初始化
 TIM_Initial:
 	bcf		RP0
-	; Tim0
-	movlw	0x31
+	; Tim0 2Hz走时定时器
+	movlw	0x25
 	iorwf	OPTION,F
-	movlw	0xf1
-	andwf	OPTION,F		; 设置8分频，PSA=0，T0CS=1,T0SE=1
+	movlw	0xe5
+	andwf	OPTION,F		; 设置64分频，PSA=0，T0CS=1,T0SE=0
 	bsf		T0OSCEN			; T0OSCEN = 1
 
-	clrf	T0				; T0从0计到256,32Hz溢出一次
+	clrf	T0				; T0从0计到256,2Hz溢出一次
 	bsf		T0IE
 	bcf		T0IF			; 开启TIM0中断并清中断标志位
 
-	; Tim1
+	; Tim1 32Hz功能定时器
 	movlw	0x8d
 	movwf	T1CON			; Tim1配置为异步定时器唤醒模式，预分频系数设为不分频
 
 	clrf	T1L
 	clrf	T1H				; 清空Tim1计数
-	movlw	0xff-0x40
+	movlw	0xff-0x04
 	movwf	T1H
 	movlw	0xff
-	movwf	T1L				; 计数16384，半S中断1次
+	movwf	T1L				; 计数1024，32Hz中断1次
 
 	bsf		T1IE
 	bcf		T1IF			; 开启TIM1中断并清中断标志位

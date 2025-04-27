@@ -63,10 +63,10 @@ L_Set_LeapYear_Flag:
 
 
 DateDis_HalfSec:
-	movlw	High(DateModeDis_JumpTable)
+	movlw	High(DateModeDis_HS_JumpTable)
 	movwf	PCLATH
 	movf	Primary_Status,W
-DateModeDis_JumpTable:
+DateModeDis_HS_JumpTable:
 	addwf	PCL,F
 	goto	Date_Display
 	goto	Year_Display
@@ -82,7 +82,7 @@ DateDis_Sec:
 DateModeDis_JumpTable:
 	addwf	PCL,F
 	return
-	goto	Undisplay_Digit
+	goto	Undisplay_All
 	goto	Undisplay_01
 	goto	Undisplay_23
 	return

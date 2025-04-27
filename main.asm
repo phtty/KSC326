@@ -2,7 +2,7 @@ List	P = HC18P134L, R = DEC
 
 include	HC18P133L.inc
 include	Content.inc
-include	Macro.inc
+include	MACRO.inc
 include	RAM_DEF.inc
 
 	org	0000H
@@ -95,9 +95,14 @@ IRQ_EXIT:
 include	Init.inc
 include	IRQHandler.inc
 include KeyHandler.inc
+include KeyFunction.inc
 include RGBTable.inc
-include Dis.inc
+include	RGBManage.inc
+include DisplayDriver.inc
 include Display.inc
+include	PeriodicTask16Hz.inc
+include	PeriodicTask2Hz.inc
+include	PeriodicTask1Hz.inc
 include Temper.inc
 include ADCTable.inc
 include Beep.inc
@@ -106,5 +111,7 @@ include Calendar.inc
 include Alarm.inc
 include NightMode.inc
 include PowerManage.inc
+include	DPMode.inc
+
 
 end

@@ -18,7 +18,7 @@ Key_Handler:
 	btfss	Key_Flag,2					; 首次触发需要消抖
 	goto	Key_Scan
 
-	decfsz	Debounce_Over,F				; 消抖延时计数，递减到0则消抖完成
+	decfsz	Debounce_Counter,F			; 消抖延时计数，递减到0则消抖完成
 	return
 
 	movlw	0xe0

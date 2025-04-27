@@ -62,6 +62,45 @@ Start_DisTime_Hour:
 
 
 
+
+; 小时制显示
+TimeMode_Display:
+	btfsc	Clock_Flag,0
+	goto	TimeMode_12H
+
+	movlw	1
+	movwf	R_X
+	movlw	4
+	call	Digit_Num_Display
+
+	clrf	R_X
+	movlw	2
+	call	Digit_Num_Display				; 24小时制显示24
+	goto	Hr_Display
+TimeMode_12H:
+	movlw	1
+	movwf	R_X
+	movlw	2
+	call	Digit_Num_Display
+
+	clrf	R_X
+	movlw	1
+	call	Digit_Num_Display				; 12小时制显示12
+Hr_Display:
+	movlw	3
+	movwf	R_X
+	movlw	Word_H
+	call	Digit_Word_Display
+
+	movlw	2
+	movwf	R_X
+	movlw	Word_r
+	call	Digit_Word_Display				; 显示Hr
+	return
+
+
+
+
 ; 日期显示
 Date_Display:
 	call	Day_Display
@@ -99,9 +138,9 @@ Month_Display:
 	clrf	R_X
 	movf	P_Temp6,W
 	btfss	Z
-	goto	Day_Tens_NoZero
+	goto	Month_Tens_NoZero
 	movlw	10
-Day_Tens_NoZero:
+Month_Tens_NoZero:
 	call	Digit_Num_Display
 	return
 
@@ -144,7 +183,7 @@ Display_CelsiusDegree:
 	goto	CelsiusDegree_Minus				; 摄氏度存在负号时使用另一套显示逻辑
 
 	movf	R_Temperature,W
-	call	F_Hex2BCD
+	call	Hex2BCD
 	clrf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示温度十位
@@ -166,7 +205,7 @@ CelsiusDegree_Minus:
 	call	Digit_Word_Display				; D0显示负号
 
 	movf	R_Temperature,W
-	call	F_Hex2BCD
+	call	Hex2BCD
 	movlw	1
 	movwf	R_X
 	movf	P_Temp6,W
@@ -186,7 +225,7 @@ CelsiusDegree_Minus:
 
 Display_FahrenheitDegree:
 	movf	R_Temperature_F,W
-	call	F_Hex2BCD
+	call	Hex2BCD
 	movf	P_Temp7
 	btfss	Z
 	goto	CelsiusDegree_3Digit			; 华氏度存在百位数时使用另一套显示逻辑
@@ -331,7 +370,7 @@ AlarmHour_Display:
 	btfsc	Z
 	goto	Alarm_0Hour
 	goto	Start_DisAlarm_Hour
-Alarm_12h_PM:
+Alarm12h_PM:
 	call	SymbolPM_Display				; 下午亮PM点
 	movlw	12
 	subwf	INDF0,W							; 调整为12h模式显示
@@ -433,7 +472,7 @@ Shift_Loop:
 	goto	Shift_LoopOver
 	decf	R_X,F
 	bcf		C
-	rlf		P_Temp
+	rlf		P_Temp,F
 	goto	Shift_Loop
 Shift_LoopOver:
 	return

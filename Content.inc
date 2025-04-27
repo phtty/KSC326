@@ -30,17 +30,3 @@ Word_d			equ	6
 Word_p			equ	7
 Word_H			equ	8
 Word_r			equ	9
-
-
-SEND_CODE1:		MACRO	
-	bsf	PORTF,5
-	bsf	PORTF,5
-	bcf	PORTF,5
-	ENDM
-
-SEND_CODE0:		MACRO
-	bsf	PORTF,5
-	bcf	PORTF,5
-	bcf	PORTF,5
-	ENDM
-

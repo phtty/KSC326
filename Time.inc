@@ -1,9 +1,5 @@
+; 走时程序，带分钟、小时进位和日期更新
 Time_Run:
-	bcf		RP0
-	btfss	Time_Flag,5
-	return
-
-	bcf		Time_Flag,5
 	incf	R_Time_Sec,F
 	movlw	60
 	subwf	R_Time_Sec,W
@@ -27,7 +23,7 @@ Time_Run:
 	btfss	C
 	return										; 未发生天进位
 
-	clrf	R_Time_Hour
+	clrf	R_Time_Hour							; 发送天进位时更新日期
 	call	Calendar_Add
 	return
 
@@ -58,14 +54,14 @@ TimeSetDis_HS_JumpTable:
 
 
 ; 时间模式1S程序
-Time_Display_Sec:
+TimeDis_Sec:
 	movlw	High(TimeSetDis_JumpTable)			; 1S灭
 	movwf	PCLATH
 	movf	Secondary_Status,W
 TimeSetDis_JumpTable:
 	addwf	PCL,F
 	return
-	goto	Undisplay_Digit
+	goto	Undisplay_All
 	goto	Undisplay_01
 	goto	Undisplay_23
 

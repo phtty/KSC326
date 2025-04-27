@@ -29,6 +29,6 @@ GRB_TickReflash_Loop:
 GRB_Tick_Overflow:
 	clrf	INDF0								; Tick达到240则说明溢出，复位此灯的Tick
 GRB_TickReflash_LoopJuge:
-	decfsz	R_X
+	decfsz	R_X,F
 	goto	GRB_TickReflash_Loop
 	return

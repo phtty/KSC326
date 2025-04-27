@@ -61,7 +61,7 @@ SysEvent_Flag
 ;bit0 = 1 更新显示标志位
 ;bit1 = 1 显示DP
 ;bit2 = 1 夜间模式开启
-;bit3 = 1 
+;bit3 = 1 省电模式
 ;bit4 = 1 
 
 Primary_Status
@@ -93,14 +93,9 @@ Key_Flag
 ;bit7 = 1 
 
 Depress_Flag
-;bit0 = 1 Down键待处理				|松键处理
-;bit1 = 1 Up键待处理				|松键处理
-;bit2 = 1 Set键待处理				|松键处理
-
-Power_Flag
-;bit0 = 1 PWR_DET电平变化标志
-;bit1 = 1 常亮模式
-;bit2 = 1 熄屏倒计时1S到来
+;bit0 = 1 Down键待处理		|松键处理
+;bit1 = 1 Up键待处理		|松键处理
+;bit2 = 1 Set键待处理		|松键处理
 
 ADC_Flag
 ;bit0 = 1 负温度标志
@@ -134,17 +129,10 @@ R_Alarm1_Hour			; 闹钟1小时
 R_Alarm2_Hour			; 闹钟2小时
 R_Alarm3_Hour			; 闹钟3小时
 
-R_Night_StartHour		; 夜间开始小时
-R_Night_EndHour			; 夜间结束小时
-R_Night_StartMin		; 夜间开始分钟
-R_Night_EndMin			; 夜间结束分钟
-
 R_Date_Day				; 日期，从1开始
 R_Date_Month			; 月份，从1开始
 R_Date_Year				; 年份，由于只计2000-2099，所以由0-99代替
 R_Date_Week				; 星期
-
-R_Snooze_Time			; 贪睡计时
 
 
 

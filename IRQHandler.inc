@@ -1,69 +1,66 @@
 T0_IRQ_Handler:
 	bcf		T0IF
-	decf	T0_Counter,F
+	decf	T0_Counter
 
-L_32Hz_Juge:
-	btfss	TimeFlag_SW,2			; 32Hz标志开关
-	goto	L_16Hz_Juge
-	bsf		Time_Flag,4				; 32Hz标志位
-
-L_16Hz_Juge:
-	btfss	TimeFlag_SW,1
-	goto	L_4Hz_Juge
-	movf	T0_Counter,W
-	andlw	0x01					; 对2求余
-	btfsc	Z
-	bsf		Time_Flag,3				; 16Hz标志位
-
-L_4Hz_Juge:
-	btfss	TimeFlag_SW,0
-	goto	L_2Hz_Juge
-	movf	T0_Counter,W
-	andlw	0x07					; 对8求余
-	btfsc	Z
-	bsf		Time_Flag,2				; 4Hz标志位
-
-L_2Hz_Juge:
-	movf	T0_Counter,W
-	andlw	0x0f					; 对16求余
-	btfsc	Z
 	bsf		Time_Flag,1				; 2Hz标志位
 
-	movf	T0_Counter,F			; 判0
-	btfsc	Z
+	movf	T0_Counter,F			; 递减T0中断次数
+	btfss	Z
 	goto	T0_Counter_Reload
-
 	goto	IRQ_EXIT
 
 T0_Counter_Reload:
-	movlw	32
-	movwf	T0_Counter				; 重装载T0计数
-
-	bsf		Time_Flag,0
-
+	movlw	2
+	movwf	T0_Counter				; 重装载T0中断次数计数
+	bsf		Time_Flag,0				; 1Hz标志位
 	goto	IRQ_EXIT
-
-
-
-
-T2_IRQ_Handler:
-	bcf		T0IF
-	clrf	T2						; 重装载T2
-
-	goto	IRQ_EXIT
-
-
 
 
 T1_IRQ_Handler:
 	bcf		T1IF
-	movlw	0xff-0x40
+	movlw	0xff-0x04
 	movwf	T1H
 	movlw	0xff
-	movwf	T1L						; 重装载T1计数器的计数值
+	movwf	T1L						; 重装载T1计数器
+	decf	T1_Counter,F			; 递减T1中断次数
 
-	movlw	0x02
-	xorwf	PORTF,F					; 翻转PF1用于测试
+T1_32Hz_Juge:
+	btfss	TimeFlag_SW,2			; 32Hz标志开关
+	goto	T1_16Hz_Juge
+	bsf		Time_Flag,4				; 32Hz标志位
+
+T1_16Hz_Juge:
+	btfss	TimeFlag_SW,1
+	goto	T1_4Hz_Juge
+	movf	T1_Counter,W
+	andlw	0x01					; 对2求余
+	btfsc	Z
+	bsf		Time_Flag,3				; 16Hz标志位
+
+T1_4Hz_Juge:
+	btfss	TimeFlag_SW,0
+	goto	T1_2Hz_Juge
+	movf	T1_Counter,W
+	andlw	0x07					; 对8求余
+	btfsc	Z
+	bsf		Time_Flag,2				; 4Hz标志位
+
+	movf	T1_Counter,F			; 判0
+	btfsc	Z
+	goto	T1_Counter_Reload
+	goto	IRQ_EXIT
+
+T1_Counter_Reload:
+	movlw	8
+	movwf	T0_Counter				; 重装载T1中断次数计数
+	;movlw	0x02
+	;xorwf	PORTF,F					; 翻转PF1用于测试
+	bsf		Time_Flag,0
+	goto	IRQ_EXIT
+
+
+T2_IRQ_Handler:
+	bcf		T0IF
 
 	goto	IRQ_EXIT
 

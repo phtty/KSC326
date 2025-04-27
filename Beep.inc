@@ -30,7 +30,6 @@ LoudManage:
 	return
 
 Close_Loud:
-	clrf	Louding_Counter
 	btfss	Beep_Flag,1					; 若存在按键提示音，则不关闭蜂鸣器
 	goto	KeyBeep_NoClose
 	bcf		T2ON
@@ -38,4 +37,5 @@ Close_Loud:
 KeyBeep_NoClose:
 	bcf		Clock_Flag,1
 	clrf	Triggered_AlarmGroup
+	clrf	Louding_Counter
 	return
