@@ -20,12 +20,12 @@ TimeMin_Display:
 	movf	R_Time_Min,W
 	call	Hex2BCD
 	
-	movlw	2
+	movlw	3
 	movwf	R_X
 	movf	P_Temp5,W
 	call	Digit_Num_Display				; 显示分钟个位
 
-	movlw	3
+	movlw	2
 	movwf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示分钟个位

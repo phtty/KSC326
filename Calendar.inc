@@ -65,7 +65,7 @@ L_Set_LeapYear_Flag:
 DateDis_HalfSec:
 	movlw	High(DateModeDis_HS_JumpTable)
 	movwf	PCLATH
-	movf	Primary_Status,W
+	movf	Secondary_Status,W
 DateModeDis_HS_JumpTable:
 	addwf	PCL,F
 	goto	Date_Display
@@ -78,7 +78,7 @@ DateModeDis_HS_JumpTable:
 DateDis_Sec:
 	movlw	High(DateModeDis_JumpTable)
 	movwf	PCLATH
-	movf	Primary_Status,W
+	movf	Secondary_Status,W
 DateModeDis_JumpTable:
 	addwf	PCL,F
 	return

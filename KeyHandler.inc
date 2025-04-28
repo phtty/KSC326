@@ -17,6 +17,7 @@ Key_Handler:
 	btfss	Key_Flag,2					; 首次触发需要消抖
 	goto	Key_Scan
 
+	movf	Debounce_Counter,W
 	decfsz	Debounce_Counter,F			; 消抖延时计数，递减到0则消抖完成
 	return
 
@@ -55,16 +56,16 @@ Key_TriggerJuge:
 	movlw	0xe0
 	andwf	PORTF,W
 	movwf	P_Temp
-	sublw	0x20
+	sublw	0xc0
 	btfsc	Z
 	goto	Key_KeyDTriggered
 
-	movlw	0x40
+	movlw	0xa0
 	subwf	P_Temp,W
 	btfsc	Z
 	goto	Key_KeyUTriggered
 
-	movlw	0x80
+	movlw	0x60
 	subwf	P_Temp,W
 	btfsc	Z
 	goto	Key_KeySTriggered
@@ -167,7 +168,7 @@ Key_KeySTriggered:
 	btfss	Z
 	goto	KeyS_SetMode
 
-	btfss	Key_Flag,3
+	btfsc	Key_Flag,3
 	goto	KeyS_DisMode_LongPress
 	bsf		Depress_Flag,2				; 显示模式短按置位松键处理标志
 	return

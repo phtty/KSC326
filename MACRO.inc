@@ -147,14 +147,14 @@ BChannel_Juge:
 ; 将W右移R_X位
 W_RightShift_XBit:		MACRO
 	movwf	P_Temp
-RightShift_Loop:
+
 	movf	R_X,F
 	btfsc	Z
-	goto	RightShift_LoopOver
+	goto	$+5								; 跳出循环
 	decf	R_X,F
 	bcf		C
 	rrf		P_Temp,F
-	goto	RightShift_Loop
-RightShift_LoopOver:
+	goto	$-6								; 跳转到循环头
+
 	movf	P_Temp,W
 	ENDM

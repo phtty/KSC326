@@ -1,11 +1,11 @@
 T0_IRQ_Handler:
 	bcf		T0IF
-	decf	T0_Counter
+	decf	T0_Counter,F
 
 	bsf		Time_Flag,1				; 2Hz标志位
 
 	movf	T0_Counter,F			; 递减T0中断次数
-	btfss	Z
+	btfsc	Z
 	goto	T0_Counter_Reload
 	goto	IRQ_EXIT
 
@@ -23,6 +23,9 @@ T1_IRQ_Handler:
 	movlw	0xff
 	movwf	T1L						; 重装载T1计数器
 	decf	T1_Counter,F			; 递减T1中断次数
+
+	movlw	0x04
+	xorwf	PORTA,F
 
 T1_32Hz_Juge:
 	btfss	TimeFlag_SW,2			; 32Hz标志开关
@@ -53,9 +56,7 @@ T1_Zero_Juge:
 
 T1_Counter_Reload:
 	movlw	8
-	movwf	T0_Counter				; 重装载T1中断次数计数
-	;movlw	0x02
-	;xorwf	PORTF,F					; 翻转PF1用于测试
+	movwf	T1_Counter				; 重装载T1中断次数计数
 	bsf		Time_Flag,0
 	goto	IRQ_EXIT
 
@@ -71,7 +72,7 @@ T2_IRQ_Handler:
 PA_IRQ_Handler:
 	movf	PORTA,F
 	bcf		RAIF
-	
+
 	goto	IRQ_EXIT
 
 
@@ -80,7 +81,7 @@ PA_IRQ_Handler:
 PB_IRQ_Handler:
 	movf	PORTB,F
 	bcf		RBIF
-	
+
 	goto	IRQ_EXIT
 
 
@@ -97,8 +98,8 @@ PF_IRQ_Handler:
 
 	movlw	0xe0
 	andwf	PORTF,W
-	subwf	PORTF_BackUp,W			; 用当前PF5~7与历史状态比较，若增大了则说明有按键压下
-	btfss	C
+	subwf	PORTF_BackUp,W			; 用当前PF5~7与历史状态比较，若减小了则说明有按键压下
+	btfsc	C
 	goto	PortF_PressKey
 
 	movlw	0xe0

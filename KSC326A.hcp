@@ -6,7 +6,7 @@ Count=24
 PowerSupply=0
 [Settings]
 Device=HC18P13XLA
-ConfigBitValue0=56752
+ConfigBitValue0=56760
 ConfigBitValue1=37887
 ConfigBitValue2=0
 Output=.

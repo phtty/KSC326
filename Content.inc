@@ -2,10 +2,10 @@ D_Char_0:		equ	0x3f ;	0
 D_Char_1:		equ	0x06 ;	1
 D_Char_2:		equ	0x5b ;	2
 D_Char_3:		equ	0x4f ;	3	
-D_Char_4:		equ	0x86 ;	4
+D_Char_4:		equ	0x66 ;	4
 D_Char_5:		equ	0x6d ;	5
 D_Char_6:		equ	0x7d ;	6
-D_Char_7:		equ	0x03 ;	7
+D_Char_7:		equ	0x07 ;	7
 D_Char_8:		equ	0x7f ;	8
 D_Char_9:		equ	0x6f ;	9
 D_Char_Null		equ	0x00 ;	Null

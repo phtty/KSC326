@@ -18,9 +18,9 @@ START:
 
 	call	Time_Display
 	call	Send_RGB_Data
-	movlw	3
-	movwf	Light_Level
-	call	Send_RGB_Data
+
+	movlw	1
+	movwf	DP_Mode
 
 MAIN:
 	call	Display_Reflash					; 刷新显示
@@ -55,37 +55,37 @@ IRQ:
 	btfss	T0IE							; 先判断中断是否开启
 	goto	T1_IRQ_Juge
 	btfsc	T0IF							; 再判断有无中断标志位
-	goto	T0_IRQ_Handler
+	goto	T0_IRQ_Handler					; Timer0 2Hz中断，用于走时和显示刷新
 T1_IRQ_Juge:
 
 	btfss	T1IE
 	goto	T2_IRQ_Juge
 	btfsc	T1IF
-	goto	T1_IRQ_Handler
+	goto	T1_IRQ_Handler					; Timer1 32Hz中断，用于按键、蜂鸣间隔、RGB变色等
 T2_IRQ_Juge:
 
 	btfss	T2IE
 	goto	PA_IRQ_Juge
 	btfsc	T2IF
-	goto	T2_IRQ_Handler
+	goto	T2_IRQ_Handler					; Timer2 中断，未使用
 PA_IRQ_Juge:
 
 	btfss	RAIE
 	goto	PB_IRQ_Juge
 	btfsc	RAIF
-	goto	PA_IRQ_Handler
+	goto	PA_IRQ_Handler					; PA口电平变化中断，未使用
 PB_IRQ_Juge:
 
 	btfss	RBIE
 	goto	PF_IRQ_Juge
 	btfsc	RBIF
-	goto	PB_IRQ_Handler
+	goto	PB_IRQ_Handler					; PB口电平变化中断，未使用
 PF_IRQ_Juge:
 
 	btfss	RFIE
 	goto	IRQ_EXIT
 	btfsc	RFIF
-	goto	PF_IRQ_Handler
+	goto	PF_IRQ_Handler					; PF口电平变化中断，用于侦测按键和DC5V
 
 IRQ_EXIT:
 	movf	R_X_BAK,W

@@ -153,7 +153,7 @@ Dot_ClearLoop:
 	movwf	INDF0							; 移位出0，则将GRB_Tick,R_X置为242
 Dot_ClearLoop_Juge:
 	incf	R_X,F
-	movlw	32
+	movlw	33
 	subwf	R_X,W
 	btfss	C
 	goto	Dot_ClearLoop

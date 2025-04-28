@@ -6,7 +6,7 @@ Time_Run:
 	btfss	C
 	return										; 未发生分钟进位
 
-	movf	R_Time_Min,W
+	REFLASH_DISPLAY								; 发生分钟进位时刷新显示
 	clrf	R_Time_Sec
 	incf	R_Time_Min,F
 	movlw	60	

@@ -10,30 +10,28 @@ System_Init:
 	clrf	TRISC			; 重置PORTC为输出
 	clrf	TRISF			; 重置PORTF为输出
 
-	bcf		SCS
-	movlw	0xb1
-	movwf	OPTION
+	bcf		SCS				; 选择高频系统时钟
+	;movlw	0xb1
+	;movwf	OPTION
 
-	call	RamInitial
-
+	call	Ram_Initial
 	call	Port_Initial
-
 	call	ADC_Initial
-
 	call	PWM_Initial
-
 	call	TIM_Initial
 
 	LED_ON					; 打开RGB灯的供电
+	movf	PORTF,F
+	bcf		RFIF
 
-	bsf		GIE				; 开启总中断
 	bsf		PEIE			; 使能外设中断
+	bsf		GIE				; 开启总中断
 
 	return
 
 
 ; 上电初始化RAM
-RamInitial:
+Ram_Initial:
 	bcf		RP0
 	movlw	00H				; 清零0X100~0X1FF
 	movwf	FSR0L
@@ -117,6 +115,7 @@ Port_Initial:
 	movwf	WPUF			; PF5~7启用上拉
 	movlw	0xe0
 	movwf	IOCF			; 启用PF5~7电平变化中断
+	movf	PORTF,W
 	bcf		RFIF
 	bsf		RFIE			; 开启PF中断
 
@@ -130,7 +129,7 @@ Port_Initial:
 	movlw	15
 	movwf	Return_Counter	; 设置模式返回计时复位
 
-	movlw	PORTF
+	movf	PORTF,W
 	andlw	0xe0
 	movwf	PORTF_BackUp	; 按键IO口初始状态保存
 
@@ -196,7 +195,7 @@ Beep_Initial:
 	movlw	0x7d
 	movwf	CCPR2L			; 占空比寄存器的高8位，低2位在CCP2CON的[6:5]位
 
-	bsf		T2ON			; 开启TIM2
+	;bsf		T2ON			; 开启TIM2
 	;bcf		TRISA,7			; PA7输出启用
 
 	return
@@ -212,8 +211,9 @@ TIM_Initial:
 	bsf		T0OSCEN			; T0OSCEN = 1
 
 	clrf	T0				; T0从0计到256,2Hz溢出一次
-	bsf		T0IE
+
 	bcf		T0IF			; 开启TIM0中断并清中断标志位
+	bsf		T0IE
 
 	; Tim1 32Hz功能定时器
 	movlw	0x8d
@@ -226,7 +226,7 @@ TIM_Initial:
 	movlw	0xff
 	movwf	T1L				; 计数1024，32Hz中断1次
 
-	bsf		T1IE
 	bcf		T1IF			; 开启TIM1中断并清中断标志位
+	bsf		T1IE
 
 	return
