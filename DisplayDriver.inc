@@ -106,12 +106,14 @@ Send_RGB_Data:
 	call	Dot_Clear						; 发送前先将灭的灯的灰度数据清零
 
 	bcf		GIE								; 发送时不响应中断，避免发送时序被中断干扰
-	movlw	32
-	movwf	R_X
+	clrf	P_Temp+1
 Send_GRB_Loop:
 	Search_TickTable						; 使用宏定义节约call调用的时间
 	Send_RGB
-	decfsz	R_X,F
+	incf	P_Temp+1,F
+	movlw	33
+	subwf	P_Temp+1,W
+	btfss	C
 	goto	Send_GRB_Loop
 
 	bsf		GIE								; 发送完成重新开启总中断

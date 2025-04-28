@@ -14,10 +14,9 @@ Time_Run:
 	btfss	C
 	return										; 未发生小时进位
 
-	btfsc	SysEvent_Flag,2
-	call	TimeBoundary_Detect					; 发生小时进位时，判断一次是否进入夜间模式
 	clrf	R_Time_Min
 	incf	R_Time_Hour,F
+	call	TimeRange_Detect					; 发生小时进位时，判断一次是否进入夜间模式
 	movlw	24
 	subwf	R_Time_Hour,W
 	btfss	C
@@ -65,3 +64,27 @@ TimeSetDis_JumpTable:
 	goto	Undisplay_01
 	goto	Undisplay_23
 
+
+
+
+; 夜间时段范围检测（19:00~6:00）
+TimeRange_Detect:
+	movlw	19
+	subwf	R_Time_Hour,W
+	btfsc	C
+	goto	Enter_NightMode					; 若小时大于等于19点则进入夜间时段
+
+	movlw	6
+	subwf	R_Time_Hour,W
+	btfss	C
+	goto	Enter_NightMode					; 若小时小于6点也进入夜间时段
+	
+	clrf	Light_Level						; 亮度设为高亮
+	REFLASH_DISPLAY
+	return
+
+Enter_NightMode:
+	movlw	3
+	movwf	Light_Level						; 亮度设为低亮
+	REFLASH_DISPLAY
+	return

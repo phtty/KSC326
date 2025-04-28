@@ -39,12 +39,13 @@ T1_16Hz_Juge:
 
 T1_4Hz_Juge:
 	btfss	TimeFlag_SW,0
-	goto	T1_2Hz_Juge
+	goto	T1_Zero_Juge
 	movf	T1_Counter,W
 	andlw	0x07					; 对8求余
 	btfsc	Z
 	bsf		Time_Flag,2				; 4Hz标志位
 
+T1_Zero_Juge:
 	movf	T1_Counter,F			; 判0
 	btfsc	Z
 	goto	T1_Counter_Reload
@@ -70,7 +71,6 @@ T2_IRQ_Handler:
 PA_IRQ_Handler:
 	movf	PORTA,F
 	bcf		RAIF
-
 	
 	goto	IRQ_EXIT
 
@@ -91,6 +91,11 @@ PF_IRQ_Handler:
 	bcf		RFIF
 
 	movlw	0xe0
+	subwf	IOCF,W
+	btfss	Z
+	goto	IRQ_EXIT				; 若按键口中断没有开启，此中断只用于唤醒，并无实际功能
+
+	movlw	0xe0
 	andwf	PORTF,W
 	subwf	PORTF_BackUp,W			; 用当前PF5~7与历史状态比较，若增大了则说明有按键压下
 	btfss	C
@@ -107,6 +112,8 @@ PortF_PressKey:
 	bsf		Key_Flag,2				; 首次触发标志位
 	movlw	2
 	movwf	Debounce_Counter		; 复位消抖计数值
+	bsf		T1ON					; 开启Time1 32Hz计数
+	bsf		TimeFlag_SW,2
 	movlw	0xe0
 	andwf	PORTF,W
 	movwf	PORTF_BackUp			; 更新历史状态

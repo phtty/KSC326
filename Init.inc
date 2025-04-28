@@ -62,8 +62,7 @@ NEXTBYTE_1:
 	movlw	8
 	movwf	T1_Counter		; 从8开始计数到0
 
-	movlw	2
-	movwf	BackLight_Level	; 上电默认高亮
+	clrf	Light_Level		; 上电默认高亮
 
 	movlw	12
 	movwf	R_Time_Hour		; 设置上电时间
@@ -93,8 +92,8 @@ NEXTBYTE_1:
 ; GPIO初始化
 Port_Initial:
 	bcf		RP0
-	movlw	0x82
-	movwf	TRISA			; 配置PA0、7输入
+	movlw	0x80
+	movwf	TRISA			; 配置PA7输入
 	movlw	0xff
 	movwf	WPDA
 	movlw	0xff
@@ -110,7 +109,7 @@ Port_Initial:
 	movlw	0xff
 	movwf	WPUB			; 无上下拉
 
-	movlw	0xe9
+	movlw	0xe1
 	movwf	TRISF			; 配置PF0、5~7为输入
 	movlw	0xff
 	movwf	WPDF
@@ -197,8 +196,6 @@ Beep_Initial:
 	movlw	0x7d
 	movwf	CCPR2L			; 占空比寄存器的高8位，低2位在CCP2CON的[6:5]位
 
-	bsf		PORTA,0
-	bsf		PORTA,1
 	bsf		T2ON			; 开启TIM2
 	;bcf		TRISA,7			; PA7输出启用
 

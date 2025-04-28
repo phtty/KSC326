@@ -11,7 +11,8 @@ SwitchState_DisplayMode:
 PrimarySta_Overflow:
 	clrf	Primary_Status
 SwitchState_DisplayMode_Exit:
-	nop									; 更新显示
+	REFLASH_DISPLAY						; 更新显示
+	HALFSEC_DISPLAY
 	return
 
 
@@ -38,7 +39,8 @@ SecondarySta_Juge:
 SecondarySta_Overflow:
 	clrf	Secondary_Status
 SwitchState_SetMode_Exit:
-	nop									; 更新显示
+	REFLASH_DISPLAY						; 更新显示
+	HALFSEC_DISPLAY
 	return
 
 
@@ -53,7 +55,8 @@ SwitchState_TemperDis:
 	movlw	2
 	movwf	Primary_Status
 SwitchState_TemperDis_Exit:
-	nop									; 更新显示
+	REFLASH_DISPLAY						; 更新显示
+	HALFSEC_DISPLAY
 	return
 
 
@@ -73,7 +76,8 @@ SwitchState_DPDis:
 DPMode_Overflow:
 	clrf	DP_Mode
 SwitchState_DPDis_Exit:
-	nop									; 更新显示
+	REFLASH_DISPLAY						; 更新显示
+	HALFSEC_DISPLAY
 	return
 
 
@@ -167,7 +171,8 @@ Time_Mode_SW:
 	movlw	1
 	xorwf	Clock_Flag,F				; 取反12/24h标志位
 
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 时增加
@@ -182,7 +187,8 @@ TimeHour_AddOverflow:
 	clrf	R_Time_Hour
 TimeHour_Add_Exit:
 	call	TimeRange_Detect			; 夜间模式的处理
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 时减少
@@ -197,7 +203,8 @@ TimeHour_SubOverflow:
 	movwf	R_Time_Hour
 TimeHour_Sub_Exit:
 	call	TimeRange_Detect			; 夜间模式的处理
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 分增加
@@ -212,8 +219,8 @@ Time_Min_Add:
 TimeMin_AddOverflow:
 	clrf	R_Time_Min
 TimeMin_Add_Exit:
-	call	TimeRange_Detect
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 分减少
@@ -228,8 +235,8 @@ TimeMin_SubOverflow:
 	movlw	59
 	movwf	R_Time_Min
 TimeMin_Sub_Exit:
-	call	TimeRange_Detect
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 
@@ -248,7 +255,8 @@ DateYear_AddOverflow:
 DateYear_Add_Exit:
 	call	L_DayOverflow_Juge
 	call	Is_Leap_Year
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 年减少
@@ -264,7 +272,8 @@ DateYear_SubOverflow:
 DateYear_Sub_Exit:
 	call	L_DayOverflow_Juge
 	call	Is_Leap_Year
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 月增加
@@ -279,7 +288,8 @@ DateMonth_AddOverflow:
 	movlw	1
 	movwf	R_Date_Month
 DateMonth_Add_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 月减少
@@ -294,14 +304,16 @@ DateMonth_SubOverflow:
 	movlw	12
 	movwf	R_Date_Month
 DateMonth_Sub_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 日增加
 Date_Day_Add:
 	incf	R_Date_Day,F
 	call	L_DayOverflow_To_1
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 日减少
@@ -334,7 +346,8 @@ L_Day_Juge2:
 	movf	PMDATH,W					; 查表得出当月最大天数
 	movwf	R_Date_Day
 DateDay_Sub_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 
@@ -367,7 +380,8 @@ Alarm3SW:
 	movlw	B'100'
 	xorwf	Alarm_Switch,F
 Alarm_SetSwitch_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 闹钟时增加
@@ -389,7 +403,8 @@ Alarm_Hour_Add:
 AlarmHour_AddOverflow:
 	clrf	INDF0
 AlarmHour_Add_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 闹钟时减少
@@ -411,7 +426,8 @@ AlarmHour_SubOverflow:
 	movlw	23
 	movwf	INDF0
 AlarmHour_Sub_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 闹钟分增加
@@ -433,7 +449,8 @@ Alarm_Min_Add:
 AlarmMin_AddOverflow:
 	clrf	INDF0
 AlarmMin_Add_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 ; 闹钟分减少
@@ -455,7 +472,8 @@ AlarmMin_SubOverflow:
 	movlw	59
 	movwf	INDF0
 AlarmMin_Sub_Exit:
-	nop									; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 
@@ -466,19 +484,14 @@ AlarmMin_Sub_Exit:
 TemperMode_Change:
 	movlw	2
 	xorwf	ADC_Flag,F					; 取反温度单位标志位，切换显示的温度单位
-	nop									; 刷新显示
-	return
-
-
-; 调整亮度
-BackLight_Level_CHG:
-	nop									; 调整亮度除数，以调整亮度
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 
 ; RGB模式切换
 RGB_MODE_CHG:
-	nop									; 调整显存值的上限来调整亮度
+	nop									; 切换RGB模式
 	return
 
 

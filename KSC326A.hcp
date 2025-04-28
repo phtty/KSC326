@@ -1,12 +1,12 @@
 [HC-IDE]
 Version=3.0.11.S
 [File Count]
-Count=25
+Count=24
 [MCU]
 PowerSupply=0
 [Settings]
 Device=HC18P13XLA
-ConfigBitValue0=64688
+ConfigBitValue0=56752
 ConfigBitValue1=37887
 ConfigBitValue2=0
 Output=.
@@ -14,28 +14,36 @@ PostBuild=0
 PostBuildCommand=
 Library=
 [Files]
-OpenFileCounts=14
-File0=Calendar.inc|3 78 1529 78 550
-File1=Time.inc|1 52 1503 52 524
-File2=PeriodicTask1Hz.inc|1 26 1477 26 498
-File3=Display.inc|1 234 1685 234 706
-File4=DisplayDriver.inc|1 26 1477 26 498
-File5=main.asm|1 208 1603 208 810
-File6=KeyHandler.inc|1 104 1555 104 576
+OpenFileCounts=18
+File0=main.asm|3 208 1603 208 810
+File1=DisplayDriver.inc|1 26 1477 26 498
+File2=MACRO.inc|1 104 1205 104 576
+File3=RGBTable.inc|1 26 1205 26 364
+File4=PeriodicTask2Hz.inc|1 52 1231 52 390
+File5=PeriodicTask16Hz.inc|1 78 1257 78 416
+File6=Alarm.inc|1 234 1633 234 840
 File7=Init.inc|1 130 1581 130 602
-File8=Content.inc|1 156 1607 156 628
-File9=ADCTable.inc|1 260 1659 260 866
+File8=PeriodicTask1Hz.inc|1 26 1477 26 498
+File9=Display.inc|1 234 1685 234 706
 File10=IRQHandler.inc|1 78 1529 78 550
-File11=HC18P133L.inc|1 26 1425 26 632
-File12=Beep.inc|1 286 1685 286 892
-File13=Alarm.inc|1 234 1633 234 840
+File11=Calendar.inc|1 78 1529 78 550
+File12=Time.inc|1 52 1503 52 524
+File13=KeyHandler.inc|1 104 1555 104 576
+File14=Content.inc|1 156 1607 156 628
+File15=ADCTable.inc|1 260 1659 260 866
+File16=HC18P133L.inc|1 26 1425 26 632
+File17=Beep.inc|1 286 1685 286 892
 [Break]
-Count=0
-BP0=11 21 1
-BP1=11 89 1
+Count=2
+BP0=14 23 1
+BP1=14 28 1
 BP2=11 107 1
 [Watch0]
-Count=0
+Count=4
+Watch0=0x12F 0
+Watch1=0x130 0
+Watch2=0x131 0
+Watch3=0x103 0
 [Watch1]
 Count=0
 [Watch2]
@@ -56,13 +64,13 @@ File11=KeyFunction.inc
 File12=KeyHandler.inc
 File13=MACRO.inc
 File14=main.asm
-File15=NightMode.inc
-File16=PeriodicTask16Hz.inc
-File17=PeriodicTask1Hz.inc
-File18=PeriodicTask2Hz.inc
-File19=PowerSaving.inc
-File20=RAM_DEF.inc
-File21=RGBManage.inc
-File22=RGBTable.inc
-File23=Temper.inc
+File15=PeriodicTask16Hz.inc
+File16=PeriodicTask1Hz.inc
+File17=PeriodicTask2Hz.inc
+File18=PowerSaving.inc
+File19=RAM_DEF.inc
+File20=RGBManage.inc
+File21=RGBTable.inc
+File22=Temper.inc
+File23=Time.inc
 File24=Time.inc

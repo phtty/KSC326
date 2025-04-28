@@ -16,7 +16,14 @@ START:
 
 	call	System_Init						; 上电初始化
 
+	call	Time_Display
+	call	Send_RGB_Data
+	movlw	3
+	movwf	Light_Level
+	call	Send_RGB_Data
+
 MAIN:
+	call	Display_Reflash					; 刷新显示
 	call	PeriodicTask_32Hz				; 32Hz任务
 	call	PeriodicTask_16Hz				; 16Hz任务
 	call	PeriodicTask_2Hz				; 2Hz任务
@@ -96,7 +103,6 @@ include	Init.inc
 include	IRQHandler.inc
 include KeyHandler.inc
 include KeyFunction.inc
-include RGBTable.inc
 include	RGBManage.inc
 include DisplayDriver.inc
 include Display.inc
@@ -109,9 +115,8 @@ include Beep.inc
 include Time.inc
 include Calendar.inc
 include Alarm.inc
-include NightMode.inc
-include PowerManage.inc
+include PowerSaving.inc
 include	DPMode.inc
-
+include RGBTable.inc
 
 end

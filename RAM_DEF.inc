@@ -60,8 +60,8 @@ TimeFlag_SW
 SysEvent_Flag
 ;bit0 = 1 更新显示标志位
 ;bit1 = 1 显示DP
-;bit2 = 1 夜间模式开启
-;bit3 = 1 省电模式
+;bit2 = 1 省电模式
+;bit3 = 1 
 ;bit4 = 1 
 
 Primary_Status
@@ -102,10 +102,10 @@ ADC_Flag
 ;bit1 = 1 华氏度模式标志
 
 ; 作循环右移的循环计数
-BackLight_Level
+Light_Level
 ;0 = 高亮
-;1 = 半亮
-;2 = 低亮
+;2 = 半亮(此产品无半亮)
+;3 = 低亮
 
 
 PORTA_BackUp

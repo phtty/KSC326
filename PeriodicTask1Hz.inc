@@ -41,5 +41,6 @@ Return_Counting:
 	return									; 未计到0则直接退出
 
 	clrf	Secondary_Status				; 返回显示模式
-	nop										; 刷新显示
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return

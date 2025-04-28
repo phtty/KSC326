@@ -1,4 +1,5 @@
 ; 颜色通道G渐变时刻表
+	org		0d00H
 G_TickTable:
 	addwf	PCL,F
 	retlw	0

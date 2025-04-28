@@ -1,3 +1,15 @@
+; 若有刷新显示标志位，则执行一次显示刷新
+Display_Reflash:
+	btfss	SysEvent_Flag,0
+	return
+	bcf		SysEvent_Flag,0
+
+	call	Send_RGB_Data
+	return
+
+
+
+
 ; 时间显示
 Time_Display:
 	call	TimeMin_Display
@@ -466,13 +478,14 @@ END_TEN:
 ; 将W左移R_X位
 W_LeftShift_XBit:
 	movwf	P_Temp
-Shift_Loop:
+LeftShift_Loop:
 	movf	R_X,F
 	btfsc	Z
-	goto	Shift_LoopOver
+	goto	LeftShift_LoopOver
 	decf	R_X,F
 	bcf		C
 	rlf		P_Temp,F
-	goto	Shift_Loop
-Shift_LoopOver:
+	goto	LeftShift_Loop
+LeftShift_LoopOver:
+	movf	P_Temp,W
 	return

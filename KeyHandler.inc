@@ -5,7 +5,6 @@ PeriodicTask_32Hz:
 	bcf		Time_Flag,4
 
 	call	Key_Handler
-	nop									; 颜色变换
 	return
 
 
@@ -74,6 +73,8 @@ Key_HandleOver:
 	movlw	0xe0
 	andwf	PORTF,W
 	movwf	PORTF_BackUp				; 更新历史状态
+	bcf		TimeFlag_SW,1
+	bcf		TimeFlag_SW,2				; 关闭4Hz和32Hz的计数开关
 
 	clrf	Key_Flag
 	clrf	LongPress_Counter			; 复位快加/长按计数值
