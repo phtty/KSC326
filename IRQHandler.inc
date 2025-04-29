@@ -57,7 +57,6 @@ T1_Zero_Juge:
 T1_Counter_Reload:
 	movlw	8
 	movwf	T1_Counter				; 重装载T1中断次数计数
-	bsf		Time_Flag,0
 	goto	IRQ_EXIT
 
 
@@ -88,8 +87,10 @@ PB_IRQ_Handler:
 
 
 PF_IRQ_Handler:
-	movf	PORTF,F
+	movf	PORTF,W
 	bcf		RFIF
+	andlw	0xe0
+	movwf	I_Temp
 
 	movlw	0xe0
 	subwf	IOCF,W
@@ -97,30 +98,35 @@ PF_IRQ_Handler:
 	goto	IRQ_EXIT				; 若按键口中断没有开启，此中断只用于唤醒，并无实际功能
 
 	movlw	0xe0
-	andwf	PORTF,W
-	subwf	PORTF_BackUp,W			; 用当前PF5~7与历史状态比较，若减小了则说明有按键压下
-	btfsc	C
-	goto	PortF_PressKey
-
-	movlw	0xe0
-	andwf	PORTF,W
-	movwf	PORTF_BackUp			; 更新历史状态
-	btfsc	Key_Flag,0				; 只有在扫键标志存在时，才会判断有无松键
-	goto	PortF_ReleaseKey
+	subwf	I_Temp,W				; 判断松键
+	btfsc	Z
 	goto	IRQ_EXIT
+	movlw	0x60
+	subwf	I_Temp,W				; 判断Set键
+	btfsc	Z
+	goto	PortF_PressKey
+	movlw	0xa0
+	subwf	I_Temp,W				; 判断Up键
+	btfsc	Z
+	goto	PortF_PressKey
+	movlw	0xc0
+	subwf	I_Temp,W				; 判断Down键
+	btfss	Z
+	goto	PortF_IllegalPress
+
 PortF_PressKey:
 	bsf		Key_Flag,0				; 扫键标志位
 	bsf		Key_Flag,2				; 首次触发标志位
 	movlw	2
 	movwf	Debounce_Counter		; 复位消抖计数值
 	bsf		T1ON					; 开启Time1 32Hz计数
-	bsf		TimeFlag_SW,2
-	movlw	0xe0
-	andwf	PORTF,W
-	movwf	PORTF_BackUp			; 更新历史状态
 	clrf	IOCF					; 消抖完成前关闭PF5~7电平变化中断
+	clrf	LongPress_Counter
+	movf	PORTF,W
+	andlw	0xe0
+	movwf	PORTF_BackUp			; 保存中断时的PF状态，在消抖后继续判断
 	goto	IRQ_EXIT
 
-PortF_ReleaseKey:
-	bsf		Key_Flag,1				; 置位松键标志位
+PortF_IllegalPress:					; 非法操作
+	call	Key_HandleOver
 	goto	IRQ_EXIT

@@ -22,6 +22,8 @@ DP_Counter
 Debounce_Counter
 ; 快加/长按计数
 LongPress_Counter
+; 测温计时
+TemperTest_Counter
 
 Calendar_Flag
 ;bit0 = 1 闰年
@@ -58,10 +60,10 @@ TimeFlag_SW
 ;bit2 = 1 32Hz计数开关
 
 SysEvent_Flag
-;bit0 = 1 更新显示标志位
-;bit1 = 1 显示DP
-;bit2 = 1 省电模式
-;bit3 = 1 
+;bit0 = 1 更新显示标志
+;bit1 = 1 DP显示标志
+;bit2 = 1 省电模式标志
+;bit3 = 1 RGB变色标志
 ;bit4 = 1 
 
 Primary_Status

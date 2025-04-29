@@ -1,7 +1,11 @@
 ; 数字显示，R_X==第几个Digit、W==要显示的数字
 Digit_Num_Display:
 	movwf	P_Temp
+	movlw	Low(Digit_NumTable)
+	addwf	P_Temp,W
 	movlw	High(Digit_NumTable)
+	btfsc	C
+	addlw	1
 	movwf	PCLATH
 	movf	P_Temp,W
 	call	Digit_NumTable
@@ -43,6 +47,7 @@ Digit_BitHandle:
 
 ; 字符显示，R_X==第几个Digit、P_Temp==要显示的字符
 Digit_Word_Display:
+	movwf	P_Temp
 	movlw	High(Word_NumTable)
 	movwf	PCLATH
 	movf	P_Temp,W
@@ -103,61 +108,53 @@ SymbolCOL_Clear:							; 灭COL点
 
 ; 发送33个灯的RGB数据
 Send_RGB_Data:
-	call	Dot_Clear						; 发送前先将灭的灯的灰度数据清零
+	clrf	P_Temp+2						; 位选byte的循环计数初始化
+	clrf	P_Temp+4						; 总计数初始化
 
 	bcf		GIE								; 发送时不响应中断，避免发送时序被中断干扰
+SendByte_Loop:
+	movlw	Low(DisSwtich)
+	addwf	P_Temp+2,W
+	movwf	FSR1L
+	movlw	High(DisSwtich)
+	movwf	FSR1H
+	movf	INDF1,W
+	movwf	P_Temp+3
+
 	clrf	P_Temp+1
-Send_GRB_Loop:
-	Search_TickTable						; 使用宏定义节约call调用的时间
-	Send_RGB
-	incf	P_Temp+1,F
+SendBit_Loop:
+	bcf		C
+	rrf		P_Temp+3,F
+	btfsc	C
+	goto	SendBit_SearchTable
+
+	Grayscale_0								; 移位出0说明该灯灭，将发送缓冲区清0
+	goto	SendBit_JugeOver
+SendBit_SearchTable:
+	Search_TickTable						; 移位出1说明该灯亮，查对应的时刻表放入发送缓冲区
+SendBit_JugeOver:
+	Send_RGB								; 发送1个灯的三通道灰度数据
+
+	incf	P_Temp+4,F
 	movlw	33
+	subwf	P_Temp+4,W
+	btfsc	C
+	goto	SendingLoop_Over				; 当发送计数计到33时，发送完成，退出循环
+
+	incf	P_Temp+1,F
+	movlw	8
 	subwf	P_Temp+1,W
 	btfss	C
-	goto	Send_GRB_Loop
+	goto	SendBit_Loop					; 发送位选bit的循环
 
-	bsf		GIE								; 发送完成重新开启总中断
-	return
-
-
-
-; 发送所有RGB灯数据前先将不亮的灯的GRB_Tick设置为时刻表中灰度为0的时刻表偏移
-Dot_Clear:
-	movf	DisSwtich+0,W
-	movwf	P_Temp+0
-	movf	DisSwtich+1,W
-	movwf	P_Temp+1
-	movf	DisSwtich+2,W
-	movwf	P_Temp+2
-	movf	DisSwtich+3,W
-	movwf	P_Temp+3
-	movf	DisSwtich+4,W
-	movwf	P_Temp+4						; 将DisSwtich存入P_Temp中以便循环右移
-
-	bcf		C
-	clrf	R_X
-Dot_ClearLoop:
-	rrf		P_Temp+4,F
-	rrf		P_Temp+3,F
-	rrf		P_Temp+2,F
-	rrf		P_Temp+1,F
-	rrf		P_Temp+0,F
-	btfsc	C
-	goto	Dot_ClearLoop_Juge				; 移位出1时不作操作
-	movlw	Low(GRB_Tick)
-	addwf	R_X,W
-	movwf	FSR0L
-	movlw	High(GRB_Tick)
-	movwf	FSR0H
-	movlw	242
-	movwf	INDF0							; 移位出0，则将GRB_Tick,R_X置为242
-Dot_ClearLoop_Juge:
-	incf	R_X,F
-	movlw	33
-	subwf	R_X,W
+	incf	P_Temp+2,F
+	movlw	5
+	subwf	P_Temp+2,W
 	btfss	C
-	goto	Dot_ClearLoop
+	goto	SendByte_Loop					; 发送位选byte的循环
 
+SendingLoop_Over:
+	bsf		GIE								; 发送完成重新开启总中断
 	return
 
 

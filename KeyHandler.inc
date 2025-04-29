@@ -1,15 +1,3 @@
-;32Hz任务，主要用于按键处理
-PeriodicTask_32Hz:
-	btfss	Time_Flag,4
-	return
-	bcf		Time_Flag,4
-
-	call	Key_Handler
-	return
-
-
-
-
 Key_Handler:
 	btfss	Key_Flag,0					; 无扫键标志则不处理
 	return
@@ -21,6 +9,8 @@ Key_Handler:
 	decfsz	Debounce_Counter,F			; 消抖延时计数，递减到0则消抖完成
 	return
 
+	movf	PORTF,F
+	bcf		RFIF
 	movlw	0xe0
 	movwf	IOCF						; 消抖完成启用PF5~7电平变化中断
 	bcf		Key_Flag,2					; 首次触发时不扫描按键
@@ -34,6 +24,11 @@ Key_Handler:
 	goto	Key_TriggerJuge				; 首次触发按键直接进入按键触发判断
 Key_Scan:
 	call	Depress_Juge				; 松键判断
+	movlw	0xe0
+	andwf	PORTF,W
+	sublw	0xe0						; 无任何按键时则结束扫键
+	btfsc	Z
+	goto	Key_HandleOver
 
 	btfsc	Key_Flag,3
 	goto	LongPress_Handle
@@ -43,13 +38,12 @@ Key_Scan:
 	goto	LongPress_Trigger
 	incf	LongPress_Counter,F
 	return
-LongPress_Trigger:
+LongPress_Trigger:						; 计满2S后长按触发，置位标志位并执行功能
 	bsf		Key_Flag,3
-	bsf		TimeFlag_SW,0				; 打开4Hz计数，置位快加
 	bcf		Time_Flag,2
-	return
+	goto	Key_TriggerJuge
 LongPress_Handle:
-	btfss	Time_Flag,2
+	btfss	Time_Flag,2					; 有长按标志时，4Hz执行一次按键功能
 	return
 	bcf		Time_Flag,2
 Key_TriggerJuge:
@@ -71,19 +65,14 @@ Key_TriggerJuge:
 	goto	Key_KeySTriggered
 
 Key_HandleOver:
-	movlw	0xe0
-	andwf	PORTF,W
-	movwf	PORTF_BackUp				; 更新历史状态
-	bcf		TimeFlag_SW,1
-	bcf		TimeFlag_SW,2				; 关闭4Hz和32Hz的计数开关
-
 	clrf	Key_Flag
 	clrf	LongPress_Counter			; 复位快加/长按计数值
 	clrf	Depress_Flag
 	return
 
 Depress_Juge:
-	btfss	Key_Flag,1					; 松键事件处理
+	movf	Depress_Flag,F
+	btfsc	Z							; 无松键功能则跳过
 	return
 
 	btfsc	Depress_Flag,0
@@ -183,9 +172,11 @@ KeyS_SetMode:
 
 
 Key_KeyDDepress:
+	bcf		Depress_Flag,0
 	return
 
 Key_KeyUDepress:
+	bcf		Depress_Flag,1
 	return
 
 Key_KeySDepress:
@@ -210,7 +201,10 @@ Key_CloseLoud:
 
 
 
+; 按键音
 Key_Beep:
 	movlw	B'10'
 	movwf	Beep_Serial
+	bsf		Beep_Flag,0
+	bsf		Beep_Flag,1
 	return

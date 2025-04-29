@@ -33,14 +33,13 @@ HALFSEC_DISPLAY:		MACRO
 	bsf		Time_Flag,1
 	ENDM
 
-; 根据GRB_Tick的值查三通道时刻表得到该通道的灰度值，并送入发送缓冲区
+; 该灯若点亮，则根据GRB_Tick的值查三通道时刻表得到该通道的灰度值，并送入发送缓冲区
 Search_TickTable:		MACRO
 	movlw	Low(GRB_Tick)
-	addwf	P_Temp+1,W
+	addwf	P_Temp+4,W
 	movwf	FSR0L
 	movlw	High(GRB_Tick)
 	movwf	FSR0H
-	movf	INDF0,W
 
 	movlw	Low(G_TickTable)
 	addwf	INDF0,W
@@ -74,6 +73,14 @@ Search_TickTable:		MACRO
 	ENDM
 
 
+; 该灯若熄灭，则用242查三通道时刻表得灰度值为0，并送入发送缓冲区
+Grayscale_0:			MACRO
+	clrf	SendBuff_G
+	clrf	SendBuff_R
+	clrf	SendBuff_B
+	ENDM
+
+
 
 ; 发送GRB缓冲区的数据，MSB
 Send_RGB:				MACRO
@@ -84,7 +91,7 @@ Send_RGB:				MACRO
 	movwf	SendBuff_G
 
 	movlw	8
-	movwf	P_Temp
+	movwf	R_X
 	bcf		C
 Send_G_Loop:								; 发送G通道的8bit
 	rlf		SendBuff_G,F
@@ -95,7 +102,7 @@ Send_G_Loop:								; 发送G通道的8bit
 GChannel_Send0:
 	SEND_CODE0
 GChannel_Juge:
-	decfsz	P_Temp,F
+	decfsz	R_X,F
 	goto	Send_G_Loop
 
 	movf	Light_Level,W
@@ -105,7 +112,7 @@ GChannel_Juge:
 	movwf	SendBuff_R
 
 	movlw	8
-	movwf	P_Temp
+	movwf	R_X
 	bcf		C
 Send_R_Loop:								; 发送R通道的8bit
 	rlf		SendBuff_R,F
@@ -116,7 +123,7 @@ Send_R_Loop:								; 发送R通道的8bit
 RChannel_Send0:
 	SEND_CODE0
 RChannel_Juge:
-	decfsz	P_Temp,F
+	decfsz	R_X,F
 	goto	Send_R_Loop
 
 	movf	Light_Level,W
@@ -126,7 +133,7 @@ RChannel_Juge:
 	movwf	SendBuff_B
 
 	movlw	8
-	movwf	P_Temp
+	movwf	R_X
 	bcf		C
 Send_B_Loop:								; 发送B通道的8bit
 	rlf		SendBuff_B,F
@@ -137,7 +144,7 @@ Send_B_Loop:								; 发送B通道的8bit
 BChannel_Send0:
 	SEND_CODE0
 BChannel_Juge:
-	decfsz	P_Temp,F
+	decfsz	R_X,F
 	goto	Send_B_Loop
 	ENDM
 

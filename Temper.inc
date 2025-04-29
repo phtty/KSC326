@@ -1,4 +1,4 @@
-F_Temperature_Get:
+Temperature_Get:
 	bcf		RP0
 
 	clrf	R_ADC_H
@@ -83,14 +83,14 @@ Minus_Temper:
 	movwf	R_Temperature
 	bsf		ADC_Flag,0
 Temperature_Get_Exit:
-	call	F_Cel2Fah
+	call	Cel2Fah
 	return
 
 
 
 
 ; 通过摄氏度计算出华氏度
-F_Cel2Fah:
+Cel2Fah:
 	bcf		RP0
 	clrf	R_Temperature_F
 	clrf	P_Temp
@@ -140,6 +140,18 @@ MinusTemper2Fah:
 
 
 
-TemperDis_HalfSec:
-	call	Temper_Display
+; 15S间隔测温
+Temperature_Test:
+	decfsz	TemperTest_Counter
 	return
+
+	movlw	15
+	movwf	TemperTest_Counter		; 复位15S测温间隔计时
+	call	Temperature_Get
+	return
+
+
+
+
+TemperDis_HalfSec:
+	goto	Temper_Display

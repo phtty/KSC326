@@ -104,7 +104,6 @@ Alarm3_MinMatch:
 Alarm_MatchHandle:
 	bsf		Clock_Flag,1						; ÖÃÎ»ÏìÄÖ×´Ì¬
 	bsf		Beep_Flag,0
-	bsf		TimeFlag_SW,1
 	bcf		Time_Flag,3
 	clrf	Louding_Counter
 	return

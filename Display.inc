@@ -13,7 +13,7 @@ Display_Reflash:
 ; 时间显示
 Time_Display:
 	call	TimeMin_Display
-	call	TimeHour_Display
+	goto	TimeHour_Display
 
 ; 分钟显示
 TimeMin_Display:
@@ -29,6 +29,7 @@ TimeMin_Display:
 	movwf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示分钟个位
+	REFLASH_DISPLAY
 	return
 
 ; 小时显示
@@ -70,6 +71,7 @@ Start_DisTime_Hour:
 	clrf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display
+	REFLASH_DISPLAY
 	return
 
 
@@ -108,6 +110,7 @@ Hr_Display:
 	movwf	R_X
 	movlw	Word_r
 	call	Digit_Word_Display				; 显示Hr
+	REFLASH_DISPLAY
 	return
 
 
@@ -116,8 +119,7 @@ Hr_Display:
 ; 日期显示
 Date_Display:
 	call	Day_Display
-	call	Month_Display
-	return
+	goto	Month_Display
 
 ; 日显示
 Day_Display:
@@ -136,6 +138,7 @@ Day_Display:
 	movlw	10
 Day_Tens_NoZero:
 	call	Digit_Num_Display
+	REFLASH_DISPLAY
 	return
 
 ; 月显示
@@ -154,6 +157,7 @@ Month_Display:
 	movlw	10
 Month_Tens_NoZero:
 	call	Digit_Num_Display
+	REFLASH_DISPLAY
 	return
 
 
@@ -180,6 +184,7 @@ Year_Display:
 	clrf	R_X
 	movlw	2
 	call	Digit_Num_Display
+	REFLASH_DISPLAY
 	return
 
 
@@ -209,6 +214,7 @@ Display_CelsiusDegree:
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D2显示温标C
+	REFLASH_DISPLAY
 	return
 
 CelsiusDegree_Minus:
@@ -232,6 +238,7 @@ CelsiusDegree_Minus:
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D3显示温标C
+	REFLASH_DISPLAY
 	return
 
 
@@ -255,6 +262,7 @@ Display_FahrenheitDegree:
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D2显示温标F
+	REFLASH_DISPLAY
 	return
 
 CelsiusDegree_3Digit:
@@ -276,6 +284,7 @@ CelsiusDegree_3Digit:
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D3显示温标F
+	REFLASH_DISPLAY
 	return
 
 
@@ -304,12 +313,12 @@ AlarmSW_Dipalay:
 AlarmSW_DisON:
 	clrf	R_X
 	movlw	Word_o
-	call	Digit_Word_Display				; 闹钟关闭显示-
+	call	Digit_Word_Display				; 闹钟开启显示o
 
 	movlw	1
 	movwf	R_X
 	movf	Word_n
-	call	Digit_Word_Display				; 闹钟关闭显示-
+	call	Digit_Word_Display				; 闹钟开启显示n
 
 Display_AlarmNumber:
 	movlw	2
@@ -322,6 +331,7 @@ Display_AlarmNumber:
 	movlw	3
 	subwf	Primary_Status,W
 	call	Digit_Num_Display				; 显示闹钟序号
+	REFLASH_DISPLAY
 	return
 
 
@@ -329,7 +339,7 @@ Display_AlarmNumber:
 ; 显示闹钟
 Alarm_Dipalay:
 	call	AlarmMin_Display
-	call	AlarmHour_Display
+	goto	AlarmHour_Display
 
 ; 闹钟分钟显示
 AlarmMin_Display:
@@ -372,7 +382,7 @@ AlarmHour_Display:
 	goto	Alarm_24hMode
 
 	movlw	12
-	subwf	INDF0,W					; 判断闹钟时间是上午或下午
+	subwf	INDF0,W							; 判断闹钟时间是上午或下午
 	btfsc	C
 	goto	Alarm12h_PM
 
@@ -396,7 +406,7 @@ Alarm_24hMode:
 	call	SymbolPM_Clear					; 24h模式下没有PM点
 	movf	INDF0,W
 Start_DisAlarm_Hour:
-	call	Hex2BCD							; 显示最终的结果
+	call	Hex2BCD							; 显示闹钟小时
 	movlw	1
 	movwf	R_X
 	movf	P_Temp5,W
@@ -405,6 +415,7 @@ Start_DisAlarm_Hour:
 	clrf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display
+	REFLASH_DISPLAY
 	return
 
 
@@ -413,8 +424,7 @@ Start_DisAlarm_Hour:
 ; 取消显示
 Undisplay_All:
 	call	Undisplay_01
-	call	Undisplay_23
-	return
+	goto	Undisplay_23
 
 ; 取消显示Digit0、1
 Undisplay_01:
@@ -427,6 +437,7 @@ Undisplay_01:
 	movwf	R_X
 	movlw	10
 	call	Digit_Num_Display				; 取消显示Digit1
+	REFLASH_DISPLAY
 	return
 
 ; 取消显示Digit2、3
@@ -440,6 +451,7 @@ Undisplay_23:
 	movwf	R_X
 	movlw	10
 	call	Digit_Num_Display				; 取消显示Digit3
+	REFLASH_DISPLAY
 	return
 
 

@@ -24,6 +24,9 @@ System_Init:
 	movf	PORTF,F
 	bcf		RFIF
 
+	movlw	1				; 测温间隔设置为1，上电进行一次测温
+	movwf	TemperTest_Counter
+
 	bsf		PEIE			; 使能外设中断
 	bsf		GIE				; 开启总中断
 
@@ -66,7 +69,7 @@ NEXTBYTE_1:
 	movwf	R_Time_Hour		; 设置上电时间
 	movlw	0
 	movwf	R_Time_Min
-	movlw	0
+	movlw	55
 	movwf	R_Time_Sec
 
 	movlw	25
@@ -129,9 +132,9 @@ Port_Initial:
 	movlw	15
 	movwf	Return_Counter	; 设置模式返回计时复位
 
-	movf	PORTF,W
-	andlw	0xe0
-	movwf	PORTF_BackUp	; 按键IO口初始状态保存
+	bsf		TimeFlag_SW,0
+	bsf		TimeFlag_SW,1
+	bsf		TimeFlag_SW,2
 
 	return
 
@@ -158,33 +161,10 @@ ADC_Initial:
 
 ; PWM初始化
 PWM_Initial:
-	;bcf		RP0
-	;bsf		PORCTR,4		; 配置CCP2为PA7，输出PWM
-	;movlw	0xfc
-	;andwf	TRISA,F
+	bsf		PORCTR,4		; 配置CCP2为PA7，输出PWM
 
-	;bsf		RP0
-	;clrf	PWMEN			; PWM模块使能寄存器
-
-	;movlw	0xd0
-	;movwf	PWM0PL
-	;movlw	0x07
-	;movwf	PWM0PH			; 周期寄存器
-
-	;movlw	0xd0
-	;movwf	PWM0DL			; 先设置低位
-	;movlw	0x07
-	;movwf	PWM0DH			; 占空比寄存器
-
-	;movlw	0x0b
-	;movwf	PWM0C			; PWM模块控制寄存器
-
-	;bcf		RP0
-	;bsf		TRISA,7			; PA7先关闭输出
-
-Beep_Initial:
-	movlw	0x14
-	movwf	T2CON			; Fcpu预分频为4作为时钟源
+	movlw	0x1c
+	movwf	T2CON			; Fcpu预分频为8作为时钟源
 
 	movlw	0xf9
 	movwf	PR2				; 250个脉冲计数为1个周期（2KHz）
@@ -193,10 +173,9 @@ Beep_Initial:
 	movwf	CCP2CON			; 配置CCP模块为PWM模式
 
 	movlw	0x7d
-	movwf	CCPR2L			; 占空比寄存器的高8位，低2位在CCP2CON的[6:5]位
+	movwf	CCPR2L			; 占空比寄存器的高8位，低2位在CCP2CON的[4:5]位
 
-	;bsf		T2ON			; 开启TIM2
-	;bcf		TRISA,7			; PA7输出启用
+	bcf		T2ON			; 关闭TIM2
 
 	return
 

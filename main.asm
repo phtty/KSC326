@@ -21,13 +21,15 @@ START:
 
 	movlw	1
 	movwf	DP_Mode
+	bsf		SysEvent_Flag,3
+	call	Key_Beep
 
 MAIN:
 	call	Display_Reflash					; 刷新显示
 	call	PeriodicTask_32Hz				; 32Hz任务
 	call	PeriodicTask_16Hz				; 16Hz任务
 	call	PeriodicTask_2Hz				; 2Hz任务
-	call	PeriodicTask_1Hz				; 1Hz任务
+
 	goto	MAIN
 
 
@@ -106,9 +108,8 @@ include KeyFunction.inc
 include	RGBManage.inc
 include DisplayDriver.inc
 include Display.inc
-include	PeriodicTask16Hz.inc
+include	PeriodicTask32Hz.inc
 include	PeriodicTask2Hz.inc
-include	PeriodicTask1Hz.inc
 include Temper.inc
 include ADCTable.inc
 include Beep.inc

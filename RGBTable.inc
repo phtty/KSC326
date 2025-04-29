@@ -247,7 +247,7 @@ G_TickTable:
 	retlw	0
 
 
-
+	org		0e00H
 ; 颜色通道R渐变时刻表
 R_TickTable:
 	addwf	PCL,F
@@ -496,7 +496,7 @@ R_TickTable:
 	retlw	0
 
 
-
+	org		0f00H
 ; 颜色通道B渐变时刻表
 B_TickTable:
 	addwf	PCL,F

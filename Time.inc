@@ -6,7 +6,6 @@ Time_Run:
 	btfss	C
 	return										; 未发生分钟进位
 
-	REFLASH_DISPLAY								; 发生分钟进位时刷新显示
 	clrf	R_Time_Sec
 	incf	R_Time_Min,F
 	movlw	60	
@@ -32,14 +31,9 @@ Time_Run:
 
 ; 时间模式半S程序
 TimeDis_HalfSec:
-	movf	Secondary_Status,F
-	btfss	Z
-	goto	TimeDis_SetMode
-
 	btfsc	SysEvent_Flag,1						; 显示模式下，有DP标志时不显示时间
 	return
 
-TimeDis_SetMode:
 	movlw	High(TimeSetDis_HS_JumpTable)
 	movwf	PCLATH
 	movf	Secondary_Status,W

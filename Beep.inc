@@ -12,6 +12,9 @@ BeepManage:
 	bsf		T2ON						; 开启TIM2
 	return
 NoBeep_Serial_Mode:
+	btfsc	Beep_Flag,1
+	clrf	Beep_Flag					; 若有按键音标志位则关闭蜂鸣处理
+
 	bcf		T2ON						; 关闭TIM2
 	bsf		TRISA,7						; PA7输出关闭
 	return
