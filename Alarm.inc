@@ -1,5 +1,9 @@
 ; 闹钟处理
 Alarm_Handler:
+	movf	Secondary_Status,F
+	btfss	Z									; 处于设置模式则不判断闹钟触发
+	return
+
 	movf	Alarm_Switch,F
 	btfss	Z									; 无闹钟开启则不判断闹钟触发
 	goto	Is_AlarmTrigger

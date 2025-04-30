@@ -16,8 +16,7 @@ START:
 
 	call	System_Init						; 上电初始化
 
-	call	Time_Display
-	call	Send_RGB_Data
+	HALFSEC_DISPLAY
 
 	movlw	1
 	movwf	DP_Mode

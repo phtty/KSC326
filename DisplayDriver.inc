@@ -1,11 +1,7 @@
 ; 数字显示，R_X==第几个Digit、W==要显示的数字
 Digit_Num_Display:
 	movwf	P_Temp
-	movlw	Low(Digit_NumTable)
-	addwf	P_Temp,W
 	movlw	High(Digit_NumTable)
-	btfsc	C
-	addlw	1
 	movwf	PCLATH
 	movf	P_Temp,W
 	call	Digit_NumTable
@@ -48,11 +44,7 @@ Digit_BitHandle:
 ; 字符显示，R_X==第几个Digit、P_Temp==要显示的字符
 Digit_Word_Display:
 	movwf	P_Temp
-	movlw	Low(Word_NumTable)
-	addwf	P_Temp,W
 	movlw	High(Word_NumTable)
-	btfsc	C
-	addlw	1
 	movwf	PCLATH
 	movf	P_Temp,W
 	call	Word_NumTable

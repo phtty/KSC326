@@ -73,6 +73,7 @@ SwitchState_DPDis:
 	btfsc	C
 	goto	DPMode_Overflow
 	incf	DP_Mode,F
+	goto	SwitchState_DPDis_Exit
 DPMode_Overflow:
 	clrf	DP_Mode
 SwitchState_DPDis_Exit:
@@ -270,7 +271,6 @@ DateDay_Sub_Exit:
 
 
 ;======================================================================================
-
 
 
 Alarm1SW:

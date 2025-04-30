@@ -55,17 +55,17 @@ Key_TriggerJuge:
 	movwf	P_Temp
 	sublw	0xc0
 	btfsc	Z
-	goto	Key_KeyDTriggered
+	goto	Key_KeyDTriggered			; D键触发
 
 	movlw	0xa0
 	subwf	P_Temp,W
 	btfsc	Z
-	goto	Key_KeyUTriggered
+	goto	Key_KeyUTriggered			; U键触发
 
 	movlw	0x60
 	subwf	P_Temp,W
 	btfsc	Z
-	goto	Key_KeySTriggered
+	goto	Key_KeySTriggered			; S键触发
 
 Key_HandleOver:
 	clrf	Key_Flag
@@ -73,6 +73,7 @@ Key_HandleOver:
 	clrf	Depress_Flag
 	return
 
+; 松键功能判断
 Depress_Juge:
 	movf	Depress_Flag,F
 	btfsc	Z							; 无任何松键功能则跳过
@@ -124,22 +125,20 @@ Key_KeyUTriggered:
 	btfsc	Key_Flag,4					; 跳过功能
 	goto	Key_HandleOver
 
-	movf	Primary_Status,F
-	btfss	Z
-	goto	KeyU_NoDisMode
-	call	SwitchState_DPDis
-	goto	Key_HandleOver				; Up键在显示模式只执行1次功能
-KeyU_NoDisMode:
+	movf	Secondary_Status,F
+	btfsc	Z
+	goto	KeyU_NoSetMode				; 非设置模式
+
 	movf	Primary_Status,F
 	btfss	Z
 	goto	KeyU_NoTimeSet
-	goto	AddNum_CS
+	goto	AddNum_CS					; 时设模式增数
 KeyU_NoTimeSet:
 	movlw	1
 	subwf	Primary_Status,W
 	btfss	Z
 	goto	KeyU_NoDateSet
-	goto	AddNum_DS
+	goto	AddNum_DS					; 日设模式增数
 KeyU_NoDateSet:
 	movlw	3
 	subwf	Primary_Status,W
@@ -147,6 +146,14 @@ KeyU_NoDateSet:
 	goto	Key_HandleOver				; 非时间、日期、闹钟设置则为无效按键
 	goto	AddNum_AS
 
+KeyU_NoSetMode:
+	movlw	3
+	subwf	Primary_Status,W
+	btfsc	C
+	goto	Key_HandleOver
+
+	call	SwitchState_DPDis			; Up键在显示模式切换DP显示
+	goto	Key_HandleOver
 Key_KeyUTriggered_Exit:
 	return
 

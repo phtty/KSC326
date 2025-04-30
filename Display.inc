@@ -101,12 +101,12 @@ TimeMode_12H:
 	movlw	1
 	call	Digit_Num_Display				; 12小时制显示12
 Hr_Display:
-	movlw	3
+	movlw	2
 	movwf	R_X
 	movlw	Word_H
 	call	Digit_Word_Display
 
-	movlw	2
+	movlw	3
 	movwf	R_X
 	movlw	Word_r
 	call	Digit_Word_Display				; 显示Hr
