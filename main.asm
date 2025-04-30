@@ -21,27 +21,15 @@ START:
 
 	movlw	1
 	movwf	DP_Mode
-	bsf		SysEvent_Flag,3
+	bcf		SysEvent_Flag,3
 	call	Key_Beep
 
 MAIN:
 	call	Display_Reflash					; 刷新显示
 	call	PeriodicTask_32Hz				; 32Hz任务
-	call	PeriodicTask_16Hz				; 16Hz任务
 	call	PeriodicTask_2Hz				; 2Hz任务
 
 	goto	MAIN
-
-
-F_Delay:									; 大约130us
-	bcf		RP0
-
-	movlw	0xff
-	movwf	P_Temp
-
-	decfsz	P_Temp,F
-	goto	$-1
-	return
 
 
 IRQ:
@@ -58,32 +46,32 @@ IRQ:
 	goto	T1_IRQ_Juge
 	btfsc	T0IF							; 再判断有无中断标志位
 	goto	T0_IRQ_Handler					; Timer0 2Hz中断，用于走时和显示刷新
-T1_IRQ_Juge:
 
+T1_IRQ_Juge:
 	btfss	T1IE
 	goto	T2_IRQ_Juge
 	btfsc	T1IF
 	goto	T1_IRQ_Handler					; Timer1 32Hz中断，用于按键、蜂鸣间隔、RGB变色等
-T2_IRQ_Juge:
 
+T2_IRQ_Juge:
 	btfss	T2IE
 	goto	PA_IRQ_Juge
 	btfsc	T2IF
-	goto	T2_IRQ_Handler					; Timer2 中断，未使用
-PA_IRQ_Juge:
+	goto	T2_IRQ_Handler					; Timer2中断，未使用
 
+PA_IRQ_Juge:
 	btfss	RAIE
 	goto	PB_IRQ_Juge
 	btfsc	RAIF
 	goto	PA_IRQ_Handler					; PA口电平变化中断，未使用
-PB_IRQ_Juge:
 
+PB_IRQ_Juge:
 	btfss	RBIE
 	goto	PF_IRQ_Juge
 	btfsc	RBIF
 	goto	PB_IRQ_Handler					; PB口电平变化中断，未使用
-PF_IRQ_Juge:
 
+PF_IRQ_Juge:
 	btfss	RFIE
 	goto	IRQ_EXIT
 	btfsc	RFIF
@@ -118,6 +106,8 @@ include Calendar.inc
 include Alarm.inc
 include PowerSaving.inc
 include	DPMode.inc
+include	Table2.inc
+include	Table1.inc
 include RGBTable.inc
 
-end
+	end

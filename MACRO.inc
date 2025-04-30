@@ -41,31 +41,19 @@ Search_TickTable:		MACRO
 	movlw	High(GRB_Tick)
 	movwf	FSR0H
 
-	movlw	Low(G_TickTable)
-	addwf	INDF0,W
 	movlw	High(G_TickTable)				; 查G通道的灰度值
-	btfsc	C
-	addlw	1
 	movwf	PCLATH
 	movf	INDF0,W
 	call	G_TickTable
 	movwf	SendBuff_G
 
-	movlw	Low(R_TickTable)
-	addwf	INDF0,W
 	movlw	High(R_TickTable)				; 查R通道的灰度值
-	btfsc	C
-	addlw	1
 	movwf	PCLATH
 	movf	INDF0,W
 	call	R_TickTable
 	movwf	SendBuff_R
 
-	movlw	Low(R_TickTable)
-	addwf	INDF0,W
 	movlw	High(B_TickTable)				; 查B通道的灰度值
-	btfsc	C
-	addlw	1
 	movwf	PCLATH
 	movf	INDF0,W
 	call	B_TickTable

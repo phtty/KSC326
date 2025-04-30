@@ -4,16 +4,17 @@ PeriodicTask_32Hz:
 	return
 	bcf		Time_Flag,4
 
-	btfsc	Time_Flag,3
-	call	PeriodicTask_16Hz
-
 	call	Key_Handler
+
+	call	PeriodicTask_16Hz
 	return
 
 
 
 ; 16Hz任务，用于蜂鸣间隔和RGB变色刷新
 PeriodicTask_16Hz:
+	btfss	Time_Flag,3
+	return
 	bcf		Time_Flag,3
 
 	call	BeepManage							; 蜂鸣管理
@@ -49,4 +50,3 @@ GRB_TickReflash_LoopJuge:
 	goto	GRB_TickReflash_Loop
 	REFLASH_DISPLAY								; 刷新显示
 	return
-

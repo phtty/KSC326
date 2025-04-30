@@ -54,11 +54,6 @@ Time_Flag
 ;bit3 = 1 16Hz标志
 ;bit4 = 1 32Hz标志
 
-TimeFlag_SW
-;bit0 = 1 4Hz计数开关
-;bit1 = 1 16Hz计数开关
-;bit2 = 1 32Hz计数开关
-
 SysEvent_Flag
 ;bit0 = 1 更新显示标志
 ;bit1 = 1 DP显示标志

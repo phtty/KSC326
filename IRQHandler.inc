@@ -28,27 +28,18 @@ T1_IRQ_Handler:
 	xorwf	PORTA,F
 
 T1_32Hz_Juge:
-	btfss	TimeFlag_SW,2			; 32Hz标志开关
-	goto	T1_16Hz_Juge
 	bsf		Time_Flag,4				; 32Hz标志位
 
-T1_16Hz_Juge:
-	btfss	TimeFlag_SW,1
-	goto	T1_4Hz_Juge
 	movf	T1_Counter,W
 	andlw	0x01					; 对2求余
 	btfsc	Z
 	bsf		Time_Flag,3				; 16Hz标志位
 
-T1_4Hz_Juge:
-	btfss	TimeFlag_SW,0
-	goto	T1_Zero_Juge
 	movf	T1_Counter,W
 	andlw	0x07					; 对8求余
 	btfsc	Z
 	bsf		Time_Flag,2				; 4Hz标志位
 
-T1_Zero_Juge:
 	movf	T1_Counter,F			; 判0
 	btfsc	Z
 	goto	T1_Counter_Reload

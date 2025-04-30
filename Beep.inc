@@ -23,7 +23,7 @@ NoBeep_Serial_Mode:
 LoudManage:
 	btfss	Clock_Flag,1
 	return
-	
+
 	movlw	4
 	movwf	Beep_Serial					; ÏìÄÖĞòÁĞÎªÁ½Éù
 	incf	Louding_Counter,F

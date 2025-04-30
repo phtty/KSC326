@@ -1,27 +1,3 @@
-AlarmDis_HalfSec:
-	movlw	High(AlarmSetDis_HS_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-AlarmSetDis_HS_JumpTable:
-	addwf	PCL,F
-	goto	AlarmSW_Dipalay
-	goto	Alarm_Dipalay
-	goto	Alarm_Dipalay
-
-
-
-AlarmDis_Sec:
-	movlw	High(AlarmSetDis_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-AlarmSetDis_JumpTable:
-	addwf	PCL,F
-	return
-	goto	Undisplay_01
-	goto	Undisplay_23
-
-
-
 ; ƒ÷÷”¥¶¿Ì
 Alarm_Handler:
 	movf	Alarm_Switch,F

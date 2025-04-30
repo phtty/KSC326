@@ -84,88 +84,6 @@ SwitchState_DPDis_Exit:
 ;======================================================================================
 
 
-; 时设模式增数
-AddNum_CS:
-	movlw	High(CS_AddNum_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-CS_AddNum_JumpTable:
-	addwf	PCL,F
-	return								; 显示模式，占位用
-	goto	Time_Mode_SW
-	goto	Time_Hour_Add
-	goto	Time_Min_Add
-	goto	Key_HandleOver
-
-; 闹设模式增数
-AddNum_AS:
-	movlw	High(AS_AddNum_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-AS_AddNum_JumpTable:
-	addwf	PCL,F
-	return								; 显示模式，占位用
-	goto	Alarm_Hour_Add				; 闹钟小时设置
-	goto	Alarm_Min_Add				; 闹钟分钟设置
-	goto	Key_HandleOver
-
-; 日设模式增数
-AddNum_DS:
-	movlw	High(DS_AddNum_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-DS_AddNum_JumpTable:
-	addwf	PCL,F
-	return								; 显示模式，占位用
-	goto	Date_Year_Add				; 年份设置
-	goto	Date_Month_Add				; 月份设置
-	goto	Date_Day_Add				; 日期设置
-	goto	Key_HandleOver
-
-
-
-
-; 时设模式减数
-SubNum_CS:
-	movlw	High(CS_SubNum_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-CS_SubNum_JumpTable:
-	addwf	PCL,F
-	return								; 显示模式，占位用
-	goto	Time_Mode_SW
-	goto	Time_Hour_Sub
-	goto	Time_Min_Sub
-	goto	Key_HandleOver
-
-; 闹设模式减数
-SubNum_AS:
-	movlw	High(AS_SubNum_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-AS_SubNum_JumpTable:
-	addwf	PCL,F
-	return								; 显示模式，占位用
-	goto	Alarm_Hour_Sub				; 闹钟小时设置
-	goto	Alarm_Min_Sub				; 闹钟分钟设置
-	goto	Key_HandleOver
-
-; 日设模式减数
-SubNum_DS:
-	movlw	High(DS_SubNum_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-DS_SubNum_JumpTable:
-	addwf	PCL,F
-	return								; 显示模式，占位用
-	goto	Date_Year_Sub				; 年份设置
-	goto	Date_Month_Sub				; 月份设置
-	goto	Date_Day_Sub				; 日期设置
-	goto	Key_HandleOver
-
-
-;======================================================================================
-
 ; 小时制切换
 Time_Mode_SW:
 	movlw	1
@@ -354,20 +272,7 @@ DateDay_Sub_Exit:
 ;======================================================================================
 
 
-; 闹钟开关
-Alarm_SetSwitch:
-	movlw	3
-	subwf	Primary_Status,W
-	movwf	P_Temp
 
-	movlw	High(AlarmSW_JumpTable)
-	movwf	PCLATH
-	movf	P_Temp,W					; 根据当前闹钟组开关闹钟
-AlarmSW_JumpTable:
-	addwf	PCL,F
-	goto	Alarm1SW
-	goto	Alarm2SW
-	goto	Alarm3SW
 Alarm1SW:
 	movlw	B'001'
 	xorwf	Alarm_Switch,F

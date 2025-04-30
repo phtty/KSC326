@@ -23,13 +23,16 @@ Key_Handler:
 	call	Key_Beep					; 确定触发后响按键音
 	goto	Key_TriggerJuge				; 首次触发按键直接进入按键触发判断
 Key_Scan:
-	call	Depress_Juge				; 松键判断
 	movlw	0xe0
 	andwf	PORTF,W
-	sublw	0xe0						; 无任何按键时则结束扫键
-	btfsc	Z
+	sublw	0xe0						; 检测到无按键时结束扫键，并执行松键功能
+	btfss	Z
+	goto	Key_Keep
+
+	call	Depress_Juge				; 松键功能判断
 	goto	Key_HandleOver
 
+Key_Keep:
 	btfsc	Key_Flag,3
 	goto	LongPress_Handle
 	movlw	64
@@ -72,7 +75,7 @@ Key_HandleOver:
 
 Depress_Juge:
 	movf	Depress_Flag,F
-	btfsc	Z							; 无松键功能则跳过
+	btfsc	Z							; 无任何松键功能则跳过
 	return
 
 	btfsc	Depress_Flag,0
@@ -88,7 +91,7 @@ Key_KeyDTriggered:
 	call	Universal_TriggerHandle
 	btfsc	Key_Flag,4					; 跳过功能
 	goto	Key_HandleOver
-	
+
 	movf	Primary_Status,F
 	btfss	Z
 	goto	KeyD_NoDisMode
@@ -187,7 +190,7 @@ Key_KeySDepress:
 
 Universal_TriggerHandle:
 	call	Key_CloseLoud
-	clrf	DP_Counter					; 复位计数
+	clrf	DP_Counter					; 复位DP模式计数
 	return
 
 

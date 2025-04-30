@@ -15,7 +15,7 @@ D_Char_F:		equ	0x71 ;	F
 D_Char_H:		equ	0x76 ;	H
 D_Char_r:		equ	0x50 ;	r
 D_Char_o:		equ	0x5c ;	o
-D_Char_n:		equ	0x54 ;	n
+D_Char_n:		equ	0x37 ;	n
 D_Char_d:		equ	0x5e ;	d
 D_Char_p:		equ	0x73 ;	p
 D_Char_A:		equ	0x77 ;	A

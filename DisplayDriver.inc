@@ -48,7 +48,11 @@ Digit_BitHandle:
 ; 字符显示，R_X==第几个Digit、P_Temp==要显示的字符
 Digit_Word_Display:
 	movwf	P_Temp
+	movlw	Low(Word_NumTable)
+	addwf	P_Temp,W
 	movlw	High(Word_NumTable)
+	btfsc	C
+	addlw	1
 	movwf	PCLATH
 	movf	P_Temp,W
 	call	Word_NumTable
@@ -56,7 +60,7 @@ Digit_Word_Display:
 
 
 
-
+; 一些符号灯的定义
 SymbolPM_Display:							; 亮PM点
 	movlw	0x01
 	iorwf	DisSwtich+0,F
@@ -114,12 +118,12 @@ Send_RGB_Data:
 	bcf		GIE								; 发送时不响应中断，避免发送时序被中断干扰
 SendByte_Loop:
 	movlw	Low(DisSwtich)
-	addwf	P_Temp+2,W
+	addwf	P_Temp+2,W						; 位选byte循环计数作为偏移，查相应的位选内存
 	movwf	FSR1L
 	movlw	High(DisSwtich)
 	movwf	FSR1H
 	movf	INDF1,W
-	movwf	P_Temp+3
+	movwf	P_Temp+3						; 查出来的内存进行拷贝，在位选bit的8次循环中右移
 
 	clrf	P_Temp+1
 SendBit_Loop:
@@ -139,7 +143,7 @@ SendBit_JugeOver:
 	movlw	33
 	subwf	P_Temp+4,W
 	btfsc	C
-	goto	SendingLoop_Over				; 当发送计数计到33时，发送完成，退出循环
+	goto	SendingLoop_Over				; 当发送计数计到33时，发送完成，直接退出循环
 
 	incf	P_Temp+1,F
 	movlw	8
@@ -160,16 +164,6 @@ SendingLoop_Over:
 
 
 
-DigitSet_SegA:
-	movlw	High(SegA_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegA_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Set_SegA
-	goto	Digit1Set_SegA
-	goto	Digit2Set_SegA
-	goto	Digit3Set_SegA
 
 Digit0Set_SegA:
 	bsf		DisSwtich+3,3
@@ -185,17 +179,6 @@ Digit3Set_SegA:
 	return
 
 
-DigitSet_SegB:
-	movlw	High(SegB_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegB_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Set_SegB
-	goto	Digit1Set_SegB
-	goto	Digit2Set_SegB
-	goto	Digit3Set_SegB
-
 Digit0Set_SegB:
 	bsf		DisSwtich+3,4
 	return
@@ -209,17 +192,6 @@ Digit3Set_SegB:
 	bsf		DisSwtich+1,0
 	return
 
-
-DigitSet_SegC:
-	movlw	High(SegC_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegC_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Set_SegC
-	goto	Digit1Set_SegC
-	goto	Digit2Set_SegC
-	goto	Digit3Set_SegC
 
 Digit0Set_SegC:
 	bsf		DisSwtich+2,6
@@ -235,17 +207,6 @@ Digit3Set_SegC:
 	return
 
 
-DigitSet_SegD:
-	movlw	High(SegD_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegD_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Set_SegD
-	goto	Digit1Set_SegD
-	goto	Digit2Set_SegD
-	goto	Digit3Set_SegD
-
 Digit0Set_SegD:
 	bsf		DisSwtich+2,7
 	return
@@ -259,17 +220,6 @@ Digit3Set_SegD:
 	bsf		DisSwtich+1,3
 	return
 
-
-DigitSet_SegE:
-	movlw	High(SegE_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegE_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Set_SegE
-	goto	Digit1Set_SegE
-	goto	Digit2Set_SegE
-	goto	Digit3Set_SegE
 
 Digit0Set_SegE:
 	bsf		DisSwtich+3,0
@@ -285,17 +235,6 @@ Digit3Set_SegE:
 	return
 
 
-DigitSet_SegF:
-	movlw	High(SegF_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegF_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Set_SegF
-	goto	Digit1Set_SegF
-	goto	Digit2Set_SegF
-	goto	Digit3Set_SegF
-
 Digit0Set_SegF:
 	bsf		DisSwtich+3,2
 	return
@@ -309,17 +248,6 @@ Digit3Set_SegF:
 	bsf		DisSwtich+0,6
 	return
 
-
-DigitSet_SegG:
-	movlw	High(SegG_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegG_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Set_SegG
-	goto	Digit1Set_SegG
-	goto	Digit2Set_SegG
-	goto	Digit3Set_SegG
 
 Digit0Set_SegG:
 	bsf		DisSwtich+3,1
@@ -337,17 +265,6 @@ Digit3Set_SegG:
 
 
 
-DigitClr_SegA:
-	movlw	High(SegAClr_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegAClr_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Clr_SegA
-	goto	Digit1Clr_SegA
-	goto	Digit2Clr_SegA
-	goto	Digit3Clr_SegA
-
 Digit0Clr_SegA:
 	bcf		DisSwtich+3,3
 	return
@@ -361,17 +278,6 @@ Digit3Clr_SegA:
 	bcf		DisSwtich+0,7
 	return
 
-
-DigitClr_SegB:
-	movlw	High(SegBClr_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegBClr_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Clr_SegB
-	goto	Digit1Clr_SegB
-	goto	Digit2Clr_SegB
-	goto	Digit3Clr_SegB
 
 Digit0Clr_SegB:
 	bcf		DisSwtich+3,4
@@ -387,17 +293,6 @@ Digit3Clr_SegB:
 	return
 
 
-DigitClr_SegC:
-	movlw	High(SegCClr_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegCClr_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Clr_SegC
-	goto	Digit1Clr_SegC
-	goto	Digit2Clr_SegC
-	goto	Digit3Clr_SegC
-
 Digit0Clr_SegC:
 	bcf		DisSwtich+2,6
 	return
@@ -411,17 +306,6 @@ Digit3Clr_SegC:
 	bcf		DisSwtich+1,2
 	return
 
-
-DigitClr_SegD:
-	movlw	High(SegDClr_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegDClr_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Clr_SegD
-	goto	Digit1Clr_SegD
-	goto	Digit2Clr_SegD
-	goto	Digit3Clr_SegD
 
 Digit0Clr_SegD:
 	bcf		DisSwtich+2,7
@@ -437,17 +321,6 @@ Digit3Clr_SegD:
 	return
 
 
-DigitClr_SegE:
-	movlw	High(SegEClr_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegEClr_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Clr_SegE
-	goto	Digit1Clr_SegE
-	goto	Digit2Clr_SegE
-	goto	Digit3Clr_SegE
-
 Digit0Clr_SegE:
 	bcf		DisSwtich+3,0
 	return
@@ -461,17 +334,6 @@ Digit3Clr_SegE:
 	bcf		DisSwtich+1,4
 	return
 
-
-DigitClr_SegF:
-	movlw	High(SegFClr_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegFClr_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Clr_SegF
-	goto	Digit1Clr_SegF
-	goto	Digit2Clr_SegF
-	goto	Digit3Clr_SegF
 
 Digit0Clr_SegF:
 	bcf		DisSwtich+3,2
@@ -487,17 +349,6 @@ Digit3Clr_SegF:
 	return
 
 
-DigitClr_SegG:
-	movlw	High(SegGClr_JumpTable)
-	movwf	PCLATH
-	movf	R_X,W
-SegGClr_JumpTable:
-	addwf	PCL,F
-	goto	Digit0Clr_SegG
-	goto	Digit1Clr_SegG
-	goto	Digit2Clr_SegG
-	goto	Digit3Clr_SegG
-
 Digit0Clr_SegG:
 	bcf		DisSwtich+3,1
 	return
@@ -510,34 +361,3 @@ Digit2Clr_SegG:
 Digit3Clr_SegG:
 	bcf		DisSwtich+1,1
 	return
-
-
-
-
-Digit_NumTable:
-	addwf	PCL,F
-	retlw	D_Char_0
-	retlw	D_Char_1
-	retlw	D_Char_2
-	retlw	D_Char_3
-	retlw	D_Char_4
-	retlw	D_Char_5
-	retlw	D_Char_6
-	retlw	D_Char_7
-	retlw	D_Char_8
-	retlw	D_Char_9
-	retlw	D_Char_Null
-
-
-Word_NumTable:
-	addwf	PCL,F
-	retlw	D_Char_C
-	retlw	D_Char_F
-	retlw	D_Char_A
-	retlw	D_Char_o
-	retlw	D_Char_n
-	retlw	D_Char_Neg
-	retlw	D_Char_d
-	retlw	D_Char_p
-	retlw	D_Char_H
-	retlw	D_Char_r

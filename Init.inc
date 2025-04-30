@@ -63,7 +63,11 @@ NEXTBYTE_1:
 	movlw	8
 	movwf	T1_Counter		; 从8开始计数到0
 
-	clrf	Light_Level		; 上电默认高亮
+	movlw	3
+	movwf	Light_Level		; 上电默认低亮
+	
+	movlw	15
+	movwf	Return_Counter	; 设置模式返回计时复位
 
 	movlw	12
 	movwf	R_Time_Hour		; 设置上电时间
@@ -129,13 +133,6 @@ Port_Initial:
 	clrf	PORTC
 	clrf	PORTF
 
-	movlw	15
-	movwf	Return_Counter	; 设置模式返回计时复位
-
-	bsf		TimeFlag_SW,0
-	bsf		TimeFlag_SW,1
-	bsf		TimeFlag_SW,2
-
 	return
 
 ; ADC初始化
@@ -155,7 +152,7 @@ ADC_Initial:
 	movwf	ADCON0			; 启用模拟通道11，参考电压内部VDD
 
 	bsf		ADEN
-	call	F_Delay			; 等待电路稳定
+	call	Delay_130us		; 等待电路稳定
 
 	return
 
@@ -208,4 +205,15 @@ TIM_Initial:
 	bcf		T1IF			; 开启TIM1中断并清中断标志位
 	bsf		T1IE
 
+	return
+
+
+Delay_130us:				; 大约130us
+	bcf		RP0
+
+	movlw	0xff
+	movwf	P_Temp
+
+	decfsz	P_Temp,F
+	goto	$-1
 	return

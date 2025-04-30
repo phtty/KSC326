@@ -61,35 +61,6 @@ L_Set_LeapYear_Flag:
 
 
 
-
-DateDis_HalfSec:
-	movlw	High(DateModeDis_HS_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-DateModeDis_HS_JumpTable:
-	addwf	PCL,F
-	goto	Date_Display
-	goto	Year_Display
-	goto	Date_Display
-	goto	Date_Display
-	return
-
-
-DateDis_Sec:
-	movlw	High(DateModeDis_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-DateModeDis_JumpTable:
-	addwf	PCL,F
-	return
-	goto	Undisplay_All
-	goto	Undisplay_01
-	goto	Undisplay_23
-	return
-
-
-
-
 ; 平年的每月份天数表
 L_Table_Month_Common:
 	db	31	; January

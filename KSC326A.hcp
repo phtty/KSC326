@@ -1,7 +1,7 @@
 [HC-IDE]
 Version=3.0.11.S
 [File Count]
-Count=23
+Count=26
 [MCU]
 PowerSupply=0
 [Settings]
@@ -16,17 +16,17 @@ Library=
 [Files]
 OpenFileCounts=12
 File0=main.asm|3 208 1603 208 810
-File1=Init.inc|1 130 1581 130 602
-File2=PeriodicTask16Hz.inc|1 0 1179 0 338
-File3=RGBTable.inc|1 26 1205 26 364
-File4=DisplayDriver.inc|1 26 1477 26 498
-File5=MACRO.inc|1 104 1205 104 576
-File6=IRQHandler.inc|1 78 1529 78 550
-File7=Display.inc|1 234 1685 234 706
-File8=PeriodicTask2Hz.inc|1 52 1231 52 390
-File9=KeyFunction.inc|1 234 1335 234 706
-File10=Time.inc|1 52 1503 52 524
-File11=KeyHandler.inc|1 104 1555 104 576
+File1=MACRO.inc|1 104 1205 104 576
+File2=Init.inc|1 130 1581 130 602
+File3=Time.inc|1 52 1503 52 524
+File4=PeriodicTask32Hz.inc|1 26 1477 26 498
+File5=IRQHandler.inc|1 78 1529 78 550
+File6=PeriodicTask2Hz.inc|1 52 1231 52 390
+File7=RGBTable.inc|1 26 1205 26 364
+File8=KeyHandler.inc|1 104 1555 104 576
+File9=DisplayDriver.inc|1 26 1477 26 498
+File10=Display.inc|1 234 1685 234 706
+File11=KeyFunction.inc|1 234 1335 234 706
 File12=Beep.inc|1 286 1685 286 892
 File13=Time.inc|1 52 1503 52 524
 File14=Alarm.inc|1 234 1633 234 840
@@ -35,7 +35,7 @@ File16=ADCTable.inc|1 260 1659 260 866
 File17=HC18P133L.inc|1 26 1425 26 632
 File18=HC18P133L.inc|1 26 1425 26 632
 [Break]
-Count=2
+Count=1
 BP0=14 14 1
 BP1=14 20 1
 BP2=12 63 1
@@ -73,13 +73,14 @@ File11=KeyFunction.inc
 File12=KeyHandler.inc
 File13=MACRO.inc
 File14=main.asm
-File15=PeriodicTask16Hz.inc
-File16=PeriodicTask2Hz.inc
+File15=PeriodicTask2Hz.inc
+File16=PeriodicTask32Hz.inc
 File17=PowerSaving.inc
 File18=RAM_DEF.inc
 File19=RGBManage.inc
 File20=RGBTable.inc
-File21=Temper.inc
-File22=Time.inc
-File23=Time.inc
-File24=Time.inc
+File21=Table.inc
+File22=Table1.inc
+File23=Table2.inc
+File24=Temper.inc
+File25=Time.inc

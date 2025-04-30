@@ -28,39 +28,6 @@ Time_Run:
 
 
 
-
-; 时间模式半S程序
-TimeDis_HalfSec:
-	btfsc	SysEvent_Flag,1						; 显示模式下，有DP标志时不显示时间
-	return
-
-	movlw	High(TimeSetDis_HS_JumpTable)
-	movwf	PCLATH
-	movf	Secondary_Status,W
-TimeSetDis_HS_JumpTable:
-	addwf	PCL,F
-	goto	Time_Display
-	goto	TimeMode_Display
-	goto	Time_Display
-	goto	Time_Display
-
-
-
-; 时间模式1S程序
-TimeDis_Sec:
-	movlw	High(TimeSetDis_JumpTable)			; 1S灭
-	movwf	PCLATH
-	movf	Secondary_Status,W
-TimeSetDis_JumpTable:
-	addwf	PCL,F
-	return
-	goto	Undisplay_All
-	goto	Undisplay_01
-	goto	Undisplay_23
-
-
-
-
 ; 夜间时段范围检测（19:00~6:00）
 TimeRange_Detect:
 	movlw	19

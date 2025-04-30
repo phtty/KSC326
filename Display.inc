@@ -307,7 +307,7 @@ AlarmSW_Dipalay:
 
 	movlw	1
 	movwf	R_X
-	movf	Word_Neg
+	movlw	Word_Neg
 	call	Digit_Word_Display				; 闹钟关闭显示-
 	goto	Display_AlarmNumber
 AlarmSW_DisON:
@@ -317,18 +317,18 @@ AlarmSW_DisON:
 
 	movlw	1
 	movwf	R_X
-	movf	Word_n
+	movlw	Word_n
 	call	Digit_Word_Display				; 闹钟开启显示n
 
 Display_AlarmNumber:
 	movlw	2
 	movwf	R_X
-	movf	Word_A
+	movlw	Word_A
 	call	Digit_Word_Display				; 显示A
 
 	movlw	3
 	movwf	R_X
-	movlw	3
+	movlw	2
 	subwf	Primary_Status,W
 	call	Digit_Num_Display				; 显示闹钟序号
 	REFLASH_DISPLAY

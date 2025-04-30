@@ -244,7 +244,6 @@ G_TickTable:
 	retlw	0
 	retlw	0
 	retlw	255
-	retlw	0
 
 
 	org		0e00H
@@ -493,7 +492,6 @@ R_TickTable:
 	retlw	255
 	retlw	255
 	retlw	255
-	retlw	0
 
 
 	org		0f00H
@@ -742,4 +740,3 @@ B_TickTable:
 	retlw	6
 	retlw	0
 	retlw	255
-	retlw	0
