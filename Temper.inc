@@ -129,7 +129,7 @@ L_Div5_Loop_Over:
 	btfsc	ADC_Flag,0
 	goto	MinusTemper2Fah
 	movlw	32
-	subwf	R_Temperature_F,F
+	addwf	R_Temperature_F,F
 	return
 MinusTemper2Fah:
 	movf	R_Temperature_F,W

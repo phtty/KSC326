@@ -188,6 +188,7 @@ Year_Display:
 	return
 
 
+; 温度显示
 Temper_Display:
 	call	SymbolTEMP_Display				; 显示温度符号
 
@@ -210,6 +211,7 @@ Display_CelsiusDegree:
 	movf	P_Temp5,W
 	call	Digit_Num_Display				; 显示温度个位
 
+	call	Undisplay_23					; 避免3号8字存在显示导致不清空
 	movlw	2
 	movwf	R_X
 	movlw	Word_C
@@ -247,7 +249,7 @@ Display_FahrenheitDegree:
 	call	Hex2BCD
 	movf	P_Temp7
 	btfss	Z
-	goto	CelsiusDegree_3Digit			; 华氏度存在百位数时使用另一套显示逻辑
+	goto	FahrenheitDegree_3Digit			; 华氏度存在百位数时使用另一套显示逻辑
 
 	clrf	R_X
 	movf	P_Temp6,W
@@ -258,14 +260,15 @@ Display_FahrenheitDegree:
 	movf	P_Temp5,W
 	call	Digit_Num_Display				; 显示温度个位
 
+	call	Undisplay_23					; 避免3号8字存在显示导致不清空
 	movlw	2
 	movwf	R_X
-	movlw	Word_C
+	movlw	Word_F
 	call	Digit_Word_Display				; D2显示温标F
 	REFLASH_DISPLAY
 	return
 
-CelsiusDegree_3Digit:
+FahrenheitDegree_3Digit:
 	clrf	R_X
 	movf	P_Temp7,W
 	call	Digit_Num_Display				; 显示温度百位
@@ -282,7 +285,7 @@ CelsiusDegree_3Digit:
 
 	movlw	3
 	movwf	R_X
-	movlw	Word_C
+	movlw	Word_F
 	call	Digit_Word_Display				; D3显示温标F
 	REFLASH_DISPLAY
 	return
@@ -357,13 +360,12 @@ AlarmMin_Display:
 
 	movlw	2
 	movwf	R_X
-	movf	P_Temp5,W
+	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示分钟十位
 
-	movf	P_Temp6,W
-	movwf	P_Temp
 	movlw	3
 	movwf	R_X
+	movf	P_Temp5,W
 	call	Digit_Num_Display				; 显示分钟个位
 	return
 
@@ -372,10 +374,10 @@ AlarmHour_Display:
 	movlw	3
 	subwf	Primary_Status,W
 	movwf	P_Temp							; 计算出闹钟组
-	movlw	Low(R_Alarm1_Min)
+	movlw	Low(R_Alarm1_Hour)
 	addwf	P_Temp,W
 	movwf	FSR0L
-	movlw	High(R_Alarm1_Min)
+	movlw	High(R_Alarm1_Hour)
 	movwf	FSR0H
 
 	btfss	Clock_Flag,0
@@ -415,6 +417,33 @@ Start_DisAlarm_Hour:
 	clrf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display
+	REFLASH_DISPLAY
+	return
+
+
+
+; 显示DP模式
+DPMode_Display:
+	clrf	R_X
+	movlw	Word_d
+	call	Digit_Word_Display
+
+	movlw	1
+	movwf	R_X
+	movlw	Word_p
+	call	Digit_Word_Display
+
+	movlw	2
+	movwf	R_X
+	movlw	Word_Neg
+	call	Digit_Word_Display				; 显示"dp-"
+
+	movlw	3
+	movwf	R_X
+	movf	DP_Mode,W
+	addlw	1
+	call	Digit_Num_Display				; 根据当前dp模式显示'1'~'3'
+
 	REFLASH_DISPLAY
 	return
 

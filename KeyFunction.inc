@@ -33,8 +33,6 @@ SecondarySta_Juge:
 	btfsc	C
 	goto	SecondarySta_Overflow
 	incf	Secondary_Status,F
-	movlw	15
-	movwf	Return_Counter				; 重置15S返回计时
 	goto	SwitchState_SetMode_Exit
 SecondarySta_Overflow:
 	clrf	Secondary_Status
@@ -67,7 +65,8 @@ SwitchState_DPDis:
 	bsf		SysEvent_Flag,1				; 置位DP显示标志位
 	movlw	3
 	movwf	Return_Counter				; 返回计时设置为3S
-	
+	clrf	DP_Counter					; 复位DP模式计数
+
 	movlw	2
 	subwf	DP_Mode,W
 	btfsc	C
@@ -388,7 +387,16 @@ AlarmMin_Sub_Exit:
 ; 切换温度单位
 TemperMode_Change:
 	movlw	2
-	xorwf	ADC_Flag,F					; 取反温度单位标志位，切换显示的温度单位
+	subwf	Primary_Status,W
+	btfsc	Z
+	goto	Switch_TemperUnit
+	movlw	2
+	movwf	Primary_Status				; 非温显模式切换至温显模式
+	goto	TemperMode_Change_Exit
+Switch_TemperUnit:
+	movlw	2
+	xorwf	ADC_Flag,F					; 温显模式取反温度单位标志位，切换显示的温度单位
+TemperMode_Change_Exit:
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return

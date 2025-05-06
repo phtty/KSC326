@@ -61,7 +61,7 @@ Search_TickTable:		MACRO
 	ENDM
 
 
-; 该灯若熄灭，则用242查三通道时刻表得灰度值为0，并送入发送缓冲区
+; 该灯若熄灭，则三通道灰度值为0
 Grayscale_0:			MACRO
 	clrf	SendBuff_G
 	clrf	SendBuff_R

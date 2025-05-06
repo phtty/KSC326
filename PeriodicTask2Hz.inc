@@ -12,6 +12,9 @@ PeriodicTask_2Hz:
 HalfSec_Handle:
 	call	COL_Display						; 秒点闪烁
 
+	btfsc	SysEvent_Flag,1
+	goto	DPMode_Display					; 存在DP显示标志时，显示当前的DP模式
+
 	goto	HalfSec_Jump
 
 
@@ -50,7 +53,13 @@ Sec_Handle:
 	call	COL_Clear						; 秒点闪烁
 	call	Temperature_Test				; 定时测温
 
+	btfsc	SysEvent_Flag,1					; 若有DP显示标志则跳过灭点
+	return
+	btfsc	Key_Flag,3						; 若有快加标志则跳过灭点
+	return
+
 	goto	Sec_Jump
+
 
 
 Return_DisMode:
@@ -64,6 +73,11 @@ Return_Counting:
 	return									; 未计到0则直接退出
 
 	clrf	Secondary_Status				; 返回显示模式
+	btfss	SysEvent_Flag,1					; 若是DP显示返回则还需要返回到时间模式
+	goto	Return_DisMode_Exit
+	bcf		SysEvent_Flag,1					; 清除DP标志
+	clrf	Primary_Status					; 返回时间模式
+Return_DisMode_Exit:
 	REFLASH_DISPLAY							; 刷新显示
 	HALFSEC_DISPLAY
 	return

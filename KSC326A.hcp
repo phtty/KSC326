@@ -1,7 +1,7 @@
 [HC-IDE]
 Version=3.0.11.S
 [File Count]
-Count=26
+Count=25
 [MCU]
 PowerSupply=0
 [Settings]
@@ -79,8 +79,8 @@ File17=PowerSaving.inc
 File18=RAM_DEF.inc
 File19=RGBManage.inc
 File20=RGBTable.inc
-File21=Table.inc
-File22=Table1.inc
-File23=Table2.inc
-File24=Temper.inc
+File21=Table1.inc
+File22=Table2.inc
+File23=Temper.inc
+File24=Time.inc
 File25=Time.inc

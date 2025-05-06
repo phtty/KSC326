@@ -344,6 +344,8 @@ DPMode_Mangage:
 	movf	Secondary_Status,F				; 设置模式下不进行DP切换
 	btfss	Z
 	return
+
+	btfss	SysEvent_Flag,1					; 存在DP显示时，不递增DP计数
 	incf	DP_Counter,F					; 递增DP计数
 
 	movlw	High(DPMode_JumpTable)

@@ -9,10 +9,6 @@ Key_Handler:
 	decfsz	Debounce_Counter,F			; 消抖延时计数，递减到0则消抖完成
 	return
 
-	movf	PORTF,F
-	bcf		RFIF
-	movlw	0xe0
-	movwf	IOCF						; 消抖完成启用PF5~7电平变化中断
 	bcf		Key_Flag,2					; 首次触发时不扫描按键
 	movf	PORTF,W
 	andlw	0xe0
@@ -71,6 +67,11 @@ Key_HandleOver:
 	clrf	Key_Flag
 	clrf	LongPress_Counter			; 复位快加/长按计数值
 	clrf	Depress_Flag
+
+	movf	PORTF,F
+	bcf		RFIF
+	movlw	0xe0
+	movwf	IOCF						; 按键扫描完成重新启用PF5~7电平变化中断
 	return
 
 ; 松键功能判断
@@ -88,6 +89,7 @@ Depress_Juge:
 	goto	Key_HandleOver
 
 
+; D键触发
 Key_KeyDTriggered:
 	call	Universal_TriggerHandle
 	btfsc	Key_Flag,4					; 跳过功能
@@ -95,69 +97,93 @@ Key_KeyDTriggered:
 
 	movf	Primary_Status,F
 	btfss	Z
-	goto	KeyD_NoDisMode
-	call	SwitchState_TemperDis
-	goto	Key_HandleOver				; Down键在显示模式只执行1次功能
-KeyD_NoDisMode:
-	movf	Primary_Status,F
+	goto	KeyD_NoTimeMode				; 非时间模式
+
+	movf	Secondary_Status,F
 	btfss	Z
-	goto	KeyD_NoTimeSet
-	goto	SubNum_CS
-KeyD_NoTimeSet:
+	goto	SubNum_CS					; 时设模式执行增数
+	call	TemperMode_Change			; 切换至温显
+	goto	Key_HandleOver				; 时显模式只执行1次按键功能
+
+KeyD_NoTimeMode:
 	movlw	1
 	subwf	Primary_Status,W
 	btfss	Z
-	goto	KeyD_NoDateSet
-	goto	SubNum_DS
-KeyD_NoDateSet:
-	movlw	3
-	subwf	Primary_Status,W
-	btfss	C
-	goto	Key_HandleOver				; 非时间、日期、闹钟设置则为无效按键
-	goto	SubNum_AS
+	goto	KeyD_NoDateMode				; 非日期模式
 
+	movf	Secondary_Status,F
+	btfss	Z
+	goto	SubNum_DS					; 日设模式执行减数
+	call	TemperMode_Change			; 切换至温显
+	goto	Key_HandleOver				; 日显模式只执行1次按键功能
+
+KeyD_NoDateMode:
+	movlw	2
+	subwf	Primary_Status,W
+	btfss	Z
+	goto	KeyD_NoTemperMode			; 非温度模式
+
+	call	TemperMode_Change			; 切换温标
+	goto	Key_HandleOver				; 温显模式只执行1次按键功能
+
+KeyD_NoTemperMode:
+	movf	Secondary_Status,F
+	btfss	Z
+	goto	SubNum_AS					; 闹设模式执行减数
+	call	TemperMode_Change			; 切换至温显
+	goto	Key_HandleOver				; 闹显模式只执行1次按键功能
 Key_KeyDTriggered_Exit:
 	return
 
 
+; U键触发
 Key_KeyUTriggered:
 	call	Universal_TriggerHandle
 	btfsc	Key_Flag,4					; 跳过功能
 	goto	Key_HandleOver
 
-	movf	Secondary_Status,F
-	btfsc	Z
-	goto	KeyU_NoSetMode				; 非设置模式
-
 	movf	Primary_Status,F
 	btfss	Z
-	goto	KeyU_NoTimeSet
-	goto	AddNum_CS					; 时设模式增数
-KeyU_NoTimeSet:
+	goto	KeyU_NoTimeMode				; 非时间模式
+
+	movf	Secondary_Status,F
+	btfss	Z
+	goto	AddNum_CS					; 时设模式执行增数
+	call	RGB_MODE_CHG				; 时显模式切换RGB模式
+	goto	Key_HandleOver				; 时显模式只执行1次按键功能
+
+KeyU_NoTimeMode:
 	movlw	1
 	subwf	Primary_Status,W
 	btfss	Z
-	goto	KeyU_NoDateSet
-	goto	AddNum_DS					; 日设模式增数
-KeyU_NoDateSet:
-	movlw	3
-	subwf	Primary_Status,W
-	btfss	C
-	goto	Key_HandleOver				; 非时间、日期、闹钟设置则为无效按键
-	goto	AddNum_AS
+	goto	KeyU_NoDateMode				; 非日期模式
 
-KeyU_NoSetMode:
-	movlw	3
-	subwf	Primary_Status,W
-	btfsc	C
-	goto	Key_HandleOver
+	movf	Secondary_Status,F
+	btfss	Z
+	goto	AddNum_DS					; 日设模式执行增数
+	call	SwitchState_DPDis			; 日显模式切换DP显示
+	goto	Key_HandleOver				; 日显模式只执行1次按键功能
 
-	call	SwitchState_DPDis			; Up键在显示模式切换DP显示
-	goto	Key_HandleOver
+KeyU_NoDateMode:
+	movlw	2
+	subwf	Primary_Status,W
+	btfss	Z
+	goto	KeyU_NoTemperMode			; 非温度模式
+
+	call	SwitchState_DPDis			; 温显模式切换DP显示
+	goto	Key_HandleOver				; 温显模式只执行1次按键功能
+
+KeyU_NoTemperMode:
+	movf	Secondary_Status,F
+	btfss	Z
+	goto	AddNum_AS					; 闹设模式执行增数
+	call	Alarm_SetSwitch				; 闹显模式开关当前闹钟
+	goto	Key_HandleOver				; 闹显模式只执行1次按键功能
 Key_KeyUTriggered_Exit:
 	return
 
 
+; S键触发
 Key_KeySTriggered:
 	call	Universal_TriggerHandle
 	btfsc	Key_Flag,4					; 跳过功能
@@ -181,6 +207,7 @@ KeyS_SetMode:
 	goto	Key_HandleOver
 
 
+
 Key_KeyDDepress:
 	bcf		Depress_Flag,0
 	return
@@ -198,15 +225,18 @@ Key_KeySDepress:
 Universal_TriggerHandle:
 	call	Key_CloseLoud
 	clrf	DP_Counter					; 复位DP模式计数
+	movlw	15							; 复位返回时显模式计数
+	movwf	Return_Counter
+	bcf		SysEvent_Flag,1				; 清除DP标志
 	return
 
 
 Key_CloseLoud:
-	movf	Triggered_AlarmGroup,F		; 按键是否打断响闹
+	movf	Triggered_AlarmGroup,F		; 判断按键是否打断了响闹
 	btfsc	Z
-	return
+	return								; 未打断响闹则执行其按键功能
 
-	bsf		Key_Flag,4					; 打断响闹的按键无功能
+	bsf		Key_Flag,4					; 打断响闹则此次按键无功能
 	goto	Close_Loud
 
 

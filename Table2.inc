@@ -1,9 +1,9 @@
-	org		0bc5H
+	org		0b00H
 DPMode_1:
 	movlw	3
 	subwf	Primary_Status,W
 	btfsc	C
-	goto	DP1_OtherDis					; 非时间、日期、温度模式
+	goto	DP1_OtherDis						; 非时间、日期、温度模式
 
 	movlw	High(DP1_JumpTable)
 	movwf	PCLATH
@@ -26,7 +26,7 @@ Alarm_SetSwitch:
 
 	movlw	High(AlarmSW_JumpTable)
 	movwf	PCLATH
-	movf	P_Temp,W					; 根据当前闹钟组开关闹钟
+	movf	P_Temp,W							; 根据当前闹钟组开关闹钟
 AlarmSW_JumpTable:
 	addwf	PCL,F
 	goto	Alarm1SW
@@ -38,9 +38,6 @@ AlarmSW_JumpTable:
 
 ; 时间模式半S程序
 TimeDis_HalfSec:
-	btfsc	SysEvent_Flag,1						; 显示模式下，有DP标志时不显示时间
-	return
-
 	movlw	High(TimeMode_HS_JumpTable)
 	movwf	PCLATH
 	movf	Secondary_Status,W
@@ -95,3 +92,54 @@ Sec_2HzJumpTable:
 	goto	AlarmDis_Sec
 	goto	AlarmDis_Sec
 	goto	AlarmDis_Sec
+
+
+;======================================================================================
+
+
+; 8字表，用于横向滚动变色
+RGBTable_HorizonRolling:
+	addwf	PCL,F
+	retlw	27
+	retlw	28
+	retlw	22
+	retlw	23
+	retlw	24
+	retlw	26
+	retlw	25
+	retlw	30
+	retlw	31
+	retlw	19
+	retlw	20
+	retlw	21
+	retlw	29
+	retlw	32
+	retlw	0
+	retlw	1
+	retlw	18
+	retlw	4
+	retlw	5
+	retlw	14
+	retlw	15
+	retlw	16
+	retlw	3
+	retlw	13
+	retlw	2
+	retlw	17
+	retlw	7
+	retlw	8
+	retlw	10
+	retlw	11
+	retlw	12
+	retlw	6
+	retlw	9
+
+
+IncTable_HorizonRolling:
+	addwf	PCL,F
+	retlw	7
+	retlw	10
+	retlw	9
+	retlw	7
+
+

@@ -59,7 +59,7 @@ NEXTBYTE_1:
 
 ; 用户变量初始化
 	movlw	2
-	movwf	T0_Counter		; 从1开始计数到0
+	movwf	T0_Counter		; 从2开始计数到0
 	movlw	8
 	movwf	T1_Counter		; 从8开始计数到0
 
@@ -67,13 +67,13 @@ NEXTBYTE_1:
 	movwf	Light_Level		; 上电默认低亮
 	
 	movlw	15
-	movwf	Return_Counter	; 设置模式返回计时复位
+	movwf	Return_Counter	; 复位设置模式返回计时
 
 	movlw	12
 	movwf	R_Time_Hour		; 设置上电时间
 	movlw	0
 	movwf	R_Time_Min
-	movlw	55
+	movlw	0
 	movwf	R_Time_Sec
 
 	movlw	25
