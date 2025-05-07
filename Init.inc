@@ -63,9 +63,9 @@ NEXTBYTE_1:
 	movlw	8
 	movwf	T1_Counter		; 从8开始计数到0
 
-	movlw	3
+	movlw	0
 	movwf	Light_Level		; 上电默认低亮
-	
+
 	movlw	15
 	movwf	Return_Counter	; 复位设置模式返回计时
 

@@ -404,7 +404,18 @@ TemperMode_Change_Exit:
 
 ; RGB模式切换
 RGB_MODE_CHG:
-	nop									; 切换RGB模式
+	movlw	11
+	subwf	RGB_Mode,W
+	btfsc	C
+	goto	RGB_Mode_Overflow
+	incf	RGB_Mode,F
+	goto	RGB_MODE_CHG_Exit
+RGB_Mode_Overflow:
+	clrf	RGB_Mode
+RGB_MODE_CHG_Exit:
+	call	RGB_ModeSwitch				; 切换RGB模式
+	REFLASH_DISPLAY						; 刷新显示
+	HALFSEC_DISPLAY
 	return
 
 

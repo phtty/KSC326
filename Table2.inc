@@ -1,4 +1,4 @@
-	org		0b00H
+	org		0b6eH
 DPMode_1:
 	movlw	3
 	subwf	Primary_Status,W
@@ -97,6 +97,29 @@ Sec_2HzJumpTable:
 ;======================================================================================
 
 
+; RGB模式切换
+RGB_ModeSwitch:
+	movlw	High(RGB_ModeJumpTable)
+	movwf	PCLATH
+	movf	RGB_Mode,W
+RGB_ModeJumpTable:
+	addwf	PCL,F
+	goto	SingleColor_White
+	goto	SingleColor_Red
+	goto	SingleColor_Yellow
+	goto	SingleColor_Green
+	goto	SingleColor_Cyan
+	goto	SingleColor_Blue
+	goto	SingleColor_Purple
+	goto	DigitalAlter_Fixed
+	goto	ChaosColor_Fixed
+	goto	SingleColor_Rolling
+	goto	ChaosColor_Rolling
+	goto	DigitalAlter_Rolling
+
+
+
+
 ; 8字表，用于横向滚动变色
 RGBTable_HorizonRolling:
 	addwf	PCL,F
@@ -143,3 +166,38 @@ IncTable_HorizonRolling:
 	retlw	7
 
 
+RGBTable_ChaosColor:
+	addwf	PCL,F
+	retlw	137
+	retlw	57
+	retlw	80
+	retlw	202
+	retlw	193
+	retlw	8
+	retlw	229
+	retlw	203
+	retlw	59
+	retlw	213
+	retlw	217
+	retlw	143
+	retlw	73
+	retlw	5
+	retlw	154
+	retlw	176
+	retlw	108
+	retlw	204
+	retlw	226
+	retlw	210
+	retlw	122
+	retlw	175
+	retlw	27
+	retlw	109
+	retlw	67
+	retlw	165
+	retlw	183
+	retlw	40
+	retlw	119
+	retlw	159
+	retlw	26
+	retlw	71
+	retlw	120

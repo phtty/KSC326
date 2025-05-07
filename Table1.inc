@@ -1,4 +1,4 @@
-org		0c00H
+	org		0c00H
 DigitSet_SegA:
 	movlw	High(SegA_JumpTable)
 	movwf	PCLATH

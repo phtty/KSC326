@@ -20,7 +20,7 @@ START:
 
 	movlw	1
 	movwf	DP_Mode
-	bcf		SysEvent_Flag,3
+	call	RGB_ModeSwitch
 	call	Key_Beep
 
 MAIN:
@@ -105,6 +105,7 @@ include Calendar.inc
 include Alarm.inc
 include PowerSaving.inc
 include	DPMode.inc
+include BootScreen.inc
 include	Table2.inc
 include	Table1.inc
 include RGBTable.inc
