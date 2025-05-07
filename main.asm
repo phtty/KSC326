@@ -16,14 +16,13 @@ START:
 
 	call	System_Init						; 上电初始化
 
-	HALFSEC_DISPLAY
-
-	movlw	1
-	movwf	DP_Mode
 	call	RGB_ModeSwitch
+	call	BootScreen_Display				; 上电显示
+	HALFSEC_DISPLAY
 	call	Key_Beep
 
 MAIN:
+	call	PowerSave_Juge
 	call	Display_Reflash					; 刷新显示
 	call	PeriodicTask_32Hz				; 32Hz任务
 	call	PeriodicTask_2Hz				; 2Hz任务
@@ -109,5 +108,4 @@ include BootScreen.inc
 include	Table2.inc
 include	Table1.inc
 include RGBTable.inc
-
 	end

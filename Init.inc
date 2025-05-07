@@ -64,7 +64,10 @@ NEXTBYTE_1:
 	movwf	T1_Counter		; 从8开始计数到0
 
 	movlw	0
-	movwf	Light_Level		; 上电默认低亮
+	movwf	Light_Level		; 上电默认高亮
+
+	movlw	1
+	movwf	DP_Mode			; DP2模式
 
 	movlw	15
 	movwf	Return_Counter	; 复位设置模式返回计时
@@ -105,6 +108,7 @@ Port_Initial:
 	movwf	WPUA			; 无上下拉
 	movlw	0x00
 	movwf	IOCA			; PA无电平变化中断
+	LED_OFF					; 初始化阶段关闭LED
 	bcf		RAIE
 
 	movlw	0x24

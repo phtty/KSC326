@@ -1,4 +1,4 @@
-	org		0b6eH
+	org		0b00H
 DPMode_1:
 	movlw	3
 	subwf	Primary_Status,W
