@@ -164,15 +164,14 @@ TimeMin_Sub_Exit:
 Date_Year_Add:
 	movlw	99
 	subwf	R_Date_Year,W
-	btfss	C
+	btfsc	C
 	goto	DateYear_AddOverflow
 	incf	R_Date_Year,F
 	goto	DateYear_Add_Exit
 DateYear_AddOverflow:
 	clrf	R_Date_Year
 DateYear_Add_Exit:
-	call	L_DayOverflow_Juge
-	call	Is_Leap_Year
+	call	DayOverflow_Juge
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -188,8 +187,7 @@ DateYear_SubOverflow:
 	movlw	99
 	movwf	R_Date_Year
 DateYear_Sub_Exit:
-	call	L_DayOverflow_Juge
-	call	Is_Leap_Year
+	call	DayOverflow_Juge
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -229,7 +227,7 @@ DateMonth_Sub_Exit:
 ; 日增加
 Date_Day_Add:
 	incf	R_Date_Day,F
-	call	L_DayOverflow_To_1
+	call	DayOverflow_To_1
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -246,16 +244,16 @@ DateDay_SubOverflow:					; 溢出时天数变为此月最大天数
 	decf	R_Date_Month,W
 	movf	R_X
 	btfsc	Calendar_Flag,0
-	goto	L_LeapYear_Handle3			; 查闰年表
-	movlw	High(L_Table_Month_Common)
+	goto	DaySub_LeapYear_Handle		; 查闰年表
+	movlw	High(Table_Month_Common)
 	movwf	PMADRH
-	movlw	Low(L_Table_Month_Common)
-	goto	L_Day_Juge2
-L_LeapYear_Handle3:
-	movlw	High(L_Table_Month_Leap)
+	movlw	Low(Table_Month_Common)
+	goto	DaySub_SearchMaxDay
+DaySub_LeapYear_Handle:
+	movlw	High(Table_Month_Leap)
 	movwf	PMADRH
-	movlw	Low(L_Table_Month_Leap)
-L_Day_Juge2:
+	movlw	Low(Table_Month_Leap)
+DaySub_SearchMaxDay:
 	addwf	R_X,W
 	movwf	PMADRL
 	bsf		RDON
@@ -422,23 +420,23 @@ RGB_MODE_CHG_Exit:
 ;======================================================================================
 
 
-L_DayOverflow_Juge:
+DayOverflow_Juge:
 	bcf		RP0
 	call	Is_Leap_Year				; 判断当前是平年还是闰年
-	
+
 	decf	R_Date_Month,W
 	movf	R_X
 	btfsc	Calendar_Flag,0
-	goto	L_LeapYear_Handle			; 查闰年表
-	movlw	High(L_Table_Month_Common)
+	goto	DayOverflow_LeapYear		; 查闰年表
+	movlw	High(Table_Month_Common)
 	movwf	PMADRH
-	movlw	Low(L_Table_Month_Common)
-	goto	L_Day_Juge1
-L_LeapYear_Handle:
-	movlw	High(L_Table_Month_Leap)
+	movlw	Low(Table_Month_Common)
+	goto	DayOverflow_SearchMaxDay
+DayOverflow_LeapYear:
+	movlw	High(Table_Month_Leap)
 	movwf	PMADRH
-	movlw	Low(L_Table_Month_Leap)
-L_Day_Juge1:
+	movlw	Low(Table_Month_Leap)
+DayOverflow_SearchMaxDay:
 	addwf	R_X,W
 	movwf	PMADRL
 	bsf		RDON
@@ -458,23 +456,23 @@ Day_Overflow_Yes:
 
 
 
-L_DayOverflow_To_1:
+DayOverflow_To_1:
 	bcf		RP0
 	call	Is_Leap_Year				; 判断当前是平年还是闰年
-	
+
 	decf	R_Date_Month,W
 	movf	R_X
 	btfsc	Calendar_Flag,0
-	goto	L_LeapYear_Handle			; 查闰年表
-	movlw	High(L_Table_Month_Common)
+	goto	DayAdd_LeapYear_Handle		; 查闰年表
+	movlw	High(Table_Month_Common)
 	movwf	PMADRH
-	movlw	Low(L_Table_Month_Common)
-	goto	L_Day_Juge1
-L_LeapYear_Handle1:
-	movlw	High(L_Table_Month_Leap)
+	movlw	Low(Table_Month_Common)
+	goto	DayAdd_SearchMaxDay
+DayAdd_LeapYear_Handle:
+	movlw	High(Table_Month_Leap)
 	movwf	PMADRH
-	movlw	Low(L_Table_Month_Leap)
-L_Day_Juge3:
+	movlw	Low(Table_Month_Leap)
+DayAdd_SearchMaxDay:
 	addwf	R_X,W
 	movwf	PMADRL
 	bsf		RDON

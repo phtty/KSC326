@@ -201,3 +201,33 @@ RGBTable_ChaosColor:
 	retlw	26
 	retlw	71
 	retlw	120
+
+; 平年的每月份天数表
+Table_Month_Common:
+	db	31	; January
+	db	28	; February
+	db	31	; March
+	db	30	; April
+	db	31	; May
+	db	30	; June
+	db	31	; July
+	db	31	; August
+	db	30	; September
+	db	31	; October
+	db	30	; November
+	db	31	; December
+
+; 闰年的每月份天数表
+Table_Month_Leap:
+	db	31	; January
+	db	29	; February
+	db	31	; March
+	db	30	; April
+	db	31	; May
+	db	30	; June
+	db	31	; July
+	db	31	; August
+	db	30	; September
+	db	31	; October
+	db	30	; November
+	db	31	; December

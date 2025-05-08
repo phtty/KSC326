@@ -248,3 +248,10 @@ Key_Beep:
 	bsf		Beep_Flag,0
 	bsf		Beep_Flag,1
 	return
+
+; °´¼üÒô
+Key_Beep_Cancel:
+	clrf	Beep_Serial
+	bcf		Beep_Flag,0
+	bcf		Beep_Flag,1
+	return

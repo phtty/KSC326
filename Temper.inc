@@ -113,7 +113,7 @@ Cel2Fah:
 	movlw	0
 	addwf	P_Temp1,F				; 再加上自身完成x9操作
 
-L_Div5_Loop:
+Div5_Loop:
 	movlw	5
 	subwf	P_Temp,F				; 循环-5
 	btfsc	C
@@ -121,11 +121,11 @@ L_Div5_Loop:
 	movlw	1
 	subwf	P_Temp1,F				; 低8位借位，高8位-1
 	btfss	C
-	goto	L_Div5_Loop_Over		; 高8位借位则是不够减了，退出循环
+	goto	Div5_Loop_Over			; 高8位借位则是不够减了，退出循环
 Div5_NoBorrow:
 	incf	R_Temperature_F,F
-	goto	L_Div5_Loop
-L_Div5_Loop_Over:
+	goto	Div5_Loop
+Div5_Loop_Over:
 	btfsc	ADC_Flag,0
 	goto	MinusTemper2Fah
 	movlw	32
