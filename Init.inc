@@ -72,19 +72,19 @@ NEXTBYTE_1:
 	movlw	15
 	movwf	Return_Counter	; 复位设置模式返回计时
 
-	movlw	12
+	movlw	23
 	movwf	R_Time_Hour		; 设置上电时间
-	movlw	0
+	movlw	59
 	movwf	R_Time_Min
-	movlw	0
+	movlw	55
 	movwf	R_Time_Sec
 	bsf		Clock_Flag,0	; 上电为12H模式
 
-	movlw	25
+	movlw	99
 	movwf	R_Date_Year		; 设置上电日期
-	movlw	1
+	movlw	12
 	movwf	R_Date_Month
-	movlw	1
+	movlw	31
 	movwf	R_Date_Day
 
 	clrf	R_Alarm1_Hour	; 设置上电闹钟

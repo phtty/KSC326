@@ -10,12 +10,11 @@ PeriodicTask_2Hz:
 
 ; 半S处理
 HalfSec_Handle:
-	call	COL_Display						; 一些符号点的点亮
-	call	AL_Display
-
 	btfsc	SysEvent_Flag,1
 	goto	DPMode_Display					; 存在DP显示标志时，显示当前的DP模式
 
+	call	COL_Display						; 一些符号点的点亮
+	call	AL_Display
 	goto	HalfSec_Jump
 
 

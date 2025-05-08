@@ -1,5 +1,4 @@
 Calendar_Add:								; 走日期
-	bcf		RP0
 	call	Is_Leap_Year
 	decf	R_Date_Month,W
 	movwf	R_X
@@ -29,7 +28,7 @@ Calendar_DayOverflow:
 	movlw	1
 	movwf	R_Date_Day						; 重置天数，月份增加，需判断月份是否溢出
 	movf	R_Date_Month,W
-	sublw	12
+	sublw	11
 	btfss	C
 	goto	Calendar_MonthOverflow			; 月份溢出
 	incf	R_Date_Month,F

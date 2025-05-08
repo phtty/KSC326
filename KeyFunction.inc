@@ -7,6 +7,7 @@ SwitchState_DisplayMode:
 	btfsc	C
 	goto	PrimarySta_Overflow
 	incf	Primary_Status,F
+	call	SymbolPM_Clear
 	call	COL_Clear
 	movlw	2
 	subwf	Primary_Status,W			; 温度显示模式亮TEMP点，非温度显示模式灭TEMP点
@@ -87,6 +88,10 @@ SwitchState_DPDis:
 DPMode_Overflow:
 	clrf	DP_Mode
 SwitchState_DPDis_Exit:
+	call	SymbolTEMP_Clear			; 切入DP显示要清除所有散点
+	call	SymbolAL_Clear
+	call	SymbolPM_Clear
+	call	SymbolCOL_Clear
 	REFLASH_DISPLAY						; 更新显示
 	HALFSEC_DISPLAY
 	return
