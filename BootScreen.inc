@@ -1,5 +1,12 @@
 ; 上电显示0~9以及所有单点
 BootScreen_Display:
+	call	Display_All
+	call	Send_RGB_Data						; 全显1S
+
+	btfss	Time_Flag,0
+	goto	$-1
+	bcf		Time_Flag,0
+
 	clrf	P_Temp+7
 	bcf		Time_Flag,1
 Number_Display_Loop:

@@ -7,10 +7,20 @@ SwitchState_DisplayMode:
 	btfsc	C
 	goto	PrimarySta_Overflow
 	incf	Primary_Status,F
+	movlw	2
+	subwf	Primary_Status,W			; 温度显示模式亮TEMP点，非温度显示模式灭TEMP点
+	btfsc	Z
+	goto	Temper_Dis
+	call	SymbolTEMP_Clear
+	goto	SwitchState_DisplayMode_Exit
+Temper_Dis:
+	call	SymbolTEMP_Display
+	call	SymbolAL_Clear				; 温度模式灭AL点
 	goto	SwitchState_DisplayMode_Exit
 PrimarySta_Overflow:
 	clrf	Primary_Status
 SwitchState_DisplayMode_Exit:
+	
 	REFLASH_DISPLAY						; 更新显示
 	HALFSEC_DISPLAY
 	return
@@ -65,7 +75,8 @@ SwitchState_DPDis:
 	bsf		SysEvent_Flag,1				; 置位DP显示标志位
 	movlw	3
 	movwf	Return_Counter				; 返回计时设置为3S
-	clrf	DP_Counter					; 复位DP模式计数
+	movlw	10
+	movwf	DP_Counter					; 复位DP模式计数
 
 	movlw	2
 	subwf	DP_Mode,W
@@ -286,6 +297,14 @@ Alarm3SW:
 	movlw	B'100'
 	xorwf	Alarm_Switch,F
 Alarm_SetSwitch_Exit:
+	movf	Alarm_Switch,F				; 若无任何闹钟开启则灭AL点，有闹钟则亮AL点
+	btfsc	Z
+	goto	AL_Clr
+	call	SymbolAL_Display
+	goto	AlarmSW_Exit
+AL_Clr:
+	call	SymbolAL_Clear
+AlarmSW_Exit:
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return

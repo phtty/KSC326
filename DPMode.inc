@@ -1,43 +1,40 @@
 
 DP1_TimeDis:
-	movlw	10
-	subwf	DP_Counter,W
-	btfss	C
+	decfsz	DP_Counter,F
 	return
-	clrf	DP_Counter						; DP1时间显示10S切换到日期显示
+	movlw	2
+	movwf	DP_Counter						; DP1时间模式计时结束切换到日期显示后,将计时设为2S
 	movlw	1
 	movwf	Primary_Status
 	return
 DP1_DateDis:
-	movlw	2
-	subwf	DP_Counter,W
-	btfss	C
+	decfsz	DP_Counter,F
 	return
-	clrf	DP_Counter						; DP1日期显示2S切换到温度显示
+	movlw	2
+	movwf	DP_Counter						; DP1日期模式计时结束切换到温度显示后,将计时设为2S
 	movlw	2
 	movwf	Primary_Status
 	return
 DP1_TemperDis:
-	movlw	2
-	subwf	DP_Counter,W
-	btfss	C
+	decfsz	DP_Counter,F
 	return
-	clrf	DP_Counter						; DP1温度显示2S切换到时间显示
+	movlw	10
+	movwf	DP_Counter						; DP1温度模式计时结束切换到时间显示后,将计时设为10S
 	clrf	Primary_Status
 	return
 DP1_OtherDis:
-	movlw	10
-	subwf	DP_Counter,W
-	btfss	C
+	decfsz	DP_Counter,F
 	return
-	clrf	DP_Counter						; DP1其他模式显示10S切换到时间显示
+	movlw	10
+	movwf	DP_Counter						; DP1其他模式显示10S切换到时间显示
 	clrf	Primary_Status
 	return
 
 
 
 DPMode_2:
-	clrf	DP_Counter						; DP2不会主动切换模式
+	movlw	10
+	movwf	DP_Counter						; DP2不会主动切换模式
 	return
 
 
@@ -47,10 +44,9 @@ DPMode_3:
 	btfsc	Z								; DP3非时间显示模式15S切换回时间显示
 	return
 
-	movlw	15
-	subwf	DP_Counter,W
-	btfss	C
+	decfsz	DP_Counter,F
 	return
-	clrf	DP_Counter
+	movlw	15
+	movwf	DP_Counter
 	clrf	Primary_Status
 	return

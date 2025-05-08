@@ -10,7 +10,8 @@ PeriodicTask_2Hz:
 
 ; 半S处理
 HalfSec_Handle:
-	call	COL_Display						; 秒点闪烁
+	call	COL_Display						; 一些符号点的点亮
+	call	AL_Display
 
 	btfsc	SysEvent_Flag,1
 	goto	DPMode_Display					; 存在DP显示标志时，显示当前的DP模式
@@ -18,10 +19,11 @@ HalfSec_Handle:
 	goto	HalfSec_Jump
 
 
+; S点显示
 COL_Display:
 	movf	Primary_Status,F
 	btfss	Z
-	goto	COL_DisplayJuge2
+	goto	COL_DisplayJuge
 
 	movlw	1
 	subwf	Secondary_Status,W
@@ -29,7 +31,7 @@ COL_Display:
 	goto	Display_COL						; 时钟模式非12/24H模式都亮S点
 	return
 
-COL_DisplayJuge2:
+COL_DisplayJuge:
 	movlw	3
 	subwf	Primary_Status,W				; 闹钟模式亮S点
 	btfss	C
@@ -39,6 +41,18 @@ Display_COL:
 	goto	SymbolCOL_Display				; S点亮
 
 
+; AL点显示
+AL_Display:
+	movf	Alarm_Switch,F					; 无任何一组闹钟开启时不显示
+	btfsc	Z
+	return
+
+	movlw	2
+	subwf	Primary_Status,W				; 温度模式不显示AL点
+	btfsc	Z
+	return
+
+	goto	SymbolAL_Display
 
 
 ; 1S处理
@@ -51,6 +65,7 @@ Sec_Handle:
 	call	DPMode_Mangage					; DP模式切换
 	call	Return_DisMode					; 设置模式定时返回显示模式
 	call	COL_Clear						; 秒点闪烁
+	call	AL_Clear
 	call	Temperature_Test				; 定时测温
 
 	btfsc	SysEvent_Flag,1					; 若有DP显示标志则跳过灭点
@@ -73,9 +88,10 @@ Return_Counting:
 	return									; 未计到0则直接退出
 
 	clrf	Secondary_Status				; 返回显示模式
-	btfss	SysEvent_Flag,1					; 若是DP显示返回则还需要返回到时间模式
+	btfss	SysEvent_Flag,1					; 若是从DP显示返回则还需要返回到时间模式
 	goto	Return_DisMode_Exit
 	bcf		SysEvent_Flag,1					; 清除DP标志
+	bsf		SysEvent_Flag,4					; 置位DP显示返回标志
 	clrf	Primary_Status					; 返回时间模式
 Return_DisMode_Exit:
 	REFLASH_DISPLAY							; 刷新显示
@@ -83,18 +99,19 @@ Return_DisMode_Exit:
 	return
 
 
+; 清S点
 COL_Clear:
 	movf	Primary_Status,F
 	btfss	Z
-	goto	COL_ClearJuge2
+	goto	COL_ClearJuge
 
 	movlw	2
 	subwf	Secondary_Status,W
 	btfss	C
-	goto	Clear_COL						; 时钟模式的前两个会熄S点
+	goto	Clear_COL						; 时钟模式的前两个子模式会熄S点
 	return
 
-COL_ClearJuge2:
+COL_ClearJuge:
 	movlw	3
 	subwf	Primary_Status,W				; 闹钟之前的模式熄S点
 	btfsc	C
@@ -102,3 +119,17 @@ COL_ClearJuge2:
 
 Clear_COL:
 	goto	SymbolCOL_Clear					; S点熄灭
+
+
+
+; 清AL点
+AL_Clear:
+	btfsc	Clock_Flag,1					; 有响闹模式清AL点
+	goto	SymbolAL_Clear
+
+	movlw	2
+	subwf	Primary_Status,W
+	btfsc	Z
+	goto	SymbolAL_Clear					; 温度模式清AL点
+
+	return

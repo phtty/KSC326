@@ -190,8 +190,6 @@ Year_Display:
 
 ; 温度显示
 Temper_Display:
-	call	SymbolTEMP_Display				; 显示温度符号
-
 	btfss	ADC_Flag,1
 	goto	Display_CelsiusDegree
 	goto	Display_FahrenheitDegree

@@ -229,14 +229,17 @@ Key_KeySDepress:
 	goto	SwitchState_DisplayMode		; 切换显示模式
 
 
+; 通用按键处理
 Universal_TriggerHandle:
 	btfss	Key_Flag,3
 	call	Key_Beep					; 按键音，长按不生效
 	call	Key_CloseLoud
-	clrf	DP_Counter					; 复位DP模式计数
+	movlw	10
+	movwf	Return_Counter				; 复位DP模式计数
 	movlw	15							; 复位返回时显模式计数
 	movwf	Return_Counter
 	bcf		SysEvent_Flag,1				; 清除DP标志
+	bsf		SysEvent_Flag,4				; 清除DP显示返回标志
 	return
 
 

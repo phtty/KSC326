@@ -345,8 +345,8 @@ DPMode_Mangage:
 	btfss	Z
 	return
 
-	btfss	SysEvent_Flag,1					; 存在DP显示时，不递增DP计数
-	incf	DP_Counter,F					; 递增DP计数
+	btfsc	SysEvent_Flag,1					; 存在DP显示时，不递增DP计数
+	return
 
 	movlw	High(DPMode_JumpTable)
 	movwf	PCLATH

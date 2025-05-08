@@ -353,3 +353,24 @@ Digit2Clr_SegG:
 Digit3Clr_SegG:
 	bcf		DisSwtich+1,1
 	return
+
+
+; È«ÏÔ
+Display_All:
+	movlw	0xff
+	movwf	DisSwtich
+	movwf	DisSwtich+1
+	movwf	DisSwtich+2
+	movwf	DisSwtich+3
+	movlw	0x01
+	movwf	DisSwtich+4
+	return
+
+; È«Çå
+Clear_All:
+	clrf	DisSwtich
+	clrf	DisSwtich+1
+	clrf	DisSwtich+2
+	clrf	DisSwtich+3
+	clrf	DisSwtich+4
+	return

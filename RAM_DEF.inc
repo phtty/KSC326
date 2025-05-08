@@ -59,7 +59,7 @@ SysEvent_Flag
 ;bit1 = 1 DP显示标志
 ;bit2 = 1 省电模式标志
 ;bit3 = 1 RGB变色标志
-;bit4 = 1 
+;bit4 = 1 DP显示返回标志
 
 Primary_Status
 ;0 = 时间显示
