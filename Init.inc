@@ -78,7 +78,7 @@ NEXTBYTE_1:
 	movwf	R_Time_Min
 	movlw	0
 	movwf	R_Time_Sec
-	bsf		Clock_Flag		; 上电为12H模式
+	bsf		Clock_Flag,0	; 上电为12H模式
 
 	movlw	25
 	movwf	R_Date_Year		; 设置上电日期
