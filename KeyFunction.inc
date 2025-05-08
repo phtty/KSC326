@@ -7,6 +7,7 @@ SwitchState_DisplayMode:
 	btfsc	C
 	goto	PrimarySta_Overflow
 	incf	Primary_Status,F
+	call	COL_Clear
 	movlw	2
 	subwf	Primary_Status,W			; 温度显示模式亮TEMP点，非温度显示模式灭TEMP点
 	btfsc	Z
@@ -20,7 +21,6 @@ Temper_Dis:
 PrimarySta_Overflow:
 	clrf	Primary_Status
 SwitchState_DisplayMode_Exit:
-	
 	REFLASH_DISPLAY						; 更新显示
 	HALFSEC_DISPLAY
 	return
@@ -115,7 +115,7 @@ Time_Hour_Add:
 TimeHour_AddOverflow:
 	clrf	R_Time_Hour
 TimeHour_Add_Exit:
-	call	TimeRange_Detect			; 夜间模式的处理
+	call	TimeBoard_Detect			; 夜间模式的处理
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -131,7 +131,7 @@ TimeHour_SubOverflow:
 	movlw	23
 	movwf	R_Time_Hour
 TimeHour_Sub_Exit:
-	call	TimeRange_Detect			; 夜间模式的处理
+	call	TimeBoard_Detect			; 夜间模式的处理
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return

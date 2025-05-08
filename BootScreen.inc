@@ -7,6 +7,7 @@ BootScreen_Display:
 	goto	$-1
 	bcf		Time_Flag,0
 
+	call	Clear_All
 	clrf	P_Temp+7
 	bcf		Time_Flag,1
 Number_Display_Loop:

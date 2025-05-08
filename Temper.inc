@@ -142,7 +142,7 @@ MinusTemper2Fah:
 
 ; 15S¼ä¸ô²âÎÂ
 Temperature_Test:
-	decfsz	TemperTest_Counter
+	decfsz	TemperTest_Counter,F
 	return
 
 	movlw	15

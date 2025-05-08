@@ -97,7 +97,6 @@ include Display.inc
 include	PeriodicTask32Hz.inc
 include	PeriodicTask2Hz.inc
 include Temper.inc
-include ADCTable.inc
 include Beep.inc
 include Time.inc
 include Calendar.inc
@@ -105,6 +104,7 @@ include Alarm.inc
 include PowerSaving.inc
 include	DPMode.inc
 include BootScreen.inc
+include ADCTable.inc
 include	Table2.inc
 include	Table1.inc
 include RGBTable.inc

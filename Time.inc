@@ -15,7 +15,7 @@ Time_Run:
 
 	clrf	R_Time_Min
 	incf	R_Time_Hour,F
-	call	TimeRange_Detect					; 发生小时进位时，判断一次是否进入夜间模式
+	call	TimeBoard_Detect					; 发生小时进位时，判断一次是否进入夜间模式
 	movlw	24
 	subwf	R_Time_Hour,W
 	btfss	C
@@ -28,24 +28,28 @@ Time_Run:
 
 
 
-; 夜间时段范围检测（19:00~6:00）
-TimeRange_Detect:
+; 夜间时段边界检测（19:00&6:00）
+TimeBoard_Detect:
 	movlw	19
 	subwf	R_Time_Hour,W
-	btfsc	C
-	goto	Enter_NightMode					; 若小时大于等于19点则进入夜间时段
+	btfss	Z
+	goto	NightMode_Juge
 
+	goto	Enter_NightMode					; 若时间等于19点则进入夜间时段
+
+NightMode_Juge:
 	movlw	6
 	subwf	R_Time_Hour,W
-	btfss	C
-	goto	Enter_NightMode					; 若小时小于6点也进入夜间时段
-	
-	clrf	Light_Level						; 亮度设为高亮
-	REFLASH_DISPLAY
-	return
+	btfss	Z
+	goto	TimeRange_Detect_Exit
+
+	clrf	Light_Level						; 若时间等于6点则退出夜间时段
+	goto	TimeRange_Detect_Exit
 
 Enter_NightMode:
 	movlw	3
 	movwf	Light_Level						; 亮度设为低亮
+
+TimeRange_Detect_Exit:
 	REFLASH_DISPLAY
 	return

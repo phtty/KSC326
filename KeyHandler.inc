@@ -268,6 +268,7 @@ Key_DPExit:
 
 ; 按键音
 Key_Beep:
+	call	NoBeep_Serial_Mode
 	movlw	B'10'
 	movwf	Beep_Serial
 	bsf		Beep_Flag,0
@@ -276,7 +277,6 @@ Key_Beep:
 
 ; 取消按键音
 Key_Beep_Cancel:
+	call	NoBeep_Serial_Mode
 	clrf	Beep_Serial
-	bcf		Beep_Flag,0
-	bcf		Beep_Flag,1
 	return
