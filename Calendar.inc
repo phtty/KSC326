@@ -1,9 +1,8 @@
 Calendar_Add:								; ×ßÈÕÆÚ
 	bcf		RP0
-	bsf		Calendar_Flag,1
 	call	Is_Leap_Year
 	decf	R_Date_Month,W
-	movf	R_X
+	movwf	R_X
 	btfsc	Calendar_Flag,0
 	goto	Calendar_Leap_Year
 	movlw	High(Table_Month_Common)

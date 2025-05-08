@@ -16,19 +16,18 @@ Key_Handler:
 	btfss	Z
 	goto	Key_HandleOver				; 若去抖后PF5~7的状态与去抖前不同，则为意外触发
 
-	call	Key_Beep					; 确定触发后响按键音
 	goto	Key_TriggerJuge				; 首次触发按键直接进入按键触发判断
 Key_Scan:
 	movlw	0xe0
 	andwf	PORTF,W
 	sublw	0xe0						; 检测到无按键时结束扫键，并执行松键功能
 	btfss	Z
-	goto	Key_Keep
+	goto	Key_LongPress_Juge
 
 	call	Depress_Juge				; 松键功能判断
 	goto	Key_HandleOver
 
-Key_Keep:
+Key_LongPress_Juge:
 	btfsc	Key_Flag,3
 	goto	LongPress_Handle
 	movlw	64
@@ -95,43 +94,45 @@ Key_KeyDTriggered:
 	btfsc	Key_Flag,4					; 跳过功能
 	goto	Key_HandleOver
 
-	movf	Primary_Status,F
-	btfss	Z
-	goto	KeyD_NoTimeMode				; 非时间模式
-
 	movf	Secondary_Status,F
 	btfss	Z
-	goto	SubNum_CS					; 时设模式执行增数
-	call	TemperMode_Change			; 切换至温显
-	goto	Key_HandleOver				; 时显模式只执行1次按键功能
+	goto	KeyD_SetMode				; 设置模式下D键只有短按功能
 
-KeyD_NoTimeMode:
+	btfss	Key_Flag,3
+	goto	KeyD_ShortTrigger			; 长按到来前只置位松键处理标志
+
+	bcf		Depress_Flag,0				; 长按触发则复位松键处理
+	call	Key_Beep
+	call	Switch_LightLevel			; 显示模式下长按切换亮度
+	goto	Key_HandleOver
+
+KeyD_ShortTrigger:
+	bsf		Depress_Flag,0				; 置位D键松键处理标志
+	call	Key_Beep_Cancel				; 按键音在松键处理中响
+
+KeyD_SetMode:
+	movf	Primary_Status,F
+	btfss	Z
+	goto	KeyD_NoTimeSet				; 非时间设置
+
+	goto	SubNum_CS					; 时设模式执行减数
+
+KeyD_NoTimeSet:
 	movlw	1
 	subwf	Primary_Status,W
 	btfss	Z
-	goto	KeyD_NoDateMode				; 非日期模式
+	goto	KeyD_NoDateSet				; 非日期设置
 
-	movf	Secondary_Status,F
-	btfss	Z
 	goto	SubNum_DS					; 日设模式执行减数
-	call	TemperMode_Change			; 切换至温显
-	goto	Key_HandleOver				; 日显模式只执行1次按键功能
 
-KeyD_NoDateMode:
-	movlw	2
+KeyD_NoDateSet:
+	movlw	3
 	subwf	Primary_Status,W
-	btfss	Z
-	goto	KeyD_NoTemperMode			; 非温度模式
+	btfss	C
+	goto	Key_KeyDTriggered_Exit		; 非闹钟设置
 
-	call	TemperMode_Change			; 切换温标
-	goto	Key_HandleOver				; 温显模式只执行1次按键功能
-
-KeyD_NoTemperMode:
-	movf	Secondary_Status,F
-	btfss	Z
 	goto	SubNum_AS					; 闹设模式执行减数
-	call	TemperMode_Change			; 切换至温显
-	goto	Key_HandleOver				; 闹显模式只执行1次按键功能
+
 Key_KeyDTriggered_Exit:
 	return
 
@@ -149,7 +150,7 @@ Key_KeyUTriggered:
 	movf	Secondary_Status,F
 	btfss	Z
 	goto	AddNum_CS					; 时设模式执行增数
-	call	RGB_MODE_CHG				; 时显模式切换RGB模式
+	call	Switch_RGBMode				; 时显模式切换RGB模式
 	goto	Key_HandleOver				; 时显模式只执行1次按键功能
 
 KeyU_NoTimeMode:
@@ -188,16 +189,18 @@ Key_KeySTriggered:
 	call	Universal_TriggerHandle
 	btfsc	Key_Flag,4					; 跳过功能
 	goto	Key_HandleOver
-	
+
 	movf	Secondary_Status,F
 	btfss	Z
-	goto	KeyS_SetMode
+	goto	KeyS_SetMode				; 设置模式下S键只有短按功能
 
 	btfsc	Key_Flag,3
 	goto	KeyS_DisMode_LongPress
+	call	Key_Beep_Cancel				; 松键有效的按键在松键时才有按键音
 	bsf		Depress_Flag,2				; 显示模式短按置位松键处理标志
 	return
 KeyS_DisMode_LongPress:
+	call	Key_Beep
 	bcf		Depress_Flag,2				; 显示模式长按会执行设置模式切换功能
 KeyS_SetMode:
 	movlw	2
@@ -208,21 +211,27 @@ KeyS_SetMode:
 
 
 
+; D键松键处理
 Key_KeyDDepress:
 	bcf		Depress_Flag,0
-	return
+	call	Key_Beep
+	goto	Switch_TemperMode			; 切换至温显或者切换温标
 
+; U键松键处理（未使用）
 Key_KeyUDepress:
 	bcf		Depress_Flag,1
 	return
 
+; S键松键处理
 Key_KeySDepress:
 	bcf		Depress_Flag,2
-	call	SwitchState_DisplayMode
-	goto	Key_HandleOver
+	call	Key_Beep
+	goto	SwitchState_DisplayMode		; 切换显示模式
 
 
 Universal_TriggerHandle:
+	btfss	Key_Flag,3
+	call	Key_Beep					; 按键音，长按不生效
 	call	Key_CloseLoud
 	clrf	DP_Counter					; 复位DP模式计数
 	movlw	15							; 复位返回时显模式计数
@@ -249,7 +258,7 @@ Key_Beep:
 	bsf		Beep_Flag,1
 	return
 
-; 按键音
+; 取消按键音
 Key_Beep_Cancel:
 	clrf	Beep_Serial
 	bcf		Beep_Flag,0

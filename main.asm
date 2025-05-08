@@ -17,7 +17,7 @@ START:
 	call	System_Init						; 上电初始化
 
 	call	RGB_ModeSwitch
-	call	BootScreen_Display				; 上电显示
+	;call	BootScreen_Display				; 上电显示
 	HALFSEC_DISPLAY
 	call	Key_Beep
 

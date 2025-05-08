@@ -49,7 +49,7 @@ SwitchState_TemperDis:
 	movlw	2
 	subwf	Primary_Status,W
 	btfsc	Z
-	goto	TemperMode_Change			; 已经处于温度显示模式时切换温标
+	goto	Switch_TemperMode			; 已经处于温度显示模式时切换温标
 	movlw	2
 	movwf	Primary_Status
 SwitchState_TemperDis_Exit:
@@ -160,6 +160,7 @@ TimeMin_Sub_Exit:
 
 ;======================================================================================
 
+
 ; 年增加
 Date_Year_Add:
 	movlw	99
@@ -196,7 +197,7 @@ DateYear_Sub_Exit:
 Date_Month_Add:
 	movlw	12
 	subwf	R_Date_Month,W
-	btfss	C
+	btfsc	C
 	goto	DateMonth_AddOverflow
 	incf	R_Date_Month,F
 	goto	DateMonth_Add_Exit
@@ -204,6 +205,7 @@ DateMonth_AddOverflow:
 	movlw	1
 	movwf	R_Date_Month
 DateMonth_Add_Exit:
+	call	DayOverflow_Juge
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -211,8 +213,8 @@ DateMonth_Add_Exit:
 ; 月减少
 Date_Month_Sub:
 	movlw	1
-	movf	R_Date_Month,W
-	btfss	C
+	subwf	R_Date_Month,W
+	btfsc	Z
 	goto	DateMonth_SubOverflow
 	decf	R_Date_Month,F
 	goto	DateMonth_Sub_Exit
@@ -220,6 +222,7 @@ DateMonth_SubOverflow:
 	movlw	12
 	movwf	R_Date_Month
 DateMonth_Sub_Exit:
+	call	DayOverflow_Juge
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -227,7 +230,7 @@ DateMonth_Sub_Exit:
 ; 日增加
 Date_Day_Add:
 	incf	R_Date_Day,F
-	call	DayOverflow_To_1
+	call	DayAdd_Overflow
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -235,14 +238,14 @@ Date_Day_Add:
 ; 日减少
 Date_Day_Sub:
 	movlw	1
-	movf	R_Date_Day,W
-	btfss	C
+	subwf	R_Date_Day,W
+	btfsc	Z
 	goto	DateDay_SubOverflow
 	decf	R_Date_Day,F
 	goto	DateDay_Sub_Exit
 DateDay_SubOverflow:					; 溢出时天数变为此月最大天数
 	decf	R_Date_Month,W
-	movf	R_X
+	movwf	R_X
 	btfsc	Calendar_Flag,0
 	goto	DaySub_LeapYear_Handle		; 查闰年表
 	movlw	High(Table_Month_Common)
@@ -270,6 +273,7 @@ DateDay_Sub_Exit:
 ;======================================================================================
 
 
+; 切换闹钟开关
 Alarm1SW:
 	movlw	B'001'
 	xorwf	Alarm_Switch,F
@@ -383,34 +387,51 @@ AlarmMin_Sub_Exit:
 
 
 ; 切换温度单位
-TemperMode_Change:
+Switch_TemperMode:
 	movlw	2
 	subwf	Primary_Status,W
 	btfsc	Z
 	goto	Switch_TemperUnit
 	movlw	2
 	movwf	Primary_Status				; 非温显模式切换至温显模式
-	goto	TemperMode_Change_Exit
+	goto	Switch_TemperMode_Exit
 Switch_TemperUnit:
 	movlw	2
 	xorwf	ADC_Flag,F					; 温显模式取反温度单位标志位，切换显示的温度单位
-TemperMode_Change_Exit:
+Switch_TemperMode_Exit:
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
 
 
-; RGB模式切换
-RGB_MODE_CHG:
+; 切换2档亮度
+Switch_LightLevel:
+	movf	Light_Level,F
+	btfsc	Z
+	goto	HighLight
+	clrf	Light_Level					; 低亮切高亮
+	goto	Switch_LightLevel_Exit
+
+HighLight:
+	movlw	3
+	movwf	Light_Level					; 高亮切低亮
+
+Switch_LightLevel_Exit:
+	REFLASH_DISPLAY						; 刷新显示
+	return
+
+
+; 切换RGB模式
+Switch_RGBMode:
 	movlw	11
 	subwf	RGB_Mode,W
 	btfsc	C
 	goto	RGB_Mode_Overflow
 	incf	RGB_Mode,F
-	goto	RGB_MODE_CHG_Exit
+	goto	Switch_RGBMode_Exit
 RGB_Mode_Overflow:
 	clrf	RGB_Mode
-RGB_MODE_CHG_Exit:
+Switch_RGBMode_Exit:
 	call	RGB_ModeSwitch				; 切换RGB模式
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
@@ -425,7 +446,7 @@ DayOverflow_Juge:
 	call	Is_Leap_Year				; 判断当前是平年还是闰年
 
 	decf	R_Date_Month,W
-	movf	R_X
+	movwf	R_X
 	btfsc	Calendar_Flag,0
 	goto	DayOverflow_LeapYear		; 查闰年表
 	movlw	High(Table_Month_Common)
@@ -450,18 +471,18 @@ DayOverflow_SearchMaxDay:
 	return
 Day_Overflow_Yes:
 	movf	P_Temp,W
-	movwf	R_Date_Day					; 溢出后不再增加天数
+	movwf	R_Date_Day					; 溢出后将天数设置为当月最大天数
 	return
 
 
 
 
-DayOverflow_To_1:
+DayAdd_Overflow:
 	bcf		RP0
 	call	Is_Leap_Year				; 判断当前是平年还是闰年
 
 	decf	R_Date_Month,W
-	movf	R_X
+	movwf	R_X
 	btfsc	Calendar_Flag,0
 	goto	DayAdd_LeapYear_Handle		; 查闰年表
 	movlw	High(Table_Month_Common)
@@ -479,7 +500,7 @@ DayAdd_SearchMaxDay:
 	nop
 	nop
 	movf	PMDATH,W					; 查表得出当月最大天数
-	movwf	P_Temp
+	addlw	1
 	subwf	R_Date_Day,W
 	btfsc	C
 	goto	Day_Overflow_Yes1			; 当前日期天数溢出
