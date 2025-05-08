@@ -91,6 +91,7 @@ Depress_Juge:
 ; D键触发
 Key_KeyDTriggered:
 	call	Universal_TriggerHandle
+	call	Key_DPExit
 	btfsc	Key_Flag,4					; 跳过功能
 	goto	Key_HandleOver
 
@@ -187,6 +188,7 @@ Key_KeyUTriggered_Exit:
 ; S键触发
 Key_KeySTriggered:
 	call	Universal_TriggerHandle
+	call	Key_DPExit
 	btfsc	Key_Flag,4					; 跳过功能
 	goto	Key_HandleOver
 
@@ -238,8 +240,6 @@ Universal_TriggerHandle:
 	movwf	Return_Counter				; 复位DP模式计数
 	movlw	15							; 复位返回时显模式计数
 	movwf	Return_Counter
-	bcf		SysEvent_Flag,1				; 清除DP标志
-	bsf		SysEvent_Flag,4				; 清除DP显示返回标志
 	return
 
 
@@ -250,6 +250,19 @@ Key_CloseLoud:
 
 	bsf		Key_Flag,4					; 打断响闹则此次按键无功能
 	goto	Close_Loud
+
+Key_DPExit:
+	btfss	SysEvent_Flag,1
+	return
+
+	bcf		SysEvent_Flag,1				; 清除DP标志
+	movlw	10
+	movwf	DP_Counter
+	clrf	Primary_Status				; 切换到时间显示模式并刷新显示
+	REFLASH_DISPLAY
+	HALFSEC_DISPLAY
+	bsf		Key_Flag,4					; 退出DP模式则此次按键无功能
+	return
 
 
 

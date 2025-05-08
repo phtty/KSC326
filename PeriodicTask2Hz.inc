@@ -91,7 +91,6 @@ Return_Counting:
 	btfss	SysEvent_Flag,1					; 若是从DP显示返回则还需要返回到时间模式
 	goto	Return_DisMode_Exit
 	bcf		SysEvent_Flag,1					; 清除DP标志
-	bsf		SysEvent_Flag,4					; 置位DP显示返回标志
 	clrf	Primary_Status					; 返回时间模式
 Return_DisMode_Exit:
 	REFLASH_DISPLAY							; 刷新显示

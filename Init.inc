@@ -78,6 +78,7 @@ NEXTBYTE_1:
 	movwf	R_Time_Min
 	movlw	0
 	movwf	R_Time_Sec
+	bsf		Clock_Flag		; 上电为12H模式
 
 	movlw	25
 	movwf	R_Date_Year		; 设置上电日期
@@ -86,10 +87,9 @@ NEXTBYTE_1:
 	movlw	1
 	movwf	R_Date_Day
 
-	movlw	12
-	movwf	R_Alarm1_Hour	; 设置上电闹钟
-	movwf	R_Alarm2_Hour
-	movwf	R_Alarm3_Hour
+	clrf	R_Alarm1_Hour	; 设置上电闹钟
+	clrf	R_Alarm2_Hour
+	clrf	R_Alarm3_Hour
 	clrf	R_Alarm1_Min
 	clrf	R_Alarm2_Min
 	clrf	R_Alarm3_Min
