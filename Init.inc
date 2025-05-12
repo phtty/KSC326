@@ -16,7 +16,6 @@ System_Init:
 
 	call	Ram_Initial
 	call	Port_Initial
-	call	ADC_Initial
 	call	PWM_Initial
 	call	TIM_Initial
 
@@ -35,7 +34,6 @@ System_Init:
 
 ; 上电初始化RAM
 Ram_Initial:
-	bcf		RP0
 	movlw	00H				; 清零0X100~0X1FF
 	movwf	FSR0L
 	movlw	0X01
@@ -72,19 +70,19 @@ NEXTBYTE_1:
 	movlw	15
 	movwf	Return_Counter	; 复位设置模式返回计时
 
-	movlw	23
+	movlw	12
 	movwf	R_Time_Hour		; 设置上电时间
-	movlw	59
+	movlw	00
 	movwf	R_Time_Min
-	movlw	55
+	movlw	00
 	movwf	R_Time_Sec
 	bsf		Clock_Flag,0	; 上电为12H模式
 
-	movlw	99
+	movlw	25
 	movwf	R_Date_Year		; 设置上电日期
-	movlw	12
+	movlw	1
 	movwf	R_Date_Month
-	movlw	31
+	movlw	1
 	movwf	R_Date_Day
 
 	clrf	R_Alarm1_Hour	; 设置上电闹钟
@@ -99,7 +97,6 @@ NEXTBYTE_1:
 
 ; GPIO初始化
 Port_Initial:
-	bcf		RP0
 	movlw	0x80
 	movwf	TRISA			; 配置PA7输入
 	movlw	0xff
@@ -141,15 +138,13 @@ Port_Initial:
 
 ; ADC初始化
 ADC_Initial:
-	bcf		RP0
-
 	bsf		TRISB,2			; PB2配置为输入
 	bsf		ANSELH,3		; PB2设为模拟IO
 
-	movlw	0x20
-	movwf	ADCON1			; 数据格式左对齐12位ADC，时钟源为Fsys8M/4T
+	movlw	0x30
+	movwf	ADCON1			; 数据格式左对齐12位ADC，时钟源为Fsys8M/2T
 
-	movlw	0x02
+	movlw	0x01
 	movwf	ADCLK
 
 	movlw	0xec
@@ -159,6 +154,20 @@ ADC_Initial:
 	call	Delay_130us		; 等待电路稳定
 
 	return
+
+
+; ADC去初始化
+ADC_Deinitial:
+	bcf		ANSELH,3		; PB2设为IO口输出
+	bcf		TRISB,2			; PB2配置为输出0
+	bcf		PORTB,2
+
+	clrf	ADCON1			; 清空ADC相关寄存器
+	clrf	ADCLK
+	clrf	ADCON0
+
+	return
+
 
 ; PWM初始化
 PWM_Initial:
@@ -182,7 +191,6 @@ PWM_Initial:
 
 ; 定时器初始化
 TIM_Initial:
-	bcf		RP0
 	; Tim0 2Hz走时定时器
 	movlw	0x25
 	iorwf	OPTION,F
@@ -213,8 +221,6 @@ TIM_Initial:
 
 
 Delay_130us:				; 大约130us
-	bcf		RP0
-
 	movlw	0xff
 	movwf	P_Temp
 

@@ -70,6 +70,8 @@ Start_DisTime_Hour:
 
 	clrf	R_X
 	movf	P_Temp6,W
+	btfsc	Z
+	movlw	10
 	call	Digit_Num_Display
 	REFLASH_DISPLAY
 	return
@@ -110,6 +112,9 @@ Hr_Display:
 	movwf	R_X
 	movlw	Word_r
 	call	Digit_Word_Display				; œ‘ æHr
+
+	call	SymbolPM_Clear
+	call	SymbolCOL_Clear
 	REFLASH_DISPLAY
 	return
 
@@ -414,6 +419,8 @@ Start_DisAlarm_Hour:
 
 	clrf	R_X
 	movf	P_Temp6,W
+	btfsc	Z
+	movlw	10
 	call	Digit_Num_Display
 	REFLASH_DISPLAY
 	return

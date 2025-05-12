@@ -1,10 +1,10 @@
 Temperature_Get:
-	bcf		RP0
-
 	clrf	R_ADC_H
 	clrf	R_ADC_L
 
+	bcf		GIE
 	bsf		PORTF,1					; AD测温电路启动
+	call	ADC_Initial				; 初始化ADC
 	nop
 	nop
 	bsf		ADON
@@ -16,6 +16,8 @@ ADC_Wait:
 	movwf	R_ADC_H
 	movf	ADRESL,W
 	movwf	R_ADC_L
+	call	ADC_Deinitial			; 避免漏电去初始化ADC
+	bcf		GIE
 	bcf		PORTF,1					; AD测温电路断开
 
 	swapf	R_ADC_L,F				; 采样值要右移4位
@@ -28,10 +30,11 @@ ADC_Wait:
 	andwf	R_ADC_H,F
 	swapf	R_ADC_H,F
 
-	movlw	0
+TEST_LABEL:
+	movlw	59
 	movwf	R_Temperature			; 温度通过循环查表递减得出
-	movlw	0xff
-	subwf	R_ADC_L,W
+	movlw	0xb0
+	subwf	R_ADC_L,F
 	btfsc	C
 	goto	TemperTableHead_NoBorrow
 	movlw	1
@@ -39,7 +42,7 @@ ADC_Wait:
 	btfss	C
 	goto	TemperLoop_Over			; 有借位则说明超过下限
 TemperTableHead_NoBorrow:
-	movlw	0x02
+	movlw	0x04
 	subwf	R_ADC_H,F
 	btfss	C						; 有借位则说明超过下限
 	goto	TemperLoop_Over
@@ -63,14 +66,11 @@ TemperLoop_Start:
 	btfss	C
 	goto	TemperLoop_Over			; 高8位出现借位，则说明温度值已经取完了
 ADCL_NoBorrow:
-	incf	R_Temperature,F
-	movlw	60
-	subwf	R_Temperature,W			; 上限检测，超过上限则不继续处理
-	btfss	C
+	decfsz	R_Temperature,F			; 下限检测，超过下限则不继续处理	
 	goto	TemperLoop_Start
 
 TemperLoop_Over:
-	movlw	10
+	movlw	9
 	subwf	R_Temperature,W
 	btfss	C
 	goto	Minus_Temper
@@ -110,7 +110,9 @@ Cel2Fah:
 
 	movf	R_Temperature,W
 	addwf	P_Temp,F
-	movlw	0
+	btfss	C
+	goto	Div5_Loop				; 无进位
+	movlw	1
 	addwf	P_Temp1,F				; 再加上自身完成x9操作
 
 Div5_Loop:

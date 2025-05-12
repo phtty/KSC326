@@ -237,7 +237,7 @@ Universal_TriggerHandle:
 	call	Key_Beep					; 按键音，长按不生效
 	call	Key_CloseLoud
 	movlw	10
-	movwf	Return_Counter				; 复位DP模式计数
+	movwf	DP_Counter					; 复位DP模式计数
 	movlw	15							; 复位返回时显模式计数
 	movwf	Return_Counter
 	return

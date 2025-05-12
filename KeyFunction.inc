@@ -64,6 +64,8 @@ SwitchState_TemperDis:
 	movlw	2
 	movwf	Primary_Status
 SwitchState_TemperDis_Exit:
+	call	SymbolTEMP_Display
+	call	SymbolAL_Clear				; 温度模式灭AL点
 	REFLASH_DISPLAY						; 更新显示
 	HALFSEC_DISPLAY
 	return
@@ -120,7 +122,7 @@ Time_Hour_Add:
 TimeHour_AddOverflow:
 	clrf	R_Time_Hour
 TimeHour_Add_Exit:
-	call	TimeBoard_Detect			; 夜间模式的处理
+	call	TimeAddBoard_Detect			; 夜间模式的处理
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -136,7 +138,7 @@ TimeHour_SubOverflow:
 	movlw	23
 	movwf	R_Time_Hour
 TimeHour_Sub_Exit:
-	call	TimeBoard_Detect			; 夜间模式的处理
+	call	TimeSubBoard_Detect			; 夜间模式的处理
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return
@@ -423,6 +425,8 @@ Switch_TemperUnit:
 	movlw	2
 	xorwf	ADC_Flag,F					; 温显模式取反温度单位标志位，切换显示的温度单位
 Switch_TemperMode_Exit:
+	call	SymbolCOL_Clear
+	call	SymbolTEMP_Display
 	REFLASH_DISPLAY						; 刷新显示
 	HALFSEC_DISPLAY
 	return

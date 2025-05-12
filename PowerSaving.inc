@@ -11,6 +11,8 @@ PowerSave_Juge:
 
 	LED_OFF									; 关闭RGB灯供电
 
+	call	ADC_Deinitial					; 去初始化ADC
+
 	bcf		T2ON							; 关闭响闹和蜂鸣器
 	bsf		TRISA,7
 	bcf		Clock_Flag,1
@@ -22,15 +24,15 @@ PowerSave_Juge:
 
 ; 省电模式
 PowerSave_Loop:
-	btfss	PORTF,0							; 当PF0==0时，进入省电模式循环
+	btfsc	PORTF,0							; 当PF0==0时，进入省电模式循环
 	goto	PowerSave_Exit					; 在省电模式下检测到有DC5V接入则退出省电模式
 
+	sleep									; 绿色模式
 	btfss	Time_Flag,0
 	goto	PowerSave_Loop
 
 	bcf		Time_Flag,0
 	call	Time_Run						; 省电模式中只走时
-	sleep									; 绿色模式
 	goto	PowerSave_Loop
 
 PowerSave_Exit:
