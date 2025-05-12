@@ -24,6 +24,9 @@ Debounce_Counter
 LongPress_Counter
 ; 测温计时
 TemperTest_Counter
+; 定时变色模式计数
+ColorCHG_Counter
+
 
 Calendar_Flag
 ;bit0 = 1 闰年
@@ -117,6 +120,16 @@ RGB_Mode
 ;9 = 单色红（渐变）
 ;10 = 乱彩（渐变）
 ;11 = 8字滚动（渐变）
+;12 = 定时变色
+
+; 定时变色颜色计数
+Color_Num
+;1 = 红
+;2 = 黄
+;3 = 绿
+;4 = 青
+;5 = 蓝
+;6 = 紫
 
 
 PORTA_BackUp

@@ -85,7 +85,7 @@ HorizonSeg_Loop:
 	movlw	40
 	goto	InitialData_CHG
 Fixed_Mode:
-	movlw	80
+	movlw	60
 InitialData_CHG:
 	addwf	P_Temp+3						; 根据是固定模式还是渐变模式选择每个8字的初值增量
 
@@ -215,3 +215,11 @@ DigitalAlter_Rolling:
 	bsf		SysEvent_Flag,3
 	call	RGB_Horizon_Roll
 	return
+
+
+SingleColor_Change:
+	movlw	5
+	movwf	ColorCHG_Counter				; 复位变色时间计数
+	movlw	1
+	movwf	Color_Num						; 复位颜色计数
+	goto	SingleColor_Red					; 定时变色模式的初始状态为红色

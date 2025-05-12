@@ -2,32 +2,104 @@
 BootScreen_Display:
 	call	Display_All
 	call	Send_RGB_Data						; 全显1S
-
 	btfss	Time_Flag,0
 	goto	$-1
 	bcf		Time_Flag,0
 
-	call	Clear_All
+	call	Clear_All							; 开始数字全显阶段
 	clrf	P_Temp+7
 	bcf		Time_Flag,1
-Number_Display_Loop:
-	call	AllDigit_Display
-	call	Send_RGB_Data						; 显示0~9数字
 
+	call	AllDigit_Display
+	call	Send_RGB_Data						; 全显数字0
 	btfss	Time_Flag,1
 	goto	$-1
 	bcf		Time_Flag,1
 
-	incf	P_Temp+7,F
-	movlw	10
-	subwf	P_Temp+7,W
-	btfss	C
-	goto	Number_Display_Loop
+	movlw	1
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	SingleColor_Red
+	call	Send_RGB_Data						; 全显数字1
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	2
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	SingleColor_Yellow
+	call	Send_RGB_Data						; 全显数字2
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	3
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	SingleColor_Green
+	call	Send_RGB_Data						; 全显数字3
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	4
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	SingleColor_Cyan
+	call	Send_RGB_Data						; 全显数字4
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	5
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	SingleColor_Blue
+	call	Send_RGB_Data						; 全显数字5
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	6
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	SingleColor_Purple
+	call	Send_RGB_Data						; 全显数字6
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	7
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	DigitalAlter_Fixed
+	call	Send_RGB_Data						; 全显数字7
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	8
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	ChaosColor_Fixed
+	call	Send_RGB_Data						; 全显数字8
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
+
+	movlw	9
+	movwf	P_Temp+7
+	call	AllDigit_Display
+	call	SingleColor_White
+	call	Send_RGB_Data						; 全显数字9
+	btfss	Time_Flag,1
+	goto	$-1
+	bcf		Time_Flag,1
 
 	call	Undisplay_All
 	call	SymbolPM_Display					; 显示PM点
 	call	Send_RGB_Data
-
 	btfss	Time_Flag,1
 	goto	$-1
 	bcf		Time_Flag,1
@@ -35,7 +107,6 @@ Number_Display_Loop:
 	call	SymbolPM_Clear
 	call	SymbolCOL_Display					; 显示COL点
 	call	Send_RGB_Data
-
 	btfss	Time_Flag,1
 	goto	$-1
 	bcf		Time_Flag,1
@@ -44,10 +115,10 @@ Number_Display_Loop:
 	call	SymbolAL_Display					; 显示AL点
 	call	SymbolTEMP_Display					; 显示TEMP点
 	call	Send_RGB_Data
-
 	btfss	Time_Flag,1
 	goto	$-1
 	bcf		Time_Flag,1
+
 	call	SymbolAL_Clear						; 显示AL点
 	call	SymbolTEMP_Clear					; 显示TEMP点
 	movlw	8

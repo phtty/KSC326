@@ -115,6 +115,7 @@ RGB_ModeJumpTable:
 	goto	SingleColor_Rolling
 	goto	ChaosColor_Rolling
 	goto	DigitalAlter_Rolling
+	goto	SingleColor_Change
 
 
 
@@ -165,41 +166,42 @@ IncTable_HorizonRolling:
 	retlw	7
 
 
+; 乱彩颜色时刻表
 RGBTable_ChaosColor:
 	addwf	PCL,F
-	retlw	137
-	retlw	57
-	retlw	80
-	retlw	202
-	retlw	193
-	retlw	8
-	retlw	229
-	retlw	203
-	retlw	59
-	retlw	213
-	retlw	217
-	retlw	143
-	retlw	73
-	retlw	5
-	retlw	154
-	retlw	176
-	retlw	108
-	retlw	204
-	retlw	226
-	retlw	210
-	retlw	122
-	retlw	175
-	retlw	27
-	retlw	109
-	retlw	67
-	retlw	165
-	retlw	183
-	retlw	40
-	retlw	119
-	retlw	159
-	retlw	26
-	retlw	71
-	retlw	120
+	retlw	0	; PM
+	retlw	40	; COL1
+	retlw	80	; AL
+	retlw	200	; 3f
+	retlw	80	; 3a
+	retlw	241	; 3b
+	retlw	120	; 4f
+	retlw	160	; 4a
+	retlw	200	; 4b
+	retlw	80	;4gf
+	retlw	0	; 4c
+	retlw	40	; 4d
+	retlw	241	; 4e
+	retlw	120	; 3g
+	retlw	160	; 3c
+	retlw	0	; 3d
+	retlw	40	; 3e
+	retlw	160	; TEMP
+	retlw	120	; COL2
+	retlw	0	; 2c
+	retlw	40	; 2d
+	retlw	200	; 2e
+	retlw	80	; 1c
+	retlw	120	; 1d
+	retlw	160	; 1e
+	retlw	241	; 1g
+	retlw	200	; 1f
+	retlw	0	; 1a
+	retlw	40	; 1b
+	retlw	80	; 2f
+	retlw	241	; 2a
+	retlw	160	; 2b
+	retlw	120 ; 2g
 
 ; 平年的每月份天数表
 Table_Month_Common:

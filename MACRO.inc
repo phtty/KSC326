@@ -1,15 +1,14 @@
 ; 发送1码
-SEND_CODE1:		MACRO	
-	bsf		PORTF,2
+SEND_CODE1:		MACRO						; 4M主频
+	bsf		PORTF,2							; 250ns
 	bsf		PORTF,2
 	bsf		PORTF,2
 	bcf		PORTF,2
 	ENDM
 
 ; 发送0码
-SEND_CODE0:		MACRO
-	bsf		PORTF,2
-	bcf		PORTF,2
+SEND_CODE0:		MACRO						; 4M主频
+	bsf		PORTF,2							; 250ns
 	bcf		PORTF,2
 	ENDM
 
