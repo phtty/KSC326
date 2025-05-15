@@ -1,3 +1,4 @@
+	org		0b00H
 DPMode_1:
 	movlw	3
 	subwf	Primary_Status,W
@@ -110,11 +111,13 @@ RGB_ModeJumpTable:
 	goto	SingleColor_Cyan
 	goto	SingleColor_Blue
 	goto	SingleColor_Purple
-	goto	DigitalAlter_Fixed
+	goto	DigitalAlter_Horizon_Fixed
+	goto	DigitalAlter_Vertical_Fixed
 	goto	ChaosColor_Fixed
 	goto	SingleColor_Rolling
 	goto	ChaosColor_Rolling
-	goto	DigitalAlter_Rolling
+	goto	DigitalAlter_Horizon_Rolling
+	goto	DigitalAlter_Vertical_Rolling
 	goto	SingleColor_Change
 
 
@@ -164,6 +167,54 @@ IncTable_HorizonRolling:
 	retlw	10
 	retlw	9
 	retlw	7
+
+
+RGBTable_VerticalRolling:
+	addwf	PCL,F
+	retlw	27
+	retlw	30
+	retlw	4
+	retlw	7
+	retlw	26
+	retlw	28
+	retlw	29
+	retlw	31
+	retlw	0
+	retlw	1
+	retlw	2
+	retlw	3
+	retlw	5
+	retlw	6
+	retlw	8
+	retlw	25
+	retlw	32
+	retlw	13
+	retlw	9
+	retlw	24
+	retlw	22
+	retlw	21
+	retlw	19
+	retlw	18
+	retlw	17
+	retlw	16
+	retlw	14
+	retlw	12
+	retlw	10
+	retlw	23
+	retlw	20
+	retlw	15
+	retlw	11
+
+
+
+IncTable_VerticalRolling:
+	addwf	PCL,F
+	retlw	4
+	retlw	11
+	retlw	4
+	retlw	10
+	retlw	4
+
 
 
 ; ÂÒ²ÊÑÕÉ«Ê±¿Ì±í

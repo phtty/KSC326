@@ -73,7 +73,7 @@ BootScreen_Display:
 	movlw	7
 	movwf	P_Temp+7
 	call	AllDigit_Display
-	call	DigitalAlter_Fixed
+	call	DigitalAlter_Horizon_Fixed
 	call	Send_RGB_Data						; 全显数字7
 	btfss	Time_Flag,1
 	goto	$-1
@@ -82,7 +82,7 @@ BootScreen_Display:
 	movlw	8
 	movwf	P_Temp+7
 	call	AllDigit_Display
-	call	ChaosColor_Fixed
+	call	DigitalAlter_Vertical_Fixed
 	call	Send_RGB_Data						; 全显数字8
 	btfss	Time_Flag,1
 	goto	$-1
@@ -91,12 +91,13 @@ BootScreen_Display:
 	movlw	9
 	movwf	P_Temp+7
 	call	AllDigit_Display
-	call	SingleColor_White
+	call	ChaosColor_Fixed
 	call	Send_RGB_Data						; 全显数字9
 	btfss	Time_Flag,1
 	goto	$-1
 	bcf		Time_Flag,1
 
+	call	SingleColor_White
 	call	Undisplay_All
 	call	SymbolPM_Display					; 显示PM点
 	call	Send_RGB_Data

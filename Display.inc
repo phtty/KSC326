@@ -195,13 +195,18 @@ Year_Display:
 
 ; 温度显示
 Temper_Display:
-	btfss	ADC_Flag,1
-	goto	Display_CelsiusDegree
+	call	Undisplay_All					; 清空所有8字
+	btfsc	ADC_Flag,1
 	goto	Display_FahrenheitDegree
 
 Display_CelsiusDegree:
 	btfsc	ADC_Flag,0
 	goto	CelsiusDegree_Minus				; 摄氏度存在负号时使用另一套显示逻辑
+
+	movlw	10
+	subwf	R_Temperature,W
+	btfss	C
+	goto	CelsiusDegree_NoTens
 
 	movf	R_Temperature,W
 	call	Hex2BCD
@@ -209,20 +214,24 @@ Display_CelsiusDegree:
 	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示温度十位
 
+CelsiusDegree_NoTens:
 	movlw	1
 	movwf	R_X
 	movf	P_Temp5,W
 	call	Digit_Num_Display				; 显示温度个位
 
-	call	Undisplay_23					; 避免3号8字存在显示导致不清空
 	movlw	2
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D2显示温标C
-	REFLASH_DISPLAY
-	return
+	goto	CelsiusDegreeDis_Exit
 
 CelsiusDegree_Minus:
+	movlw	10
+	subwf	R_Temperature,W
+	btfss	C
+	goto	CelsiusDegree_MinusNoTens
+
 	clrf	R_X
 	movlw	Word_Neg
 	call	Digit_Word_Display				; D0显示负号
@@ -243,8 +252,26 @@ CelsiusDegree_Minus:
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D3显示温标C
+	goto	CelsiusDegreeDis_Exit
+
+CelsiusDegree_MinusNoTens:					; 负温度只有个位的情况
+	clrf	R_X
+	movlw	Word_Neg
+	call	Digit_Word_Display				; D1显示负号
+	
+	movlw	1
+	movwf	R_X
+	movf	P_Temp5,W
+	call	Digit_Num_Display				; 显示温度个位
+
+	movlw	2
+	movwf	R_X
+	movlw	Word_C
+	call	Digit_Word_Display				; D3显示温标C
+CelsiusDegreeDis_Exit:
 	REFLASH_DISPLAY
 	return
+
 
 
 Display_FahrenheitDegree:
@@ -263,7 +290,6 @@ Display_FahrenheitDegree:
 	movf	P_Temp5,W
 	call	Digit_Num_Display				; 显示温度个位
 
-	call	Undisplay_23					; 避免3号8字存在显示导致不清空
 	movlw	2
 	movwf	R_X
 	movlw	Word_F

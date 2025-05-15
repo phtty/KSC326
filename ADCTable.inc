@@ -1,4 +1,4 @@
-	org		0b00H
+	org		0ac4H
 Temper_Table:
 	db	0x1D
 	db	0x1E

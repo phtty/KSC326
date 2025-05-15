@@ -99,6 +99,58 @@ InitialData_CHG:
 
 
 
+; 垂直渐变
+RGB_Vertical_Roll:
+	clrf	P_Temp							; 初始化外层循环计数
+	clrf	P_Temp+1						; 初始化内层循环计数
+	clrf	P_Temp+2						; 初始化总偏移计数
+	clrf	P_Temp+3						; 初始化初值
+VerticalDigit_Loop:
+	movlw	High(IncTable_VerticalRolling)
+	movwf	PCLATH
+	movf	P_Temp,W
+	call	IncTable_VerticalRolling
+	movwf	P_Temp+1						; 外层循环计数值作为偏移量查增量表，作为内层循环计数
+
+VerticalSeg_Loop:
+	movlw	High(RGBTable_VerticalRolling)
+	movwf	PCLATH
+	movf	P_Temp+2,W
+	call	RGBTable_VerticalRolling
+	movwf	R_X								; 将总循环计数作为偏移查横滚顺序表得出GRB时刻表的偏移
+
+	movlw	Low(GRB_Tick)
+	addwf	R_X,W
+	movwf	FSR0L
+	movlw	High(GRB_Tick)
+	movwf	FSR0H
+	movf	P_Temp+3,W
+	movwf	INDF0							; 将初值赋给对应GRB时刻表的内存
+
+	incf	P_Temp+2,F						; 递增总偏移
+
+	decfsz	P_Temp+1,F
+	goto	VerticalSeg_Loop				; 递增内层循环
+
+	btfss	SysEvent_Flag,3					; 每次内层循环结束说明8字改变，递增初值
+	goto	VFixed_Mode
+	movlw	40
+	goto	VInitialData_CHG
+VFixed_Mode:
+	movlw	40
+VInitialData_CHG:
+	addwf	P_Temp+3						; 根据是固定模式还是渐变模式选择每个8字的初值增量
+
+	incf	P_Temp,F
+	movlw	5
+	subwf	P_Temp,W
+	btfss	C
+	goto	VerticalDigit_Loop				; 递增外层循环
+
+	return
+
+
+
 ; 乱彩模式，根据RGBTable_ChaosColor对33个时刻内存赋值
 RGB_SetChaosColor:
 	clrf	P_Temp							; 循环计数内存
@@ -185,9 +237,15 @@ SingleColor_Purple:
 	return
 
 
-DigitalAlter_Fixed:
+DigitalAlter_Horizon_Fixed:
 	bcf		SysEvent_Flag,3
 	call	RGB_Horizon_Roll
+	return
+
+
+DigitalAlter_Vertical_Fixed:
+	bcf		SysEvent_Flag,3
+	call	RGB_Vertical_Roll
 	return
 
 
@@ -211,9 +269,15 @@ ChaosColor_Rolling:
 	return
 
 
-DigitalAlter_Rolling:
+DigitalAlter_Horizon_Rolling:
 	bsf		SysEvent_Flag,3
 	call	RGB_Horizon_Roll
+	return
+
+
+DigitalAlter_Vertical_Rolling:
+	bsf		SysEvent_Flag,3
+	call	RGB_Vertical_Roll
 	return
 
 

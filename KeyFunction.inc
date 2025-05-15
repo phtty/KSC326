@@ -451,7 +451,7 @@ Switch_LightLevel_Exit:
 
 ; ÇÐ»»RGBÄ£Ê½
 Switch_RGBMode:
-	movlw	12
+	movlw	14
 	subwf	RGB_Mode,W
 	btfsc	C
 	goto	RGB_Mode_Overflow
