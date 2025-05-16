@@ -64,8 +64,8 @@ NEXTBYTE_1:
 	movlw	0
 	movwf	Light_Level		; 上电默认高亮
 
-	movlw	1
-	movwf	DP_Mode			; DP2模式
+	;movlw	1
+	;movwf	DP_Mode			; DP2模式
 
 	movlw	15
 	movwf	Return_Counter	; 复位设置模式返回计时

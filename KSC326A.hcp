@@ -3,10 +3,10 @@ Version=3.0.11.S
 [File Count]
 Count=26
 [MCU]
-PowerSupply=0
+PowerSupply=2
 [Settings]
 Device=HC18P13XLA
-ConfigBitValue0=56760
+ConfigBitValue0=56496
 ConfigBitValue1=37887
 ConfigBitValue2=0
 Output=.
@@ -16,17 +16,17 @@ Library=
 [Files]
 OpenFileCounts=16
 File0=main.asm|3 208 1603 208 810
-File1=PeriodicTask2Hz.inc|1 156 1335 156 494
-File2=PowerSaving.inc|1 130 1581 130 602
-File3=BootScreen.inc|1 104 1555 104 576
-File4=Display.inc|1 78 1257 78 416
-File5=PeriodicTask32Hz.inc|1 130 1309 130 468
-File6=RGBManage.inc|1 26 1205 26 364
-File7=KeyHandler.inc|1 104 1283 104 429
-File8=DisplayDriver.inc|1 78 1257 78 403
-File9=RGBTable.inc|1 0 1451 0 472
-File10=MACRO.inc|1 156 1335 156 494
-File11=Table2.inc|1 0 1179 0 338
+File1=BootScreen.inc|1 104 1555 104 576
+File2=Table2.inc|1 0 1179 0 338
+File3=RGBTable.inc|1 0 1451 0 472
+File4=PeriodicTask2Hz.inc|1 156 1335 156 494
+File5=PowerSaving.inc|1 130 1581 130 602
+File6=Display.inc|1 78 1257 78 416
+File7=PeriodicTask32Hz.inc|1 130 1309 130 468
+File8=RGBManage.inc|1 26 1205 26 364
+File9=KeyHandler.inc|1 104 1283 104 429
+File10=DisplayDriver.inc|1 78 1257 78 403
+File11=MACRO.inc|1 156 1335 156 494
 File12=KeyFunction.inc|1 130 1581 130 602
 File13=IRQHandler.inc|1 208 1659 208 680
 File14=Init.inc|1 130 1581 130 602
