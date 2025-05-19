@@ -57,3 +57,18 @@ DPMode_3:
 	movwf	DP_Counter
 	clrf	Primary_Status
 	return
+
+
+DPMode_Reload:
+	movf	DP_Mode,W
+	btfsc	Z
+	goto	DP1_Reload
+
+	movlw	15
+	movwf	DP_Counter						; 当前为DP-2、3，重装载计数15
+	return
+
+DP1_Reload:
+	movlw	10
+	movwf	DP_Counter						; 当前为DP-1，重装载计数10
+	return

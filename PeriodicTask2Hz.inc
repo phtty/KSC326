@@ -72,7 +72,7 @@ Return_DisMode_Exit:
 
 ; 定时变色模式
 ColorChange:
-	movlw	12
+	movlw	14
 	subwf	RGB_Mode,W
 	btfss	Z
 	return									; 当前RGB模式不为定时变色模式则不进处理

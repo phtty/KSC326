@@ -54,18 +54,18 @@ TemperGet_Calculate:
 
 	movlw	59
 	movwf	R_Temperature			; 温度通过循环查表递减得出
-	movlw	0xb0
+	movlw	0xb3
 	subwf	R_ADC_L,F
 	btfsc	C
 	goto	TemperTableHead_NoBorrow
 	movlw	1
 	subwf	R_ADC_H,F
 	btfss	C
-	goto	TemperLoop_Over			; 有借位则说明超过下限
+	goto	TemperLoop_Over			; 有借位则说明超过上限
 TemperTableHead_NoBorrow:
 	movlw	0x04
 	subwf	R_ADC_H,F
-	btfss	C						; 有借位则说明超过下限
+	btfss	C						; 有借位则说明超过上限
 	goto	TemperLoop_Over
 
 TemperLoop_Start:
