@@ -1,3 +1,36 @@
+; RGB变色的Tick更新
+RGB_TickReflash:
+	btfss	SysEvent_Flag,3
+	return
+
+	clrf	R_X
+GRB_TickReflash_Loop:
+	movlw	Low(GRB_Tick)
+	addwf	R_X,W
+	movwf	FSR0L
+	movlw	High(GRB_Tick)
+	movwf	FSR0H
+	movf	INDF0,W
+	sublw	239
+	btfss	C
+	goto	GRB_Tick_Overflow
+	incf	INDF0,F								; 未溢出则自增1后继续循环
+	goto	GRB_TickReflash_LoopJuge
+GRB_Tick_Overflow:
+	clrf	INDF0								; Tick达到240则说明溢出，复位此灯的Tick
+GRB_TickReflash_LoopJuge:
+	incf	R_X,F
+	movlw	33
+	subwf	R_X,W
+	btfss	C
+	goto	GRB_TickReflash_Loop
+	REFLASH_DISPLAY								; 刷新显示
+	return
+
+
+;======================================================================================
+
+
 ; 单色模式，根据R_X的值（0~6）对33个时刻内存赋值
 RGB_SetColor:
 	clrf	P_Temp							; 循环计数内存

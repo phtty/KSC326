@@ -236,8 +236,8 @@ Universal_TriggerHandle:
 	btfss	Key_Flag,3
 	call	Key_Beep					; 按键音，长按不生效
 	call	Key_CloseLoud
-	movlw	10
-	movwf	DP_Counter					; 复位DP模式计数
+	;movlw	10
+	;movwf	DP_Counter					; 复位DP模式计数
 	movlw	15							; 复位返回时显模式计数
 	movwf	Return_Counter
 	return
@@ -256,8 +256,8 @@ Key_DPExit:
 	return
 
 	bcf		SysEvent_Flag,1				; 清除DP标志
-	movlw	10
-	movwf	DP_Counter
+	;movlw	10
+	;movwf	DP_Counter
 	clrf	Primary_Status				; 切换到时间显示模式并刷新显示
 	REFLASH_DISPLAY
 	HALFSEC_DISPLAY

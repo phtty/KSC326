@@ -77,6 +77,13 @@ Start_DisTime_Hour:
 	return
 
 
+; 时间显示的符号
+TimeSymbol_Display:
+	call	SymbolTEMP_Clear				; 清TEMP点
+	call	AL_Display						; 根据闹钟开关亮AL点
+	goto	SymbolCOL_Display				; 亮COL点
+
+
 
 
 ; 小时制显示
@@ -113,10 +120,15 @@ Hr_Display:
 	movlw	Word_r
 	call	Digit_Word_Display				; 显示Hr
 
-	call	SymbolPM_Clear
-	call	SymbolCOL_Clear
 	REFLASH_DISPLAY
 	return
+
+
+TimeModeSymbol_Display:
+	call	SymbolTEMP_Clear				; 清TEMP点
+	call	AL_Display						; 根据闹钟开关亮AL点
+	call	SymbolCOL_Clear					; 清COL点
+	goto	SymbolPM_Clear					; 清PM点
 
 
 
@@ -193,6 +205,15 @@ Year_Display:
 	return
 
 
+DateSymbol_Display:
+	call	SymbolPM_Clear
+	call	AL_Display						; 根据闹钟开关亮AL点
+	call	SymbolTEMP_Clear
+	goto	SymbolCOL_Clear
+
+
+
+
 ; 温度显示
 Temper_Display:
 	call	Undisplay_All					; 清空所有8字
@@ -200,6 +221,9 @@ Temper_Display:
 	goto	Display_FahrenheitDegree
 
 Display_CelsiusDegree:
+	movf	R_Temperature,W
+	call	Hex2BCD
+
 	btfsc	ADC_Flag,0
 	goto	CelsiusDegree_Minus				; 摄氏度存在负号时使用另一套显示逻辑
 
@@ -208,8 +232,6 @@ Display_CelsiusDegree:
 	btfss	C
 	goto	CelsiusDegree_NoTens
 
-	movf	R_Temperature,W
-	call	Hex2BCD
 	clrf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示温度十位
@@ -224,7 +246,7 @@ CelsiusDegree_NoTens:
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D2显示温标C
-	goto	CelsiusDegreeDis_Exit
+	goto	DegreeDisplay_Exit
 
 CelsiusDegree_Minus:
 	movlw	10
@@ -236,8 +258,6 @@ CelsiusDegree_Minus:
 	movlw	Word_Neg
 	call	Digit_Word_Display				; D0显示负号
 
-	movf	R_Temperature,W
-	call	Hex2BCD
 	movlw	1
 	movwf	R_X
 	movf	P_Temp6,W
@@ -252,13 +272,13 @@ CelsiusDegree_Minus:
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D3显示温标C
-	goto	CelsiusDegreeDis_Exit
+	goto	DegreeDisplay_Exit
 
 CelsiusDegree_MinusNoTens:					; 负温度只有个位的情况
 	clrf	R_X
 	movlw	Word_Neg
 	call	Digit_Word_Display				; D1显示负号
-	
+
 	movlw	1
 	movwf	R_X
 	movf	P_Temp5,W
@@ -268,9 +288,7 @@ CelsiusDegree_MinusNoTens:					; 负温度只有个位的情况
 	movwf	R_X
 	movlw	Word_C
 	call	Digit_Word_Display				; D3显示温标C
-CelsiusDegreeDis_Exit:
-	REFLASH_DISPLAY
-	return
+	goto	DegreeDisplay_Exit
 
 
 
@@ -294,8 +312,7 @@ Display_FahrenheitDegree:
 	movwf	R_X
 	movlw	Word_F
 	call	Digit_Word_Display				; D2显示温标F
-	REFLASH_DISPLAY
-	return
+	goto	DegreeDisplay_Exit
 
 FahrenheitDegree_3Digit:
 	clrf	R_X
@@ -316,8 +333,16 @@ FahrenheitDegree_3Digit:
 	movwf	R_X
 	movlw	Word_F
 	call	Digit_Word_Display				; D3显示温标F
+DegreeDisplay_Exit:
 	REFLASH_DISPLAY
 	return
+
+
+TemperSymbol_Display:
+	call	SymbolPM_Clear
+	call	SymbolAL_Clear
+	call	SymbolTEMP_Display
+	goto	SymbolCOL_Clear
 
 
 
@@ -365,6 +390,13 @@ Display_AlarmNumber:
 	call	Digit_Num_Display				; 显示闹钟序号
 	REFLASH_DISPLAY
 	return
+
+
+AlarmSWSymbol_Display:
+	call	AL_Display						; 根据闹钟开关亮AL点
+	call	SymbolPM_Clear
+	call	SymbolTEMP_Clear
+	goto	SymbolCOL_Display
 
 
 
@@ -452,6 +484,12 @@ Start_DisAlarm_Hour:
 	return
 
 
+AlarmSymbol_Display:
+	call	SymbolCOL_Display
+	goto	SymbolTEMP_Clear
+
+
+
 
 ; 显示DP模式
 DPMode_Display:
@@ -479,9 +517,16 @@ DPMode_Display:
 	return
 
 
+DPModeSymbol_Display:
+	call	SymbolPM_Clear
+	call	SymbolAL_Clear
+	call	SymbolTEMP_Clear
+	goto	SymbolCOL_Clear
 
 
-; 取消显示
+
+
+; 取消显示所有8字
 Undisplay_All:
 	call	Undisplay_01
 	goto	Undisplay_23

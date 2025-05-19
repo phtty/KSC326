@@ -1,25 +1,47 @@
-Temperature_Get:
+; 32Hz里调用温度测量的处理并递减测温序列
+TemperTest_Handler:
+	call	Temperature_Get
+	movf	Temper_Serial,f			; 测温序列递减到0则不继续递减
+	btfss	Z
+	decf	Temper_Serial,F
+	return
+
+
+
+
+; 初始化AD
+TemperGet_Init:
 	clrf	R_ADC_H
 	clrf	R_ADC_L
 
-	bcf		GIE
 	bsf		PORTF,1					; AD测温电路启动
-	call	ADC_Initial				; 初始化ADC
-	nop
-	nop
+	goto	ADC_Initial				; 初始化ADC
+
+
+
+
+; AD测量
+TemperGet_Start:
+	bcf		GIE						; 测温时关闭中断
+
 	bsf		ADON
-ADC_Wait:
 	btfsc	ADON
-	goto	ADC_Wait
+	goto	$-1
 
 	movf	ADRESH,W
 	movwf	R_ADC_H
 	movf	ADRESL,W
 	movwf	R_ADC_L
 	call	ADC_Deinitial			; 避免漏电去初始化ADC
-	bcf		GIE
 	bcf		PORTF,1					; AD测温电路断开
+	bsf		GIE						; 测温完成重新开启中断
+	return
 
+
+
+
+; 通过AD采样值计算温度
+TemperGet_Calculate:
 	swapf	R_ADC_L,F				; 采样值要右移4位
 	movlw	0x0f
 	andwf	R_ADC_H,W
@@ -30,7 +52,6 @@ ADC_Wait:
 	andwf	R_ADC_H,F
 	swapf	R_ADC_H,F
 
-TEST_LABEL:
 	movlw	59
 	movwf	R_Temperature			; 温度通过循环查表递减得出
 	movlw	0xb0
@@ -149,11 +170,13 @@ Temperature_Test:
 
 	movlw	15
 	movwf	TemperTest_Counter		; 复位15S测温间隔计时
-	call	Temperature_Get
+	movlw	5
+	movwf	Temper_Serial			; 开始测温序列
 	return
 
 
 
 
 TemperDis_HalfSec:
-	goto	Temper_Display
+	call	Temper_Display
+	goto	TemperSymbol_Display

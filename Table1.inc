@@ -292,10 +292,10 @@ DateDis_HalfSec:
 	movf	Secondary_Status,W
 DateMode_HS_JumpTable:
 	addwf	PCL,F
-	goto	Date_Display
-	goto	Year_Display
-	goto	Date_Display
-	goto	Date_Display
+	goto	Date_HS_Display
+	goto	Year_HS_Display
+	goto	Date_HS_Display
+	goto	Date_HS_Display
 	return
 
 
@@ -305,10 +305,10 @@ DateDis_Sec:
 	movf	Secondary_Status,W
 DateMode_JumpTable:
 	addwf	PCL,F
-	return
-	goto	Undisplay_All
-	goto	Undisplay_01
-	goto	Undisplay_23
+	goto	Date_Sec_Display
+	goto	Year_Sec_Display
+	goto	DateMonth_HS_Display
+	goto	DateDay_HS_Display
 	return
 
 
@@ -321,9 +321,9 @@ AlarmDis_HalfSec:
 	movf	Secondary_Status,W
 AlarmMode_HS_JumpTable:
 	addwf	PCL,F
-	goto	AlarmSW_Dipalay
-	goto	Alarm_Dipalay
-	goto	Alarm_Dipalay
+	goto	AlarmSW_HS_Display
+	goto	Alarm_HS_Display
+	goto	Alarm_HS_Display
 
 
 AlarmDis_Sec:
@@ -332,9 +332,9 @@ AlarmDis_Sec:
 	movf	Secondary_Status,W
 AlarmMode_JumpTable:
 	addwf	PCL,F
-	return
-	goto	Undisplay_01
-	goto	Undisplay_23
+	goto	AlarmSW_Sec_Display
+	goto	AlarmHour_Sec_Display
+	goto	AlarmMin_Sec_Display
 
 
 ;======================================================================================

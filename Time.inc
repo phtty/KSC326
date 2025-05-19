@@ -26,6 +26,39 @@ Time_Run:
 	return
 
 
+Time_HS_Display:
+	call	TimeSymbol_Display
+	goto	Time_Display
+
+
+TimeMode_HS_Display:
+	call	TimeModeSymbol_Display
+	goto	TimeMode_Display
+
+
+
+Time_Sec_Display:
+	call	SymbolCOL_Clear
+	btfsc	Clock_Flag,1
+	call	SymbolAL_Clear					; 响闹时1S灭AL点
+	goto	Time_Display
+
+
+TimeMode_Sec_Display:
+	call	TimeModeSymbol_Display
+	goto	Undisplay_All
+
+
+TimeHour_HS_Display:
+	call	TimeSymbol_Display
+	goto	Undisplay_01
+
+
+TimeMin_HS_Display:
+	call	TimeSymbol_Display
+	goto	Undisplay_23
+
+
 
 
 ; 时增加的夜间时段边界检测（19:00&6:00）

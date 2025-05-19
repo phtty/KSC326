@@ -138,6 +138,7 @@ PORTA_BackUp
 PORTF_BackUp
 
 Beep_Serial
+Temper_Serial
 
 R_ADC_L
 R_ADC_H

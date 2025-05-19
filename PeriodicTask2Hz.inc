@@ -13,45 +13,16 @@ HalfSec_Handle:
 	btfsc	SysEvent_Flag,1
 	goto	DPMode_Display					; 存在DP显示标志时，显示当前的DP模式
 
-	call	COL_Display						; 一些符号点的点亮
-	call	AL_Display
 	goto	HalfSec_Jump
-
-
-; S点显示
-COL_Display:
-	movf	Primary_Status,F
-	btfss	Z
-	goto	COL_DisplayJuge
-
-	movlw	1
-	subwf	Secondary_Status,W
-	btfss	Z
-	goto	Display_COL						; 时钟模式非12/24H模式都亮S点
-	return
-
-COL_DisplayJuge:
-	movlw	3
-	subwf	Primary_Status,W				; 闹钟模式亮S点
-	btfss	C
-	return
-
-Display_COL:
-	goto	SymbolCOL_Display				; S点亮
 
 
 ; AL点显示
 AL_Display:
 	movf	Alarm_Switch,F					; 无任何一组闹钟开启时不显示
 	btfsc	Z
-	return
+	goto	SymbolAL_Clear
 
-	movlw	2
-	subwf	Primary_Status,W				; 温度模式不显示AL点
-	btfsc	Z
-	return
-
-	goto	SymbolAL_Display
+	goto	SymbolAL_Display				; 有闹钟开启时显示
 
 
 ; 1S处理
@@ -64,8 +35,6 @@ Sec_Handle:
 	call	DPMode_Mangage					; DP模式切换
 	call	Return_DisMode					; 设置模式定时返回显示模式
 	call	ColorChange						; 定时变色模式下，切换颜色计时
-	call	COL_Clear						; 秒点闪烁
-	call	AL_Clear
 	call	Temperature_Test				; 定时测温
 
 	btfsc	SysEvent_Flag,1					; 若有DP显示标志则跳过灭点
@@ -128,40 +97,3 @@ ColorNum_Overflow:
 	movlw	1
 	movwf	R_X
 	goto	RGB_SetColor
-
-
-
-; 清S点
-COL_Clear:
-	movf	Primary_Status,F
-	btfss	Z
-	goto	COL_ClearJuge
-
-	movlw	2
-	subwf	Secondary_Status,W
-	btfss	C
-	goto	Clear_COL						; 时钟模式的前两个子模式会熄S点
-	return
-
-COL_ClearJuge:
-	movlw	3
-	subwf	Primary_Status,W				; 闹钟之前的模式熄S点
-	btfsc	C
-	return
-
-Clear_COL:
-	goto	SymbolCOL_Clear					; S点熄灭
-
-
-
-; 清AL点
-AL_Clear:
-	btfsc	Clock_Flag,1					; 有响闹模式清AL点
-	goto	SymbolAL_Clear
-
-	movlw	2
-	subwf	Primary_Status,W
-	btfsc	Z
-	goto	SymbolAL_Clear					; 温度模式清AL点
-
-	return

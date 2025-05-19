@@ -43,10 +43,10 @@ TimeDis_HalfSec:
 	movf	Secondary_Status,W
 TimeMode_HS_JumpTable:
 	addwf	PCL,F
-	goto	Time_Display
-	goto	TimeMode_Display
-	goto	Time_Display
-	goto	Time_Display
+	goto	Time_HS_Display
+	goto	TimeMode_HS_Display
+	goto	Time_HS_Display
+	goto	Time_HS_Display
 
 
 
@@ -57,10 +57,10 @@ TimeDis_Sec:
 	movf	Secondary_Status,W
 TimeMode_JumpTable:
 	addwf	PCL,F
-	return
-	goto	Undisplay_All
-	goto	Undisplay_01
-	goto	Undisplay_23
+	goto	Time_Sec_Display
+	goto	TimeMode_Sec_Display
+	goto	TimeHour_HS_Display
+	goto	TimeMin_HS_Display
 
 
 ;======================================================================================
@@ -92,6 +92,28 @@ Sec_2HzJumpTable:
 	goto	AlarmDis_Sec
 	goto	AlarmDis_Sec
 	goto	AlarmDis_Sec
+
+
+;======================================================================================
+
+
+; ÎÂ¶È²âÁ¿
+Temperature_Get:
+	movf	Temper_Serial,W
+	sublw	5
+	movwf	P_Temp
+
+	movlw	High(TemperTest_JumpTable)
+	movwf	PCLATH
+	movf	P_Temp,W
+TemperTest_JumpTable:
+	addwf	PCL,F
+	goto	TemperGet_Init
+	return
+	goto	TemperGet_Start
+	return
+	goto	TemperGet_Calculate
+	return
 
 
 ;======================================================================================

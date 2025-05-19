@@ -56,3 +56,38 @@ Is_Leap_Year:
 Set_LeapYear_Flag:
 	bsf		Calendar_Flag,0
 	return
+
+
+
+
+Date_HS_Display:
+	call	DateSymbol_Display
+	goto	Date_Display
+
+
+Year_HS_Display:
+	call	DateSymbol_Display
+	goto	Year_Display
+
+
+
+Date_Sec_Display:
+	call	DateSymbol_Display
+	btfsc	Clock_Flag,1
+	call	SymbolAL_Clear					; ÏìÄÖÊ±1SÃðALµã
+	goto	Date_Display
+
+
+Year_Sec_Display:
+	call	DateSymbol_Display
+	goto	Undisplay_All
+
+
+DateMonth_HS_Display:
+	call	DateSymbol_Display
+	goto	Undisplay_01
+
+
+DateDay_HS_Display:
+	call	DateSymbol_Display
+	goto	Undisplay_23

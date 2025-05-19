@@ -67,6 +67,9 @@ NEXTBYTE_1:
 	;movlw	1
 	;movwf	DP_Mode			; DP2模式
 
+	movlw	10
+	movwf	DP_Counter
+
 	movlw	15
 	movwf	Return_Counter	; 复位设置模式返回计时
 

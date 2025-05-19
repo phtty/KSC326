@@ -87,3 +87,31 @@ Alarm_MatchHandle:
 	bcf		Time_Flag,3
 	clrf	Louding_Counter
 	return
+
+
+
+
+AlarmSW_HS_Display:
+	call	AlarmSWSymbol_Display
+	goto	AlarmSW_Dipalay
+
+
+Alarm_HS_Display:
+	call	AlarmSymbol_Display
+	goto	Alarm_Dipalay
+
+
+AlarmSW_Sec_Display:
+	call	AlarmSWSymbol_Display
+	btfsc	Clock_Flag,1
+	call	SymbolAL_Clear						; ÏìÄÖÊ±1SÃðALµã
+	goto	AlarmSW_Dipalay
+
+
+AlarmHour_Sec_Display:
+	call	AlarmSymbol_Display
+	goto	Undisplay_01
+
+AlarmMin_Sec_Display:
+	call	AlarmSymbol_Display
+	goto	Undisplay_23

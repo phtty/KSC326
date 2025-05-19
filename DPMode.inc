@@ -1,4 +1,3 @@
-
 DP1_TimeDis:
 	decfsz	DP_Counter,F
 	return
@@ -16,8 +15,6 @@ DP1_DateDis:
 	movwf	DP_Counter						; DP1日期模式计时结束切换到温度显示后,将计时设为2S
 	movlw	2
 	movwf	Primary_Status
-	call	SymbolTEMP_Display
-	call	SymbolAL_Clear					; 温度模式灭AL点亮TEMP点
 	REFLASH_DISPLAY							; 更新显示
 	HALFSEC_DISPLAY
 	return
@@ -27,7 +24,6 @@ DP1_TemperDis:
 	movlw	10
 	movwf	DP_Counter						; DP1温度模式计时结束切换到时间显示后,将计时设为10S
 	clrf	Primary_Status
-	call	SymbolTEMP_Clear				; 退出温度模式灭TEMP点
 	REFLASH_DISPLAY							; 更新显示
 	HALFSEC_DISPLAY
 	return
@@ -44,7 +40,7 @@ DP1_OtherDis:
 
 
 DPMode_2:
-	movlw	10
+	movlw	15
 	movwf	DP_Counter						; DP2不会主动切换模式
 	return
 

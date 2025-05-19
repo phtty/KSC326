@@ -7,17 +7,6 @@ SwitchState_DisplayMode:
 	btfsc	C
 	goto	PrimarySta_Overflow
 	incf	Primary_Status,F
-	call	SymbolPM_Clear
-	call	COL_Clear
-	movlw	2
-	subwf	Primary_Status,W			; 温度显示模式亮TEMP点，非温度显示模式灭TEMP点
-	btfsc	Z
-	goto	Temper_Dis
-	call	SymbolTEMP_Clear
-	goto	SwitchState_DisplayMode_Exit
-Temper_Dis:
-	call	SymbolTEMP_Display
-	call	SymbolAL_Clear				; 温度模式灭AL点
 	goto	SwitchState_DisplayMode_Exit
 PrimarySta_Overflow:
 	clrf	Primary_Status
@@ -85,7 +74,13 @@ SwitchState_DPDis:
 	subwf	DP_Mode,W
 	btfsc	C
 	goto	DPMode_Overflow
-	incf	DP_Mode,F
+	incf	DP_Mode,f
+	movlw	2
+	subwf	DP_Mode,W
+	btfss	Z
+	goto	SwitchState_DPDis_Exit
+	movlw	15
+	movwf	DP_Counter					; 复位DP模式计数
 	goto	SwitchState_DPDis_Exit
 DPMode_Overflow:
 	clrf	DP_Mode
