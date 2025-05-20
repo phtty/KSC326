@@ -39,6 +39,7 @@ KEY_HOLD_INVALID:		MACRO
 	clrf	Depress_Flag
 	movlw	B'00011'
 	movwf	Key_Flag
+	call	Close_Loud
 	ENDM
 
 

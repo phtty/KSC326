@@ -11,8 +11,6 @@ System_Init:
 	clrf	TRISF			; 重置PORTF为输出
 
 	bcf		SCS				; 选择高频系统时钟
-	;movlw	0xb1
-	;movwf	OPTION
 
 	call	Ram_Initial
 	call	Port_Initial
@@ -124,7 +122,7 @@ Port_Initial:
 	movwf	WPDF
 	movlw	0x1f
 	movwf	WPUF			; PF5~7启用上拉
-	movlw	0xe0
+	movlw	0xe1
 	movwf	IOCF			; 启用PF5~7电平变化中断
 	movf	PORTF,W
 	bcf		RFIF

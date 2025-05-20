@@ -4,7 +4,7 @@ PeriodicTask_2Hz:
 	return
 	bcf		Time_Flag,1						; 复位2Hz标志
 
-	REFLASH_DISPLAY							; 半S刷新一次显示
+	REFLASH_DISPLAY							; 半S强制刷新一次显示
 	btfsc	Time_Flag,0
 	goto	Sec_Handle
 
@@ -39,7 +39,7 @@ Sec_Handle:
 
 	btfsc	SysEvent_Flag,1					; 若有DP显示标志则跳过灭点
 	return
-	btfsc	Key_Flag,3						; 若有快加标志则跳过灭点
+	btfsc	Key_Flag,3						; 若有长按标志则跳过灭点
 	return
 
 	goto	Sec_Jump

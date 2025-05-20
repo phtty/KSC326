@@ -15,12 +15,12 @@ START:
 	nop
 
 	call	System_Init						; 上电初始化
+	
+	btfss	PORTF,0
+	LED_OFF
 
-	call	RGB_ModeSwitch
-	;btfsc	PORTF,0							; 若是只有纽扣电池则不进行上电显示
 	call	BootScreen_Display				; 上电显示
-	HALFSEC_DISPLAY							; 半S更新以及上电提示音
-	call	Key_Beep
+	HALFSEC_DISPLAY							; 上电全显完成后立刻产生1次半S更新
 
 MAIN:
 	call	PowerSave_Juge					; 省电模式

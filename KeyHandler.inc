@@ -12,8 +12,14 @@ Key_Handler:
 	movf	PORTF,W						; 判断消抖后的按键口
 	andlw	0xe0
 	subwf	PORTF_BackUp,W
+	btfsc	Z
+	goto	Key_Scan					; 消抖前后按键状态相同，则为正常触发，进入按键扫描
+
+	movf	PORTF,W
+	andlw	0xe0						; 判断是否为多键按下的情况
 	btfss	Z
-	goto	Key_HandleOver				; 若去抖后PF5~7的状态与去抖前不同，则为意外触发
+	call	Close_Loud					; 多键按下，则需要关响闹
+	goto	Key_HandleOver
 
 Key_Scan:
 	movlw	0xe0
@@ -96,7 +102,7 @@ Key_KeyDTriggered:
 	goto	KeyD_ShortTrigger			; 长按到来前只置位松键处理标志
 
 	bcf		Depress_Flag,0				; 长按触发则复位松键处理
-	call	Key_Beep
+	call	Key_Beep					; 长按功能的按键音
 	call	Switch_LightLevel			; 显示模式下长按切换亮度
 	KEY_HOLD_INVALID
 	return
@@ -104,6 +110,7 @@ Key_KeyDTriggered:
 KeyD_ShortTrigger:
 	bsf		Depress_Flag,0				; 置位D键松键处理标志
 	call	Key_Beep_Cancel				; 按键音在松键处理中响
+	return
 
 KeyD_SetMode:
 	movf	Primary_Status,F
@@ -206,6 +213,14 @@ Key_KeySTriggered:
 	btfss	Z
 	goto	KeyS_SetMode				; 设置模式下S键只有短按功能
 
+	movlw	2
+	subwf	Primary_Status,W
+	btfss	Z							; 若为温度显示，则压键有效
+	goto	KeyS_NoTemperMode
+	call	SwitchState_DisplayMode
+	goto	Key_KeySTriggered_Exit
+
+KeyS_NoTemperMode:
 	btfsc	Key_Flag,3
 	goto	KeyS_DisMode_LongPress
 	call	Key_Beep_Cancel				; 松键有效的按键在松键时才有按键音
@@ -213,11 +228,10 @@ Key_KeySTriggered:
 	return
 KeyS_DisMode_LongPress:
 	bcf		Depress_Flag,2				; 显示模式长按会执行设置模式切换功能
+	call	Key_Beep					; 长按功能的按键音
 KeyS_SetMode:
-	movlw	2
-	subwf	Primary_Status,W
-	btfss	Z							; 若为温度显示，则不会进行设置切换
 	call	SwitchState_SetMode
+Key_KeySTriggered_Exit:
 	KEY_HOLD_INVALID
 	return
 
@@ -296,6 +310,7 @@ Key_DPExit:
 
 	bcf		SysEvent_Flag,1				; 清除DP标志
 	call	DPMode_Reload
+	call	Key_Beep
 	clrf	Primary_Status				; 切换到时间显示模式并刷新显示
 	REFLASH_DISPLAY
 	HALFSEC_DISPLAY

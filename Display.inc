@@ -19,7 +19,7 @@ Time_Display:
 TimeMin_Display:
 	movf	R_Time_Min,W
 	call	Hex2BCD
-	
+
 	movlw	3
 	movwf	R_X
 	movf	P_Temp5,W

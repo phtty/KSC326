@@ -1,5 +1,7 @@
 ; 上电显示0~9以及所有单点
 BootScreen_Display:
+	call	RGB_ModeSwitch
+
 	call	Display_All
 	call	Send_RGB_Data						; 全显1S
 	btfss	Time_Flag,0
@@ -120,14 +122,17 @@ BootScreen_Display:
 	goto	$-1
 	bcf		Time_Flag,1
 
-	call	SymbolAL_Clear						; 显示AL点
-	call	SymbolTEMP_Clear					; 显示TEMP点
+	call	SymbolAL_Clear						; 清除AL点
+	call	SymbolTEMP_Clear					; 清除TEMP点
 	movlw	8
 	movwf	T1_Counter
 	movlw	2
 	movwf	T0_Counter
 	bcf		Time_Flag,3
 	bcf		Time_Flag,0
+	bcf		IOCF,0
+
+	call	Key_Beep
 	return
 
 
