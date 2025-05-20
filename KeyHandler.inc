@@ -9,42 +9,26 @@ Key_Handler:
 	decfsz	Debounce_Counter,F			; 消抖延时计数，递减到0则消抖完成
 	return
 
-	bcf		Key_Flag,2					; 首次触发时不扫描按键
-	movf	PORTF,W
+	movf	PORTF,W						; 判断消抖后的按键口
 	andlw	0xe0
 	subwf	PORTF_BackUp,W
 	btfss	Z
 	goto	Key_HandleOver				; 若去抖后PF5~7的状态与去抖前不同，则为意外触发
 
-	goto	Key_TriggerJuge				; 首次触发按键直接进入按键触发判断
 Key_Scan:
 	movlw	0xe0
 	andwf	PORTF,W
 	sublw	0xe0						; 检测到无按键时结束扫键，并执行松键功能
 	btfss	Z
-	goto	Key_LongPress_Juge
+	goto	Key_TriggerJuge				; 未判空时进按键触发判断
 
 	call	Depress_Juge				; 松键功能判断
-	goto	Key_HandleOver
+	goto	Key_HandleOver				; 判空按键，结束扫描
 
-Key_LongPress_Juge:
-	btfsc	Key_Flag,3
-	goto	LongPress_Handle
-	movlw	64
-	subwf	LongPress_Counter,W
-	btfsc	C
-	goto	LongPress_Trigger
-	incf	LongPress_Counter,F
-	return
-LongPress_Trigger:						; 计满2S后长按触发，置位标志位并执行功能
-	bsf		Key_Flag,3
-	bcf		Time_Flag,2
-	goto	Key_TriggerJuge
-LongPress_Handle:
-	btfss	Time_Flag,2					; 有长按标志时，4Hz执行一次按键功能
-	return
-	bcf		Time_Flag,2
 Key_TriggerJuge:
+	btfsc	Key_Flag,1
+	return								; 若存在无效按键标志，不再执行按键触发判断
+
 	movlw	0xe0
 	andwf	PORTF,W
 	movwf	P_Temp
@@ -61,6 +45,9 @@ Key_TriggerJuge:
 	subwf	P_Temp,W
 	btfsc	Z
 	goto	Key_KeySTriggered			; S键触发
+
+	KEY_HOLD_INVALID					; 非以上3种情况则为无效键
+	return
 
 Key_HandleOver:
 	clrf	Key_Flag
@@ -85,19 +72,25 @@ Depress_Juge:
 	goto	Key_KeyUDepress
 	btfsc	Depress_Flag,2
 	goto	Key_KeySDepress
-	goto	Key_HandleOver
+	return
 
 
 ; D键触发
 Key_KeyDTriggered:
 	call	Universal_TriggerHandle
 	call	Key_DPExit
-	btfsc	Key_Flag,4					; 跳过功能
-	goto	Key_HandleOver
+	btfsc	Key_Flag,1					; 按键无效
+	return
+	call	Key_LongPress_Juge			; 长按判断
+	btfsc	Key_Flag,4
+	return
+	btfsc	Key_Flag,2
+	call	Key_Beep					; 按键音，首次触发生效
+	bcf		Key_Flag,2
 
 	movf	Secondary_Status,F
 	btfss	Z
-	goto	KeyD_SetMode				; 设置模式下D键只有短按功能
+	goto	KeyD_SetMode				; 设置模式下D键有长按功能
 
 	btfss	Key_Flag,3
 	goto	KeyD_ShortTrigger			; 长按到来前只置位松键处理标志
@@ -105,7 +98,8 @@ Key_KeyDTriggered:
 	bcf		Depress_Flag,0				; 长按触发则复位松键处理
 	call	Key_Beep
 	call	Switch_LightLevel			; 显示模式下长按切换亮度
-	goto	Key_HandleOver
+	KEY_HOLD_INVALID
+	return
 
 KeyD_ShortTrigger:
 	bsf		Depress_Flag,0				; 置位D键松键处理标志
@@ -135,14 +129,21 @@ KeyD_NoDateSet:
 	goto	SubNum_AS					; 闹设模式执行减数
 
 Key_KeyDTriggered_Exit:
+	KEY_HOLD_INVALID
 	return
 
 
 ; U键触发
 Key_KeyUTriggered:
 	call	Universal_TriggerHandle
-	btfsc	Key_Flag,4					; 跳过功能
-	goto	Key_HandleOver
+	btfsc	Key_Flag,1					; 按键无效
+	return
+	call	Key_LongPress_Juge			; 长按判断
+	btfsc	Key_Flag,4
+	return
+	btfsc	Key_Flag,2
+	call	Key_Beep					; 按键音，首次触发生效
+	bcf		Key_Flag,2
 
 	movf	Primary_Status,F
 	btfss	Z
@@ -152,7 +153,8 @@ Key_KeyUTriggered:
 	btfss	Z
 	goto	AddNum_CS					; 时设模式执行增数
 	call	Switch_RGBMode				; 时显模式切换RGB模式
-	goto	Key_HandleOver				; 时显模式只执行1次按键功能
+	KEY_HOLD_INVALID
+	return								; 时显模式只执行1次按键功能
 
 KeyU_NoTimeMode:
 	movlw	1
@@ -164,7 +166,8 @@ KeyU_NoTimeMode:
 	btfss	Z
 	goto	AddNum_DS					; 日设模式执行增数
 	call	SwitchState_DPDis			; 日显模式切换DP显示
-	goto	Key_HandleOver				; 日显模式只执行1次按键功能
+	KEY_HOLD_INVALID
+	return								; 日显模式只执行1次按键功能
 
 KeyU_NoDateMode:
 	movlw	2
@@ -173,15 +176,16 @@ KeyU_NoDateMode:
 	goto	KeyU_NoTemperMode			; 非温度模式
 
 	call	SwitchState_DPDis			; 温显模式切换DP显示
-	goto	Key_HandleOver				; 温显模式只执行1次按键功能
+	KEY_HOLD_INVALID
+	return								; 温显模式只执行1次按键功能
 
 KeyU_NoTemperMode:
 	movf	Secondary_Status,F
 	btfss	Z
 	goto	AddNum_AS					; 闹设模式执行增数
-	call	Alarm_SetSwitch				; 闹显模式开关当前闹钟
-	goto	Key_HandleOver				; 闹显模式只执行1次按键功能
+	call	Alarm_SetSwitch				; 闹显模式只执行1次按键功能
 Key_KeyUTriggered_Exit:
+	KEY_HOLD_INVALID
 	return
 
 
@@ -189,8 +193,14 @@ Key_KeyUTriggered_Exit:
 Key_KeySTriggered:
 	call	Universal_TriggerHandle
 	call	Key_DPExit
-	btfsc	Key_Flag,4					; 跳过功能
-	goto	Key_HandleOver
+	btfsc	Key_Flag,1					; 按键无效
+	return
+	call	Key_LongPress_Juge			; 长按判断
+	btfsc	Key_Flag,4
+	return
+	btfsc	Key_Flag,2
+	call	Key_Beep					; 按键音，首次触发生效
+	bcf		Key_Flag,2
 
 	movf	Secondary_Status,F
 	btfss	Z
@@ -202,14 +212,14 @@ Key_KeySTriggered:
 	bsf		Depress_Flag,2				; 显示模式短按置位松键处理标志
 	return
 KeyS_DisMode_LongPress:
-	call	Key_Beep
 	bcf		Depress_Flag,2				; 显示模式长按会执行设置模式切换功能
 KeyS_SetMode:
 	movlw	2
 	subwf	Primary_Status,W
 	btfss	Z							; 若为温度显示，则不会进行设置切换
 	call	SwitchState_SetMode
-	goto	Key_HandleOver
+	KEY_HOLD_INVALID
+	return
 
 
 
@@ -233,8 +243,6 @@ Key_KeySDepress:
 
 ; 通用按键处理
 Universal_TriggerHandle:
-	btfss	Key_Flag,3
-	call	Key_Beep					; 按键音，长按不生效
 	call	Key_CloseLoud
 	call	DPMode_Reload
 	movlw	15							; 复位返回时显模式计数
@@ -242,12 +250,44 @@ Universal_TriggerHandle:
 	return
 
 
+; 长按判断
+Key_LongPress_Juge:
+	btfsc	Key_Flag,2					; 首次触发跳过长按判断
+	return
+
+	btfsc	Key_Flag,3
+	goto	LongPress_Handle			; 有长按标志时，4Hz执行一次按键功能
+	movlw	64
+	subwf	LongPress_Counter,W
+	btfsc	C
+	goto	LongPress_Trigger
+	incf	LongPress_Counter,F
+	bsf		Key_Flag,4					; 长按计数未满，置位功能跳过标志
+	return
+LongPress_Trigger:						; 计满2S后长按触发，置位标志位并执行功能
+	bsf		Key_Flag,3
+	bcf		Key_Flag,4					; 长按计数满足，复位功能跳过标志
+	bcf		Time_Flag,2
+	return
+LongPress_Handle:
+	btfss	Time_Flag,2
+	goto	LongPress_No4Hz
+	bcf		Key_Flag,4					; 4Hz到来，复位功能跳过标志
+	bcf		Time_Flag,2
+	return
+LongPress_No4Hz:
+	bsf		Key_Flag,4					; 4Hz未到来，置位功能跳过标志
+	return
+
+
+
+
 Key_CloseLoud:
 	movf	Triggered_AlarmGroup,F		; 判断按键是否打断了响闹
 	btfsc	Z
 	return								; 未打断响闹则执行其按键功能
 
-	bsf		Key_Flag,4					; 打断响闹则此次按键无功能
+	KEY_HOLD_INVALID					; 打断响闹则置位按键无效标志
 	goto	Close_Loud
 
 Key_DPExit:
@@ -259,7 +299,7 @@ Key_DPExit:
 	clrf	Primary_Status				; 切换到时间显示模式并刷新显示
 	REFLASH_DISPLAY
 	HALFSEC_DISPLAY
-	bsf		Key_Flag,4					; 退出DP模式则此次按键无功能
+	KEY_HOLD_INVALID					; 退出DP模式则置位按键无效标志
 	return
 
 

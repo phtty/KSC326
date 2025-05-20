@@ -45,5 +45,5 @@ PowerSave_Exit:
 	movlw	0xe0
 	movwf	IOCF
 
-	LED_ON									; 打开RGB灯供电
+	;LED_ON									; 打开RGB灯供电
 	return

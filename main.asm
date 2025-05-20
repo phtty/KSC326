@@ -17,9 +17,9 @@ START:
 	call	System_Init						; 上电初始化
 
 	call	RGB_ModeSwitch
-	btfsc	PORTF,0
+	;btfsc	PORTF,0							; 若是只有纽扣电池则不进行上电显示
 	call	BootScreen_Display				; 上电显示
-	HALFSEC_DISPLAY
+	HALFSEC_DISPLAY							; 半S更新以及上电提示音
 	call	Key_Beep
 
 MAIN:

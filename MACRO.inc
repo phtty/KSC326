@@ -32,6 +32,17 @@ HALFSEC_DISPLAY:		MACRO
 	bsf		Time_Flag,1
 	ENDM
 
+
+
+; 按键无效保持
+KEY_HOLD_INVALID:		MACRO
+	clrf	Depress_Flag
+	movlw	B'00011'
+	movwf	Key_Flag
+	ENDM
+
+
+
 ; 该灯若点亮，则根据GRB_Tick的值查三通道时刻表得到该通道的灰度值，并送入发送缓冲区
 Search_TickTable:		MACRO
 	movlw	Low(GRB_Tick)
