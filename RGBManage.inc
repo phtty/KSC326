@@ -115,10 +115,10 @@ HorizonSeg_Loop:
 
 	btfss	SysEvent_Flag,3					; 每次内层循环结束说明8字改变，递增初值
 	goto	Fixed_Mode
-	movlw	40
+	movlw	20
 	goto	InitialData_CHG
 Fixed_Mode:
-	movlw	60
+	movlw	40
 InitialData_CHG:
 	addwf	P_Temp+3						; 根据是固定模式还是渐变模式选择每个8字的初值增量
 
@@ -167,7 +167,7 @@ VerticalSeg_Loop:
 
 	btfss	SysEvent_Flag,3					; 每次内层循环结束说明8字改变，递增初值
 	goto	VFixed_Mode
-	movlw	40
+	movlw	20
 	goto	VInitialData_CHG
 VFixed_Mode:
 	movlw	40

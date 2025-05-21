@@ -8,6 +8,7 @@ Time_Run:
 
 	clrf	R_Time_Sec
 	incf	R_Time_Min,F
+	call	CompenTime_Juge						; 每次进位分钟更新一次补偿时间
 	movlw	60	
 	subwf	R_Time_Min,W
 	btfss	C

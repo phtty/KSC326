@@ -26,6 +26,8 @@ LongPress_Counter
 TemperTest_Counter
 ; 定时变色模式计数
 ColorCHG_Counter
+; 补偿时间计数
+CompTime_Count
 
 
 Calendar_Flag

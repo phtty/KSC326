@@ -52,9 +52,9 @@ TemperGet_Calculate:
 	andwf	R_ADC_H,F
 	swapf	R_ADC_H,F
 
-	movlw	59
+	movlw	90
 	movwf	R_Temperature			; 温度通过循环查表递减得出
-	movlw	0xb3
+	movlw	0x4a
 	subwf	R_ADC_L,F
 	btfsc	C
 	goto	TemperTableHead_NoBorrow
@@ -63,7 +63,7 @@ TemperGet_Calculate:
 	btfss	C
 	goto	TemperLoop_Over			; 有借位则说明超过上限
 TemperTableHead_NoBorrow:
-	movlw	0x04
+	movlw	0x03
 	subwf	R_ADC_H,F
 	btfss	C						; 有借位则说明超过上限
 	goto	TemperLoop_Over
@@ -91,7 +91,9 @@ ADCL_NoBorrow:
 	goto	TemperLoop_Start
 
 TemperLoop_Over:
-	movlw	9
+	call	Compensation			; 温度补偿
+
+	movlw	25
 	subwf	R_Temperature,W
 	btfss	C
 	goto	Minus_Temper
@@ -100,7 +102,7 @@ TemperLoop_Over:
 	goto	Temperature_Get_Exit
 Minus_Temper:
 	movf	R_Temperature,W
-	sublw	10
+	sublw	25
 	movwf	R_Temperature
 	bsf		ADC_Flag,0
 Temperature_Get_Exit:
@@ -180,3 +182,91 @@ Temperature_Test:
 TemperDis_HalfSec:
 	call	Temper_Display
 	goto	TemperSymbol_Display
+
+
+
+
+; 根据时间进行温度补偿
+Compensation:
+	clrf	P_Temp
+
+	movf	Light_Level,F
+	btfsc	Z
+	goto	HighLightCompen
+
+LowLightLoop_Start:
+	movlw	High(LowLightCompen_Table)
+	movwf	PCLATH
+	movf	P_Temp,W
+	call	LowLightCompen_Table			; 用当前的补偿时间循环查表，得到补偿等级
+
+	subwf	CompTime_Count,W
+	btfss	C
+	goto	LowLightLoop_Over
+	incf	P_Temp,F
+	goto	LowLightLoop_Start
+LowLightLoop_Over:
+	movlw	6
+	addwf	P_Temp,F						; 低亮从6度开始补偿
+	goto	TemperOverflow_Juge
+
+HighLightCompen:
+	movlw	High(HighLightCompen_Table)
+	movwf	PCLATH
+	movf	P_Temp,W
+	call	HighLightCompen_Table			; 用当前的补偿时间循环查表，得到补偿等级
+
+	subwf	CompTime_Count,W
+	btfss	C
+	goto	HighLightLoop_Over
+	incf	P_Temp,F
+	goto	LowLightLoop_Start
+HighLightLoop_Over:
+	movlw	10
+	addwf	P_Temp,F						; 高亮从10度开始补偿
+
+TemperOverflow_Juge:
+	movf	P_Temp,W
+	subwf	R_Temperature,W			; 补偿值修正
+	btfss	C
+	movlw	15
+	movwf	R_Temperature			; 补偿值大于温度值时以15度计算
+
+	movlw	75
+	subwf	R_Temperature,W			; 计算修正后的值是否有上下溢
+	btfss	C
+	goto	LowerLimit_Juge
+
+	movlw	75
+	movwf	R_Temperature			; 发生上溢
+	return
+
+LowerLimit_Juge:
+	movlw	15
+	subwf	R_Temperature,W
+	btfsc	C
+	return							; 未溢出
+
+	movlw	15
+	movwf	R_Temperature			; 发生下溢
+	return
+
+
+
+
+; 补偿时间递增/递减判断
+CompenTime_Juge:
+	btfsc	PORTF,0
+	goto	CompenTime_Add
+
+	movf	CompTime_Count,F
+	btfss	Z
+	decf	CompTime_Count,F		; 若关屏则递减到0
+	return
+
+CompenTime_Add:
+	movlw	20
+	subwf	CompTime_Count
+	btfss	Z
+	incf	CompTime_Count,F		; 若亮屏则递增到20
+	return
