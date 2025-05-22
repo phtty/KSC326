@@ -94,12 +94,17 @@ Temper_Table:
 HighLightCompen_Table:
 	addwf	PCL,F
 	retlw	1
+	retlw	2
 	retlw	3
+	retlw	4
+	retlw	5
 	retlw	6
+	retlw	7
+	retlw	8
+	retlw	9
+	retlw	10
 	retlw	12
-	retlw	15
-	retlw	19
 
-LowLightCompen_Table:
-	addwf	PCL,F
-	retlw	1
+;LowLightCompen_Table:
+;	addwf	PCL,F
+;	retlw	1

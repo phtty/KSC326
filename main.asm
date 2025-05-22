@@ -15,16 +15,22 @@ START:
 	nop
 
 	call	System_Init						; 上电初始化
-	
+
 	btfss	PORTF,0
 	LED_OFF
 
+	call	RGB_ModeSwitch
 	call	BootScreen_Display				; 上电显示
+	bcf		IOCF,0
+
+	movlw	5
+	movwf	CompTime_Count					; 上电给5分钟补偿等级
+
 	HALFSEC_DISPLAY							; 上电全显完成后立刻产生1次半S更新
 
 MAIN:
 	call	PowerSave_Juge					; 省电模式
-	call	Display_Reflash					; 刷新显示
+	;call	Display_Reflash					; 刷新显示
 	call	PeriodicTask_32Hz				; 32Hz任务
 	call	PeriodicTask_2Hz				; 2Hz任务
 

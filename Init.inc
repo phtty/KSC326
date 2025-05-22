@@ -152,7 +152,7 @@ ADC_Initial:
 	movwf	ADCON0			; 启用模拟通道11，参考电压内部VDD
 
 	bsf		ADEN
-	call	Delay_130us		; 等待电路稳定
+	;call	Delay_130us		; 等待电路稳定
 
 	return
 

@@ -195,42 +195,45 @@ Compensation:
 	goto	HighLightCompen
 
 LowLightLoop_Start:
-	movlw	High(LowLightCompen_Table)
-	movwf	PCLATH
-	movf	P_Temp,W
-	call	LowLightCompen_Table			; 用当前的补偿时间循环查表，得到补偿等级
-
-	subwf	CompTime_Count,W
-	btfss	C
-	goto	LowLightLoop_Over
-	incf	P_Temp,F
-	goto	LowLightLoop_Start
-LowLightLoop_Over:
-	movlw	6
-	addwf	P_Temp,F						; 低亮从6度开始补偿
+;	movlw	High(LowLightCompen_Table)
+;	movwf	PCLATH
+;	movf	P_Temp,W
+;	call	LowLightCompen_Table			; 用当前的补偿时间循环查表，得到补偿等级
+;
+;	subwf	CompTime_Count,W
+;	btfss	C
+;	goto	LowLightLoop_Over
+;	incf	P_Temp,F
+;	goto	LowLightLoop_Start
+;LowLightLoop_Over:
+	movf	CompTime_Count,F
+	btfsc	Z
+	goto	TemperOverflow_Juge		; 低亮时若补偿时间为0则不进行补偿
+	movlw	5
+	addwf	P_Temp,F				; 有补偿时间则固定补偿5度
 	goto	TemperOverflow_Juge
 
 HighLightCompen:
 	movlw	High(HighLightCompen_Table)
 	movwf	PCLATH
 	movf	P_Temp,W
-	call	HighLightCompen_Table			; 用当前的补偿时间循环查表，得到补偿等级
+	call	HighLightCompen_Table	; 用当前的补偿时间循环查表，得到补偿等级
 
 	subwf	CompTime_Count,W
 	btfss	C
 	goto	HighLightLoop_Over
 	incf	P_Temp,F
-	goto	LowLightLoop_Start
+	goto	HighLightCompen
 HighLightLoop_Over:
-	movlw	10
-	addwf	P_Temp,F						; 高亮从10度开始补偿
+	;movlw	5
+	;addwf	P_Temp,F				; 高亮从5度开始补偿
 
 TemperOverflow_Juge:
 	movf	P_Temp,W
 	subwf	R_Temperature,W			; 补偿值修正
 	btfss	C
 	movlw	15
-	movwf	R_Temperature			; 补偿值大于温度值时以15度计算
+	movwf	R_Temperature			; 补偿后值若小于最低温度值时，以补偿15度计算
 
 	movlw	75
 	subwf	R_Temperature,W			; 计算修正后的值是否有上下溢
@@ -238,7 +241,7 @@ TemperOverflow_Juge:
 	goto	LowerLimit_Juge
 
 	movlw	75
-	movwf	R_Temperature			; 发生上溢
+	movwf	R_Temperature			; 发生上溢将温度固定为+50
 	return
 
 LowerLimit_Juge:
@@ -248,7 +251,7 @@ LowerLimit_Juge:
 	return							; 未溢出
 
 	movlw	15
-	movwf	R_Temperature			; 发生下溢
+	movwf	R_Temperature			; 发生下溢将温度固定为-10
 	return
 
 
@@ -265,8 +268,8 @@ CompenTime_Juge:
 	return
 
 CompenTime_Add:
-	movlw	20
-	subwf	CompTime_Count
+	movlw	11
+	subwf	CompTime_Count,W
 	btfss	Z
-	incf	CompTime_Count,F		; 若亮屏则递增到20
+	incf	CompTime_Count,F		; 若亮屏则递增到11
 	return

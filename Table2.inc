@@ -74,7 +74,7 @@ HalfSec_2HzJumpTable:
 	addwf	PCL,F
 	goto	TimeDis_HalfSec
 	goto	DateDis_HalfSec
-	goto	TemperDis_HalfSec
+ 	goto	TemperDis_HalfSec
 	goto	AlarmDis_HalfSec
 	goto	AlarmDis_HalfSec
 	goto	AlarmDis_HalfSec
@@ -88,7 +88,7 @@ Sec_2HzJumpTable:
 	addwf	PCL,F
 	goto	TimeDis_Sec
 	goto	DateDis_Sec
-	return
+  	return
 	goto	AlarmDis_Sec
 	goto	AlarmDis_Sec
 	goto	AlarmDis_Sec

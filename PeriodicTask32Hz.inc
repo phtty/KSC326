@@ -12,7 +12,7 @@ PeriodicTask_32Hz:
 
 
 
-; 16Hz任务，用于蜂鸣间隔和RGB变色刷新
+; 16Hz任务，用于蜂鸣间隔和RGB变色刷新以及更新显示
 PeriodicTask_16Hz:
 	btfss	Time_Flag,3
 	return
@@ -20,4 +20,5 @@ PeriodicTask_16Hz:
 
 	call	BeepManage							; 蜂鸣管理
 	call	RGB_TickReflash						; RGB渐变刷新
+	call	Send_RGB_Data
 	return
