@@ -1,11 +1,11 @@
 ; 若有刷新显示标志位，则执行一次显示刷新
-Display_Reflash:
-	btfss	SysEvent_Flag,0
-	return
-	bcf		SysEvent_Flag,0
-
-	call	Send_RGB_Data
-	return
+;Display_Reflash:
+;	btfss	SysEvent_Flag,0
+;	return
+;	bcf		SysEvent_Flag,0
+;
+;	call	Send_RGB_Data
+;	return
 
 
 
@@ -289,7 +289,6 @@ CelsiusDegree_MinusNoTens:					; 负温度只有个位的情况
 	movlw	Word_C
 	call	Digit_Word_Display				; D3显示温标C
 	goto	DegreeDisplay_Exit
-
 
 
 Display_FahrenheitDegree:

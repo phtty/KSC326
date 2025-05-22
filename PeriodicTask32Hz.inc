@@ -20,5 +20,5 @@ PeriodicTask_16Hz:
 
 	call	BeepManage							; 蜂鸣管理
 	call	RGB_TickReflash						; RGB渐变刷新
-	call	Send_RGB_Data
+	call	Send_RGB_Data						; 16Hz刷新显示
 	return

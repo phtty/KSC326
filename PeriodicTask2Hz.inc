@@ -8,21 +8,13 @@ PeriodicTask_2Hz:
 	btfsc	Time_Flag,0
 	goto	Sec_Handle
 
+
 ; 半S处理
 HalfSec_Handle:
 	btfsc	SysEvent_Flag,1
 	goto	DPMode_Display					; 存在DP显示标志时，显示当前的DP模式
 
-	goto	HalfSec_Jump
-
-
-; AL点显示
-AL_Display:
-	movf	Alarm_Switch,F					; 无任何一组闹钟开启时不显示
-	btfsc	Z
-	goto	SymbolAL_Clear
-
-	goto	SymbolAL_Display				; 有闹钟开启时显示
+	goto	HalfSec_Jump					; 通过跳转表以当前系统状态为索引进行半S显示分发
 
 
 ; 1S处理
@@ -42,7 +34,7 @@ Sec_Handle:
 	btfsc	Key_Flag,3						; 若有长按标志则跳过灭点
 	return
 
-	goto	Sec_Jump
+	goto	Sec_Jump						; 通过跳转表以当前系统状态为索引进行1S显示分发
 
 
 

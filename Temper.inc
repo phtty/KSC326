@@ -180,8 +180,8 @@ Temperature_Test:
 
 
 TemperDis_HalfSec:
-	call	Temper_Display
-	goto	TemperSymbol_Display
+	call	TemperSymbol_Display
+	goto	Temper_Display
 
 
 

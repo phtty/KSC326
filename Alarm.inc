@@ -91,16 +91,30 @@ Alarm_MatchHandle:
 
 
 
+; AL点显示
+AL_Display:
+	movf	Alarm_Switch,F					; 无任何一组闹钟开启时不显示
+	btfsc	Z
+	goto	SymbolAL_Clear
+
+	goto	SymbolAL_Display				; 有闹钟开启时显示
+
+
+
+
+; 闹钟开关半S的显示
 AlarmSW_HS_Display:
 	call	AlarmSWSymbol_Display
 	goto	AlarmSW_Dipalay
 
 
+; 闹钟时间设置半S的显示
 Alarm_HS_Display:
 	call	AlarmSymbol_Display
 	goto	Alarm_Dipalay
 
 
+; 闹钟开关1S的显示
 AlarmSW_Sec_Display:
 	call	AlarmSWSymbol_Display
 	btfsc	Clock_Flag,1
@@ -108,10 +122,13 @@ AlarmSW_Sec_Display:
 	goto	AlarmSW_Dipalay
 
 
+; 闹钟小时设置1S的显示
 AlarmHour_Sec_Display:
 	call	AlarmSymbol_Display
 	goto	Undisplay_01
 
+
+; 闹钟分钟设置1S的显示
 AlarmMin_Sec_Display:
 	call	AlarmSymbol_Display
 	goto	Undisplay_23
