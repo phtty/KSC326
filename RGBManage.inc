@@ -24,7 +24,6 @@ GRB_TickReflash_LoopJuge:
 	subwf	R_X,W
 	btfss	C
 	goto	GRB_TickReflash_Loop
-	;REFLASH_DISPLAY								; Ë¢ÐÂÏÔÊ¾
 	return
 
 

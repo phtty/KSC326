@@ -1,15 +1,3 @@
-; 若有刷新显示标志位，则执行一次显示刷新
-;Display_Reflash:
-;	btfss	SysEvent_Flag,0
-;	return
-;	bcf		SysEvent_Flag,0
-;
-;	call	Send_RGB_Data
-;	return
-
-
-
-
 ; 时间显示
 Time_Display:
 	call	TimeMin_Display
@@ -29,7 +17,6 @@ TimeMin_Display:
 	movwf	R_X
 	movf	P_Temp6,W
 	call	Digit_Num_Display				; 显示分钟个位
-	;REFLASH_DISPLAY
 	return
 
 ; 小时显示
@@ -73,7 +60,6 @@ Start_DisTime_Hour:
 	btfsc	Z
 	movlw	10
 	call	Digit_Num_Display
-	;REFLASH_DISPLAY
 	return
 
 
@@ -119,8 +105,6 @@ Hr_Display:
 	movwf	R_X
 	movlw	Word_r
 	call	Digit_Word_Display				; 显示Hr
-
-	;REFLASH_DISPLAY
 	return
 
 
@@ -155,7 +139,6 @@ Day_Display:
 	movlw	10
 Day_Tens_NoZero:
 	call	Digit_Num_Display
-	;REFLASH_DISPLAY
 	return
 
 ; 月显示
@@ -174,7 +157,6 @@ Month_Display:
 	movlw	10
 Month_Tens_NoZero:
 	call	Digit_Num_Display
-	;REFLASH_DISPLAY
 	return
 
 
@@ -201,7 +183,6 @@ Year_Display:
 	clrf	R_X
 	movlw	2
 	call	Digit_Num_Display
-	;REFLASH_DISPLAY
 	return
 
 
@@ -333,7 +314,6 @@ FahrenheitDegree_3Digit:
 	movlw	Word_F
 	call	Digit_Word_Display				; D3显示温标F
 DegreeDisplay_Exit:
-	;REFLASH_DISPLAY
 	return
 
 
@@ -387,7 +367,6 @@ Display_AlarmNumber:
 	movlw	2
 	subwf	Primary_Status,W
 	call	Digit_Num_Display				; 显示闹钟序号
-	;REFLASH_DISPLAY
 	return
 
 
@@ -479,7 +458,6 @@ Start_DisAlarm_Hour:
 	btfsc	Z
 	movlw	10
 	call	Digit_Num_Display
-	;REFLASH_DISPLAY
 	return
 
 
@@ -512,7 +490,6 @@ DPMode_Display:
 	addlw	1
 	call	Digit_Num_Display				; 根据当前dp模式显示'1'~'3'
 
-	;REFLASH_DISPLAY
 	return
 
 
@@ -541,7 +518,6 @@ Undisplay_01:
 	movwf	R_X
 	movlw	10
 	call	Digit_Num_Display				; 取消显示Digit1
-	;REFLASH_DISPLAY
 	return
 
 ; 取消显示Digit2、3
@@ -555,7 +531,6 @@ Undisplay_23:
 	movwf	R_X
 	movlw	10
 	call	Digit_Num_Display				; 取消显示Digit3
-	;REFLASH_DISPLAY
 	return
 
 

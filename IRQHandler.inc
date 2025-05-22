@@ -135,6 +135,5 @@ Is_Battery:
 	LED_OFF
 	goto	Battery_JugeOver
 DC5V:
-	;REFLASH_DISPLAY
 	LED_ON
 	goto	Battery_JugeOver

@@ -312,9 +312,8 @@ Key_DPExit:
 	call	DPMode_Reload
 	call	Key_Beep
 	clrf	Primary_Status				; 切换到时间显示模式并刷新显示
-	;REFLASH_DISPLAY
-	HALFSEC_DISPLAY
-	KEY_HOLD_INVALID					; 退出DP模式则置位按键无效标志
+	HALFSEC_DISPLAY						; 产生半S刷新
+	KEY_HOLD_INVALID					; 置位按键无效
 	return
 
 

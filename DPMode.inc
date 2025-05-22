@@ -5,8 +5,7 @@ DP1_TimeDis:
 	movwf	DP_Counter						; DP1时间模式计时结束切换到日期显示后,将计时设为2S
 	movlw	1
 	movwf	Primary_Status
-	;REFLASH_DISPLAY							; 更新显示
-	HALFSEC_DISPLAY
+	HALFSEC_DISPLAY							; 产生半S刷新
 	return
 DP1_DateDis:
 	decfsz	DP_Counter,F
@@ -15,8 +14,7 @@ DP1_DateDis:
 	movwf	DP_Counter						; DP1日期模式计时结束切换到温度显示后,将计时设为2S
 	movlw	2
 	movwf	Primary_Status
-	;REFLASH_DISPLAY							; 更新显示
-	HALFSEC_DISPLAY
+	HALFSEC_DISPLAY							; 产生半S刷新
 	return
 DP1_TemperDis:
 	decfsz	DP_Counter,F
@@ -24,8 +22,7 @@ DP1_TemperDis:
 	movlw	10
 	movwf	DP_Counter						; DP1温度模式计时结束切换到时间显示后,将计时设为10S
 	clrf	Primary_Status
-	;REFLASH_DISPLAY							; 更新显示
-	HALFSEC_DISPLAY
+	HALFSEC_DISPLAY							; 产生半S刷新
 	return
 DP1_OtherDis:
 	decfsz	DP_Counter,F
@@ -33,8 +30,7 @@ DP1_OtherDis:
 	movlw	10
 	movwf	DP_Counter						; DP1其他模式显示10S切换到时间显示
 	clrf	Primary_Status
-	;REFLASH_DISPLAY							; 更新显示
-	HALFSEC_DISPLAY
+	HALFSEC_DISPLAY							; 产生半S刷新
 	return
 
 

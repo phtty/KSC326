@@ -81,7 +81,6 @@ Enter_NightMode:
 	movwf	Light_Level						; ÁÁ¶ÈÉèÎªµÍÁÁ
 
 TimeRange_Detect_Exit:
-	;REFLASH_DISPLAY
 	return
 
 
